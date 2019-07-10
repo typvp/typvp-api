@@ -1,0 +1,23 @@
+type Account {
+  id: ID! @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  email: String! @unique
+  username: String! @unique
+  password: String!
+  profile: Profile! @relation(name: "UsersProfile", link: INLINE, onDelete: CASCADE)
+  role: Role!
+}
+
+type Profile {
+  id: ID! @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  account: Account! @relation(name: "UsersProfile")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+

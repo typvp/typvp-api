@@ -4,7 +4,7 @@ import * as jwt from 'jsonwebtoken'
 import {Context} from '../../types'
 
 export const Auth = {
-  async signup(_, {email, password, username}, ctx: Context) {
+  signup: async (_, {email, password, username}, ctx: Context) => {
     try {
       const accountExists = await ctx.prisma.$exists.account({
         email,
@@ -31,14 +31,14 @@ export const Auth = {
       throw err
     }
   },
-  async login(_, {email, password}, ctx: Context) {
+  login: async (_, {username, password}, ctx: Context) => {
     try {
       // make sure the account exists first
-      const account = await ctx.prisma.account({email: email})
+      const account = await ctx.prisma.account({username: username})
 
       if (!account) {
         throw new Error(
-          `Cannot find account associated with the email: ${email}`,
+          `Cannot find account associated with the username: ${username}`,
         )
       }
 
@@ -46,7 +46,7 @@ export const Auth = {
       const valid = await bcrypt.compare(password, account.password)
 
       if (!valid) {
-        throw new Error('Invalid email or password')
+        throw new Error('Invalid username or password')
       }
 
       // everything checks out, send them back some data

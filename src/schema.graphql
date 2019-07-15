@@ -10,8 +10,11 @@ type Mutation {
     username: String!
   ): AuthPayload!
   login(email: String!, password: String!): AuthPayload!
-  createAccount(email: String!, password: String!, role: Role!): Account!
-  deleteAccount(id: ID!): Account!
+  # createAccount(email: String!, password: String!, role: Role!): Account!
+  # deleteAccount(id: ID!): Account!
+
+  # Singleplayer Typing Test
+  addResults(cpm: Int!, rawCpm: Int!, wpm: Int!, correct: Int!, incorrect: Int!, corrections: Int!): Test!
 }
 
 type AuthPayload {
@@ -25,14 +28,20 @@ type Account {
   updatedAt: DateTime
   email: String!
   username: String!
-  profile: Profile
   role: Role!
+  results: [Test!]!
 }
 
-type Profile {
+type Test {
   id: ID!
-  createdAt: DateTime
-  updatedAt: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  cpm: Int!
+  rawCpm: Int!
+  wpm: Int!
+  correct: Int!
+  incorrect: Int!
+  corrections: Int!
   account: Account!
 }
 

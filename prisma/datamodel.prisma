@@ -5,15 +5,21 @@ type Account {
   email: String! @unique
   username: String! @unique
   password: String!
-  profile: Profile! @relation(name: "UsersProfile", link: INLINE, onDelete: CASCADE)
+  results: [Test!] @relation(name: "UsersTests")
   role: Role!
 }
 
-type Profile {
+type Test {
   id: ID! @id
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
-  account: Account! @relation(name: "UsersProfile")
+  cpm: Int!
+  rawCpm: Int!
+  wpm: Int!
+  correct: Int!
+  incorrect: Int!
+  corrections: Int!
+  account: Account! @relation(name: "UsersTests")
 }
 
 enum Role {

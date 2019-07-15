@@ -16,15 +16,12 @@ export const Auth = {
 
       password = await bcrypt.hash(password, 10)
 
-      const account = await ctx.prisma
-        .createAccount({
-          email: email,
-          password: password,
-          username: username,
-          role: 'USER',
-          profile: {create: {}},
-        })
-        .profile()
+      const account = await ctx.prisma.createAccount({
+        email: email,
+        password: password,
+        username: username,
+        role: 'USER',
+      })
 
       return {
         token: jwt.sign({accountId: account.id}, process.env.APP_SECRET),

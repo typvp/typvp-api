@@ -17,7 +17,7 @@ export type Maybe<T> = T | undefined | null;
 
 export interface Exists {
   account: (where?: AccountWhereInput) => Promise<boolean>;
-  profile: (where?: ProfileWhereInput) => Promise<boolean>;
+  test: (where?: TestWhereInput) => Promise<boolean>;
 }
 
 export interface Node {}
@@ -58,25 +58,25 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => AccountConnectionPromise;
-  profile: (where: ProfileWhereUniqueInput) => ProfileNullablePromise;
-  profiles: (args?: {
-    where?: ProfileWhereInput;
-    orderBy?: ProfileOrderByInput;
+  test: (where: TestWhereUniqueInput) => TestNullablePromise;
+  tests: (args?: {
+    where?: TestWhereInput;
+    orderBy?: TestOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
     first?: Int;
     last?: Int;
-  }) => FragmentableArray<Profile>;
-  profilesConnection: (args?: {
-    where?: ProfileWhereInput;
-    orderBy?: ProfileOrderByInput;
+  }) => FragmentableArray<Test>;
+  testsConnection: (args?: {
+    where?: TestWhereInput;
+    orderBy?: TestOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
     first?: Int;
     last?: Int;
-  }) => ProfileConnectionPromise;
+  }) => TestConnectionPromise;
   node: (args: { id: ID_Output }) => Node;
 
   /**
@@ -99,18 +99,22 @@ export interface Prisma {
   }) => AccountPromise;
   deleteAccount: (where: AccountWhereUniqueInput) => AccountPromise;
   deleteManyAccounts: (where?: AccountWhereInput) => BatchPayloadPromise;
-  createProfile: (data: ProfileCreateInput) => ProfilePromise;
-  updateProfile: (args: {
-    data: ProfileUpdateInput;
-    where: ProfileWhereUniqueInput;
-  }) => ProfilePromise;
-  upsertProfile: (args: {
-    where: ProfileWhereUniqueInput;
-    create: ProfileCreateInput;
-    update: ProfileUpdateInput;
-  }) => ProfilePromise;
-  deleteProfile: (where: ProfileWhereUniqueInput) => ProfilePromise;
-  deleteManyProfiles: (where?: ProfileWhereInput) => BatchPayloadPromise;
+  createTest: (data: TestCreateInput) => TestPromise;
+  updateTest: (args: {
+    data: TestUpdateInput;
+    where: TestWhereUniqueInput;
+  }) => TestPromise;
+  updateManyTests: (args: {
+    data: TestUpdateManyMutationInput;
+    where?: TestWhereInput;
+  }) => BatchPayloadPromise;
+  upsertTest: (args: {
+    where: TestWhereUniqueInput;
+    create: TestCreateInput;
+    update: TestUpdateInput;
+  }) => TestPromise;
+  deleteTest: (where: TestWhereUniqueInput) => TestPromise;
+  deleteManyTests: (where?: TestWhereInput) => BatchPayloadPromise;
 
   /**
    * Subscriptions
@@ -123,9 +127,9 @@ export interface Subscription {
   account: (
     where?: AccountSubscriptionWhereInput
   ) => AccountSubscriptionPayloadSubscription;
-  profile: (
-    where?: ProfileSubscriptionWhereInput
-  ) => ProfileSubscriptionPayloadSubscription;
+  test: (
+    where?: TestSubscriptionWhereInput
+  ) => TestSubscriptionPayloadSubscription;
 }
 
 export interface ClientConstructor<T> {
@@ -137,6 +141,26 @@ export interface ClientConstructor<T> {
  */
 
 export type Role = "USER" | "ADMIN";
+
+export type TestOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC"
+  | "cpm_ASC"
+  | "cpm_DESC"
+  | "rawCpm_ASC"
+  | "rawCpm_DESC"
+  | "wpm_ASC"
+  | "wpm_DESC"
+  | "correct_ASC"
+  | "correct_DESC"
+  | "incorrect_ASC"
+  | "incorrect_DESC"
+  | "corrections_ASC"
+  | "corrections_DESC";
 
 export type AccountOrderByInput =
   | "id_ASC"
@@ -154,14 +178,6 @@ export type AccountOrderByInput =
   | "role_ASC"
   | "role_DESC";
 
-export type ProfileOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC";
-
 export type MutationType = "CREATED" | "UPDATED" | "DELETED";
 
 export type AccountWhereUniqueInput = AtLeastOne<{
@@ -169,6 +185,91 @@ export type AccountWhereUniqueInput = AtLeastOne<{
   email?: Maybe<String>;
   username?: Maybe<String>;
 }>;
+
+export interface TestWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  cpm?: Maybe<Int>;
+  cpm_not?: Maybe<Int>;
+  cpm_in?: Maybe<Int[] | Int>;
+  cpm_not_in?: Maybe<Int[] | Int>;
+  cpm_lt?: Maybe<Int>;
+  cpm_lte?: Maybe<Int>;
+  cpm_gt?: Maybe<Int>;
+  cpm_gte?: Maybe<Int>;
+  rawCpm?: Maybe<Int>;
+  rawCpm_not?: Maybe<Int>;
+  rawCpm_in?: Maybe<Int[] | Int>;
+  rawCpm_not_in?: Maybe<Int[] | Int>;
+  rawCpm_lt?: Maybe<Int>;
+  rawCpm_lte?: Maybe<Int>;
+  rawCpm_gt?: Maybe<Int>;
+  rawCpm_gte?: Maybe<Int>;
+  wpm?: Maybe<Int>;
+  wpm_not?: Maybe<Int>;
+  wpm_in?: Maybe<Int[] | Int>;
+  wpm_not_in?: Maybe<Int[] | Int>;
+  wpm_lt?: Maybe<Int>;
+  wpm_lte?: Maybe<Int>;
+  wpm_gt?: Maybe<Int>;
+  wpm_gte?: Maybe<Int>;
+  correct?: Maybe<Int>;
+  correct_not?: Maybe<Int>;
+  correct_in?: Maybe<Int[] | Int>;
+  correct_not_in?: Maybe<Int[] | Int>;
+  correct_lt?: Maybe<Int>;
+  correct_lte?: Maybe<Int>;
+  correct_gt?: Maybe<Int>;
+  correct_gte?: Maybe<Int>;
+  incorrect?: Maybe<Int>;
+  incorrect_not?: Maybe<Int>;
+  incorrect_in?: Maybe<Int[] | Int>;
+  incorrect_not_in?: Maybe<Int[] | Int>;
+  incorrect_lt?: Maybe<Int>;
+  incorrect_lte?: Maybe<Int>;
+  incorrect_gt?: Maybe<Int>;
+  incorrect_gte?: Maybe<Int>;
+  corrections?: Maybe<Int>;
+  corrections_not?: Maybe<Int>;
+  corrections_in?: Maybe<Int[] | Int>;
+  corrections_not_in?: Maybe<Int[] | Int>;
+  corrections_lt?: Maybe<Int>;
+  corrections_lte?: Maybe<Int>;
+  corrections_gt?: Maybe<Int>;
+  corrections_gte?: Maybe<Int>;
+  account?: Maybe<AccountWhereInput>;
+  AND?: Maybe<TestWhereInput[] | TestWhereInput>;
+  OR?: Maybe<TestWhereInput[] | TestWhereInput>;
+  NOT?: Maybe<TestWhereInput[] | TestWhereInput>;
+}
 
 export interface AccountWhereInput {
   id?: Maybe<ID_Input>;
@@ -243,7 +344,9 @@ export interface AccountWhereInput {
   password_not_starts_with?: Maybe<String>;
   password_ends_with?: Maybe<String>;
   password_not_ends_with?: Maybe<String>;
-  profile?: Maybe<ProfileWhereInput>;
+  results_every?: Maybe<TestWhereInput>;
+  results_some?: Maybe<TestWhereInput>;
+  results_none?: Maybe<TestWhereInput>;
   role?: Maybe<Role>;
   role_not?: Maybe<Role>;
   role_in?: Maybe<Role[] | Role>;
@@ -253,7 +356,87 @@ export interface AccountWhereInput {
   NOT?: Maybe<AccountWhereInput[] | AccountWhereInput>;
 }
 
-export interface ProfileWhereInput {
+export type TestWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface AccountCreateInput {
+  id?: Maybe<ID_Input>;
+  email: String;
+  username: String;
+  password: String;
+  results?: Maybe<TestCreateManyWithoutAccountInput>;
+  role: Role;
+}
+
+export interface TestCreateManyWithoutAccountInput {
+  create?: Maybe<
+    TestCreateWithoutAccountInput[] | TestCreateWithoutAccountInput
+  >;
+  connect?: Maybe<TestWhereUniqueInput[] | TestWhereUniqueInput>;
+}
+
+export interface TestCreateWithoutAccountInput {
+  id?: Maybe<ID_Input>;
+  cpm: Int;
+  rawCpm: Int;
+  wpm: Int;
+  correct: Int;
+  incorrect: Int;
+  corrections: Int;
+}
+
+export interface AccountUpdateInput {
+  email?: Maybe<String>;
+  username?: Maybe<String>;
+  password?: Maybe<String>;
+  results?: Maybe<TestUpdateManyWithoutAccountInput>;
+  role?: Maybe<Role>;
+}
+
+export interface TestUpdateManyWithoutAccountInput {
+  create?: Maybe<
+    TestCreateWithoutAccountInput[] | TestCreateWithoutAccountInput
+  >;
+  delete?: Maybe<TestWhereUniqueInput[] | TestWhereUniqueInput>;
+  connect?: Maybe<TestWhereUniqueInput[] | TestWhereUniqueInput>;
+  set?: Maybe<TestWhereUniqueInput[] | TestWhereUniqueInput>;
+  disconnect?: Maybe<TestWhereUniqueInput[] | TestWhereUniqueInput>;
+  update?: Maybe<
+    | TestUpdateWithWhereUniqueWithoutAccountInput[]
+    | TestUpdateWithWhereUniqueWithoutAccountInput
+  >;
+  upsert?: Maybe<
+    | TestUpsertWithWhereUniqueWithoutAccountInput[]
+    | TestUpsertWithWhereUniqueWithoutAccountInput
+  >;
+  deleteMany?: Maybe<TestScalarWhereInput[] | TestScalarWhereInput>;
+  updateMany?: Maybe<
+    TestUpdateManyWithWhereNestedInput[] | TestUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface TestUpdateWithWhereUniqueWithoutAccountInput {
+  where: TestWhereUniqueInput;
+  data: TestUpdateWithoutAccountDataInput;
+}
+
+export interface TestUpdateWithoutAccountDataInput {
+  cpm?: Maybe<Int>;
+  rawCpm?: Maybe<Int>;
+  wpm?: Maybe<Int>;
+  correct?: Maybe<Int>;
+  incorrect?: Maybe<Int>;
+  corrections?: Maybe<Int>;
+}
+
+export interface TestUpsertWithWhereUniqueWithoutAccountInput {
+  where: TestWhereUniqueInput;
+  update: TestUpdateWithoutAccountDataInput;
+  create: TestCreateWithoutAccountInput;
+}
+
+export interface TestScalarWhereInput {
   id?: Maybe<ID_Input>;
   id_not?: Maybe<ID_Input>;
   id_in?: Maybe<ID_Input[] | ID_Input>;
@@ -284,45 +467,71 @@ export interface ProfileWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
-  account?: Maybe<AccountWhereInput>;
-  AND?: Maybe<ProfileWhereInput[] | ProfileWhereInput>;
-  OR?: Maybe<ProfileWhereInput[] | ProfileWhereInput>;
-  NOT?: Maybe<ProfileWhereInput[] | ProfileWhereInput>;
+  cpm?: Maybe<Int>;
+  cpm_not?: Maybe<Int>;
+  cpm_in?: Maybe<Int[] | Int>;
+  cpm_not_in?: Maybe<Int[] | Int>;
+  cpm_lt?: Maybe<Int>;
+  cpm_lte?: Maybe<Int>;
+  cpm_gt?: Maybe<Int>;
+  cpm_gte?: Maybe<Int>;
+  rawCpm?: Maybe<Int>;
+  rawCpm_not?: Maybe<Int>;
+  rawCpm_in?: Maybe<Int[] | Int>;
+  rawCpm_not_in?: Maybe<Int[] | Int>;
+  rawCpm_lt?: Maybe<Int>;
+  rawCpm_lte?: Maybe<Int>;
+  rawCpm_gt?: Maybe<Int>;
+  rawCpm_gte?: Maybe<Int>;
+  wpm?: Maybe<Int>;
+  wpm_not?: Maybe<Int>;
+  wpm_in?: Maybe<Int[] | Int>;
+  wpm_not_in?: Maybe<Int[] | Int>;
+  wpm_lt?: Maybe<Int>;
+  wpm_lte?: Maybe<Int>;
+  wpm_gt?: Maybe<Int>;
+  wpm_gte?: Maybe<Int>;
+  correct?: Maybe<Int>;
+  correct_not?: Maybe<Int>;
+  correct_in?: Maybe<Int[] | Int>;
+  correct_not_in?: Maybe<Int[] | Int>;
+  correct_lt?: Maybe<Int>;
+  correct_lte?: Maybe<Int>;
+  correct_gt?: Maybe<Int>;
+  correct_gte?: Maybe<Int>;
+  incorrect?: Maybe<Int>;
+  incorrect_not?: Maybe<Int>;
+  incorrect_in?: Maybe<Int[] | Int>;
+  incorrect_not_in?: Maybe<Int[] | Int>;
+  incorrect_lt?: Maybe<Int>;
+  incorrect_lte?: Maybe<Int>;
+  incorrect_gt?: Maybe<Int>;
+  incorrect_gte?: Maybe<Int>;
+  corrections?: Maybe<Int>;
+  corrections_not?: Maybe<Int>;
+  corrections_in?: Maybe<Int[] | Int>;
+  corrections_not_in?: Maybe<Int[] | Int>;
+  corrections_lt?: Maybe<Int>;
+  corrections_lte?: Maybe<Int>;
+  corrections_gt?: Maybe<Int>;
+  corrections_gte?: Maybe<Int>;
+  AND?: Maybe<TestScalarWhereInput[] | TestScalarWhereInput>;
+  OR?: Maybe<TestScalarWhereInput[] | TestScalarWhereInput>;
+  NOT?: Maybe<TestScalarWhereInput[] | TestScalarWhereInput>;
 }
 
-export type ProfileWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-}>;
-
-export interface AccountCreateInput {
-  id?: Maybe<ID_Input>;
-  email: String;
-  username: String;
-  password: String;
-  profile: ProfileCreateOneWithoutAccountInput;
-  role: Role;
+export interface TestUpdateManyWithWhereNestedInput {
+  where: TestScalarWhereInput;
+  data: TestUpdateManyDataInput;
 }
 
-export interface ProfileCreateOneWithoutAccountInput {
-  create?: Maybe<ProfileCreateWithoutAccountInput>;
-  connect?: Maybe<ProfileWhereUniqueInput>;
-}
-
-export interface ProfileCreateWithoutAccountInput {
-  id?: Maybe<ID_Input>;
-}
-
-export interface AccountUpdateInput {
-  email?: Maybe<String>;
-  username?: Maybe<String>;
-  password?: Maybe<String>;
-  profile?: Maybe<ProfileUpdateOneRequiredWithoutAccountInput>;
-  role?: Maybe<Role>;
-}
-
-export interface ProfileUpdateOneRequiredWithoutAccountInput {
-  create?: Maybe<ProfileCreateWithoutAccountInput>;
-  connect?: Maybe<ProfileWhereUniqueInput>;
+export interface TestUpdateManyDataInput {
+  cpm?: Maybe<Int>;
+  rawCpm?: Maybe<Int>;
+  wpm?: Maybe<Int>;
+  correct?: Maybe<Int>;
+  incorrect?: Maybe<Int>;
+  corrections?: Maybe<Int>;
 }
 
 export interface AccountUpdateManyMutationInput {
@@ -332,17 +541,23 @@ export interface AccountUpdateManyMutationInput {
   role?: Maybe<Role>;
 }
 
-export interface ProfileCreateInput {
+export interface TestCreateInput {
   id?: Maybe<ID_Input>;
-  account: AccountCreateOneWithoutProfileInput;
+  cpm: Int;
+  rawCpm: Int;
+  wpm: Int;
+  correct: Int;
+  incorrect: Int;
+  corrections: Int;
+  account: AccountCreateOneWithoutResultsInput;
 }
 
-export interface AccountCreateOneWithoutProfileInput {
-  create?: Maybe<AccountCreateWithoutProfileInput>;
+export interface AccountCreateOneWithoutResultsInput {
+  create?: Maybe<AccountCreateWithoutResultsInput>;
   connect?: Maybe<AccountWhereUniqueInput>;
 }
 
-export interface AccountCreateWithoutProfileInput {
+export interface AccountCreateWithoutResultsInput {
   id?: Maybe<ID_Input>;
   email: String;
   username: String;
@@ -350,27 +565,42 @@ export interface AccountCreateWithoutProfileInput {
   role: Role;
 }
 
-export interface ProfileUpdateInput {
-  account?: Maybe<AccountUpdateOneRequiredWithoutProfileInput>;
+export interface TestUpdateInput {
+  cpm?: Maybe<Int>;
+  rawCpm?: Maybe<Int>;
+  wpm?: Maybe<Int>;
+  correct?: Maybe<Int>;
+  incorrect?: Maybe<Int>;
+  corrections?: Maybe<Int>;
+  account?: Maybe<AccountUpdateOneRequiredWithoutResultsInput>;
 }
 
-export interface AccountUpdateOneRequiredWithoutProfileInput {
-  create?: Maybe<AccountCreateWithoutProfileInput>;
-  update?: Maybe<AccountUpdateWithoutProfileDataInput>;
-  upsert?: Maybe<AccountUpsertWithoutProfileInput>;
+export interface AccountUpdateOneRequiredWithoutResultsInput {
+  create?: Maybe<AccountCreateWithoutResultsInput>;
+  update?: Maybe<AccountUpdateWithoutResultsDataInput>;
+  upsert?: Maybe<AccountUpsertWithoutResultsInput>;
   connect?: Maybe<AccountWhereUniqueInput>;
 }
 
-export interface AccountUpdateWithoutProfileDataInput {
+export interface AccountUpdateWithoutResultsDataInput {
   email?: Maybe<String>;
   username?: Maybe<String>;
   password?: Maybe<String>;
   role?: Maybe<Role>;
 }
 
-export interface AccountUpsertWithoutProfileInput {
-  update: AccountUpdateWithoutProfileDataInput;
-  create: AccountCreateWithoutProfileInput;
+export interface AccountUpsertWithoutResultsInput {
+  update: AccountUpdateWithoutResultsDataInput;
+  create: AccountCreateWithoutResultsInput;
+}
+
+export interface TestUpdateManyMutationInput {
+  cpm?: Maybe<Int>;
+  rawCpm?: Maybe<Int>;
+  wpm?: Maybe<Int>;
+  correct?: Maybe<Int>;
+  incorrect?: Maybe<Int>;
+  corrections?: Maybe<Int>;
 }
 
 export interface AccountSubscriptionWhereInput {
@@ -384,15 +614,15 @@ export interface AccountSubscriptionWhereInput {
   NOT?: Maybe<AccountSubscriptionWhereInput[] | AccountSubscriptionWhereInput>;
 }
 
-export interface ProfileSubscriptionWhereInput {
+export interface TestSubscriptionWhereInput {
   mutation_in?: Maybe<MutationType[] | MutationType>;
   updatedFields_contains?: Maybe<String>;
   updatedFields_contains_every?: Maybe<String[] | String>;
   updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<ProfileWhereInput>;
-  AND?: Maybe<ProfileSubscriptionWhereInput[] | ProfileSubscriptionWhereInput>;
-  OR?: Maybe<ProfileSubscriptionWhereInput[] | ProfileSubscriptionWhereInput>;
-  NOT?: Maybe<ProfileSubscriptionWhereInput[] | ProfileSubscriptionWhereInput>;
+  node?: Maybe<TestWhereInput>;
+  AND?: Maybe<TestSubscriptionWhereInput[] | TestSubscriptionWhereInput>;
+  OR?: Maybe<TestSubscriptionWhereInput[] | TestSubscriptionWhereInput>;
+  NOT?: Maybe<TestSubscriptionWhereInput[] | TestSubscriptionWhereInput>;
 }
 
 export interface NodeNode {
@@ -416,7 +646,15 @@ export interface AccountPromise extends Promise<Account>, Fragmentable {
   email: () => Promise<String>;
   username: () => Promise<String>;
   password: () => Promise<String>;
-  profile: <T = ProfilePromise>() => T;
+  results: <T = FragmentableArray<Test>>(args?: {
+    where?: TestWhereInput;
+    orderBy?: TestOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   role: () => Promise<Role>;
 }
 
@@ -429,7 +667,15 @@ export interface AccountSubscription
   email: () => Promise<AsyncIterator<String>>;
   username: () => Promise<AsyncIterator<String>>;
   password: () => Promise<AsyncIterator<String>>;
-  profile: <T = ProfileSubscription>() => T;
+  results: <T = Promise<AsyncIterator<TestSubscription>>>(args?: {
+    where?: TestWhereInput;
+    orderBy?: TestOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   role: () => Promise<AsyncIterator<Role>>;
 }
 
@@ -442,38 +688,70 @@ export interface AccountNullablePromise
   email: () => Promise<String>;
   username: () => Promise<String>;
   password: () => Promise<String>;
-  profile: <T = ProfilePromise>() => T;
+  results: <T = FragmentableArray<Test>>(args?: {
+    where?: TestWhereInput;
+    orderBy?: TestOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   role: () => Promise<Role>;
 }
 
-export interface Profile {
+export interface Test {
   id: ID_Output;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
+  cpm: Int;
+  rawCpm: Int;
+  wpm: Int;
+  correct: Int;
+  incorrect: Int;
+  corrections: Int;
 }
 
-export interface ProfilePromise extends Promise<Profile>, Fragmentable {
+export interface TestPromise extends Promise<Test>, Fragmentable {
   id: () => Promise<ID_Output>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+  cpm: () => Promise<Int>;
+  rawCpm: () => Promise<Int>;
+  wpm: () => Promise<Int>;
+  correct: () => Promise<Int>;
+  incorrect: () => Promise<Int>;
+  corrections: () => Promise<Int>;
   account: <T = AccountPromise>() => T;
 }
 
-export interface ProfileSubscription
-  extends Promise<AsyncIterator<Profile>>,
+export interface TestSubscription
+  extends Promise<AsyncIterator<Test>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  cpm: () => Promise<AsyncIterator<Int>>;
+  rawCpm: () => Promise<AsyncIterator<Int>>;
+  wpm: () => Promise<AsyncIterator<Int>>;
+  correct: () => Promise<AsyncIterator<Int>>;
+  incorrect: () => Promise<AsyncIterator<Int>>;
+  corrections: () => Promise<AsyncIterator<Int>>;
   account: <T = AccountSubscription>() => T;
 }
 
-export interface ProfileNullablePromise
-  extends Promise<Profile | null>,
+export interface TestNullablePromise
+  extends Promise<Test | null>,
     Fragmentable {
   id: () => Promise<ID_Output>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+  cpm: () => Promise<Int>;
+  rawCpm: () => Promise<Int>;
+  wpm: () => Promise<Int>;
+  correct: () => Promise<Int>;
+  incorrect: () => Promise<Int>;
+  corrections: () => Promise<Int>;
   account: <T = AccountPromise>() => T;
 }
 
@@ -554,56 +832,56 @@ export interface AggregateAccountSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface ProfileConnection {
+export interface TestConnection {
   pageInfo: PageInfo;
-  edges: ProfileEdge[];
+  edges: TestEdge[];
 }
 
-export interface ProfileConnectionPromise
-  extends Promise<ProfileConnection>,
+export interface TestConnectionPromise
+  extends Promise<TestConnection>,
     Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<ProfileEdge>>() => T;
-  aggregate: <T = AggregateProfilePromise>() => T;
+  edges: <T = FragmentableArray<TestEdge>>() => T;
+  aggregate: <T = AggregateTestPromise>() => T;
 }
 
-export interface ProfileConnectionSubscription
-  extends Promise<AsyncIterator<ProfileConnection>>,
+export interface TestConnectionSubscription
+  extends Promise<AsyncIterator<TestConnection>>,
     Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<ProfileEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateProfileSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<TestEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateTestSubscription>() => T;
 }
 
-export interface ProfileEdge {
-  node: Profile;
+export interface TestEdge {
+  node: Test;
   cursor: String;
 }
 
-export interface ProfileEdgePromise extends Promise<ProfileEdge>, Fragmentable {
-  node: <T = ProfilePromise>() => T;
+export interface TestEdgePromise extends Promise<TestEdge>, Fragmentable {
+  node: <T = TestPromise>() => T;
   cursor: () => Promise<String>;
 }
 
-export interface ProfileEdgeSubscription
-  extends Promise<AsyncIterator<ProfileEdge>>,
+export interface TestEdgeSubscription
+  extends Promise<AsyncIterator<TestEdge>>,
     Fragmentable {
-  node: <T = ProfileSubscription>() => T;
+  node: <T = TestSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
 
-export interface AggregateProfile {
+export interface AggregateTest {
   count: Int;
 }
 
-export interface AggregateProfilePromise
-  extends Promise<AggregateProfile>,
+export interface AggregateTestPromise
+  extends Promise<AggregateTest>,
     Fragmentable {
   count: () => Promise<Int>;
 }
 
-export interface AggregateProfileSubscription
-  extends Promise<AsyncIterator<AggregateProfile>>,
+export interface AggregateTestSubscription
+  extends Promise<AsyncIterator<AggregateTest>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
@@ -683,51 +961,69 @@ export interface AccountPreviousValuesSubscription
   role: () => Promise<AsyncIterator<Role>>;
 }
 
-export interface ProfileSubscriptionPayload {
+export interface TestSubscriptionPayload {
   mutation: MutationType;
-  node: Profile;
+  node: Test;
   updatedFields: String[];
-  previousValues: ProfilePreviousValues;
+  previousValues: TestPreviousValues;
 }
 
-export interface ProfileSubscriptionPayloadPromise
-  extends Promise<ProfileSubscriptionPayload>,
+export interface TestSubscriptionPayloadPromise
+  extends Promise<TestSubscriptionPayload>,
     Fragmentable {
   mutation: () => Promise<MutationType>;
-  node: <T = ProfilePromise>() => T;
+  node: <T = TestPromise>() => T;
   updatedFields: () => Promise<String[]>;
-  previousValues: <T = ProfilePreviousValuesPromise>() => T;
+  previousValues: <T = TestPreviousValuesPromise>() => T;
 }
 
-export interface ProfileSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<ProfileSubscriptionPayload>>,
+export interface TestSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<TestSubscriptionPayload>>,
     Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = ProfileSubscription>() => T;
+  node: <T = TestSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = ProfilePreviousValuesSubscription>() => T;
+  previousValues: <T = TestPreviousValuesSubscription>() => T;
 }
 
-export interface ProfilePreviousValues {
+export interface TestPreviousValues {
   id: ID_Output;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
+  cpm: Int;
+  rawCpm: Int;
+  wpm: Int;
+  correct: Int;
+  incorrect: Int;
+  corrections: Int;
 }
 
-export interface ProfilePreviousValuesPromise
-  extends Promise<ProfilePreviousValues>,
+export interface TestPreviousValuesPromise
+  extends Promise<TestPreviousValues>,
     Fragmentable {
   id: () => Promise<ID_Output>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+  cpm: () => Promise<Int>;
+  rawCpm: () => Promise<Int>;
+  wpm: () => Promise<Int>;
+  correct: () => Promise<Int>;
+  incorrect: () => Promise<Int>;
+  corrections: () => Promise<Int>;
 }
 
-export interface ProfilePreviousValuesSubscription
-  extends Promise<AsyncIterator<ProfilePreviousValues>>,
+export interface TestPreviousValuesSubscription
+  extends Promise<AsyncIterator<TestPreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  cpm: () => Promise<AsyncIterator<Int>>;
+  rawCpm: () => Promise<AsyncIterator<Int>>;
+  wpm: () => Promise<AsyncIterator<Int>>;
+  correct: () => Promise<AsyncIterator<Int>>;
+  incorrect: () => Promise<AsyncIterator<Int>>;
+  corrections: () => Promise<AsyncIterator<Int>>;
 }
 
 /*
@@ -773,7 +1069,7 @@ export const models: Model[] = [
     embedded: false
   },
   {
-    name: "Profile",
+    name: "Test",
     embedded: false
   },
   {

@@ -9,7 +9,7 @@ export const typeDefs = /* GraphQL */ `type Account {
   email: String!
   username: String!
   password: String!
-  profile: Profile!
+  results(where: TestWhereInput, orderBy: TestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Test!]
   role: Role!
 }
 
@@ -24,16 +24,16 @@ input AccountCreateInput {
   email: String!
   username: String!
   password: String!
-  profile: ProfileCreateOneWithoutAccountInput!
+  results: TestCreateManyWithoutAccountInput
   role: Role!
 }
 
-input AccountCreateOneWithoutProfileInput {
-  create: AccountCreateWithoutProfileInput
+input AccountCreateOneWithoutResultsInput {
+  create: AccountCreateWithoutResultsInput
   connect: AccountWhereUniqueInput
 }
 
-input AccountCreateWithoutProfileInput {
+input AccountCreateWithoutResultsInput {
   id: ID
   email: String!
   username: String!
@@ -95,7 +95,7 @@ input AccountUpdateInput {
   email: String
   username: String
   password: String
-  profile: ProfileUpdateOneRequiredWithoutAccountInput
+  results: TestUpdateManyWithoutAccountInput
   role: Role
 }
 
@@ -106,23 +106,23 @@ input AccountUpdateManyMutationInput {
   role: Role
 }
 
-input AccountUpdateOneRequiredWithoutProfileInput {
-  create: AccountCreateWithoutProfileInput
-  update: AccountUpdateWithoutProfileDataInput
-  upsert: AccountUpsertWithoutProfileInput
+input AccountUpdateOneRequiredWithoutResultsInput {
+  create: AccountCreateWithoutResultsInput
+  update: AccountUpdateWithoutResultsDataInput
+  upsert: AccountUpsertWithoutResultsInput
   connect: AccountWhereUniqueInput
 }
 
-input AccountUpdateWithoutProfileDataInput {
+input AccountUpdateWithoutResultsDataInput {
   email: String
   username: String
   password: String
   role: Role
 }
 
-input AccountUpsertWithoutProfileInput {
-  update: AccountUpdateWithoutProfileDataInput!
-  create: AccountCreateWithoutProfileInput!
+input AccountUpsertWithoutResultsInput {
+  update: AccountUpdateWithoutResultsDataInput!
+  create: AccountCreateWithoutResultsInput!
 }
 
 input AccountWhereInput {
@@ -198,7 +198,9 @@ input AccountWhereInput {
   password_not_starts_with: String
   password_ends_with: String
   password_not_ends_with: String
-  profile: ProfileWhereInput
+  results_every: TestWhereInput
+  results_some: TestWhereInput
+  results_none: TestWhereInput
   role: Role
   role_not: Role
   role_in: [Role!]
@@ -218,7 +220,7 @@ type AggregateAccount {
   count: Int!
 }
 
-type AggregateProfile {
+type AggregateTest {
   count: Int!
 }
 
@@ -237,11 +239,12 @@ type Mutation {
   upsertAccount(where: AccountWhereUniqueInput!, create: AccountCreateInput!, update: AccountUpdateInput!): Account!
   deleteAccount(where: AccountWhereUniqueInput!): Account
   deleteManyAccounts(where: AccountWhereInput): BatchPayload!
-  createProfile(data: ProfileCreateInput!): Profile!
-  updateProfile(data: ProfileUpdateInput!, where: ProfileWhereUniqueInput!): Profile
-  upsertProfile(where: ProfileWhereUniqueInput!, create: ProfileCreateInput!, update: ProfileUpdateInput!): Profile!
-  deleteProfile(where: ProfileWhereUniqueInput!): Profile
-  deleteManyProfiles(where: ProfileWhereInput): BatchPayload!
+  createTest(data: TestCreateInput!): Test!
+  updateTest(data: TestUpdateInput!, where: TestWhereUniqueInput!): Test
+  updateManyTests(data: TestUpdateManyMutationInput!, where: TestWhereInput): BatchPayload!
+  upsertTest(where: TestWhereUniqueInput!, create: TestCreateInput!, update: TestUpdateInput!): Test!
+  deleteTest(where: TestWhereUniqueInput!): Test
+  deleteManyTests(where: TestWhereInput): BatchPayload!
 }
 
 enum MutationType {
@@ -261,81 +264,110 @@ type PageInfo {
   endCursor: String
 }
 
-type Profile {
+type Query {
+  account(where: AccountWhereUniqueInput!): Account
+  accounts(where: AccountWhereInput, orderBy: AccountOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Account]!
+  accountsConnection(where: AccountWhereInput, orderBy: AccountOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AccountConnection!
+  test(where: TestWhereUniqueInput!): Test
+  tests(where: TestWhereInput, orderBy: TestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Test]!
+  testsConnection(where: TestWhereInput, orderBy: TestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): TestConnection!
+  node(id: ID!): Node
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+type Subscription {
+  account(where: AccountSubscriptionWhereInput): AccountSubscriptionPayload
+  test(where: TestSubscriptionWhereInput): TestSubscriptionPayload
+}
+
+type Test {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
+  cpm: Int!
+  rawCpm: Int!
+  wpm: Int!
+  correct: Int!
+  incorrect: Int!
+  corrections: Int!
   account: Account!
 }
 
-type ProfileConnection {
+type TestConnection {
   pageInfo: PageInfo!
-  edges: [ProfileEdge]!
-  aggregate: AggregateProfile!
+  edges: [TestEdge]!
+  aggregate: AggregateTest!
 }
 
-input ProfileCreateInput {
+input TestCreateInput {
   id: ID
-  account: AccountCreateOneWithoutProfileInput!
+  cpm: Int!
+  rawCpm: Int!
+  wpm: Int!
+  correct: Int!
+  incorrect: Int!
+  corrections: Int!
+  account: AccountCreateOneWithoutResultsInput!
 }
 
-input ProfileCreateOneWithoutAccountInput {
-  create: ProfileCreateWithoutAccountInput
-  connect: ProfileWhereUniqueInput
+input TestCreateManyWithoutAccountInput {
+  create: [TestCreateWithoutAccountInput!]
+  connect: [TestWhereUniqueInput!]
 }
 
-input ProfileCreateWithoutAccountInput {
+input TestCreateWithoutAccountInput {
   id: ID
+  cpm: Int!
+  rawCpm: Int!
+  wpm: Int!
+  correct: Int!
+  incorrect: Int!
+  corrections: Int!
 }
 
-type ProfileEdge {
-  node: Profile!
+type TestEdge {
+  node: Test!
   cursor: String!
 }
 
-enum ProfileOrderByInput {
+enum TestOrderByInput {
   id_ASC
   id_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
+  cpm_ASC
+  cpm_DESC
+  rawCpm_ASC
+  rawCpm_DESC
+  wpm_ASC
+  wpm_DESC
+  correct_ASC
+  correct_DESC
+  incorrect_ASC
+  incorrect_DESC
+  corrections_ASC
+  corrections_DESC
 }
 
-type ProfilePreviousValues {
+type TestPreviousValues {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
+  cpm: Int!
+  rawCpm: Int!
+  wpm: Int!
+  correct: Int!
+  incorrect: Int!
+  corrections: Int!
 }
 
-type ProfileSubscriptionPayload {
-  mutation: MutationType!
-  node: Profile
-  updatedFields: [String!]
-  previousValues: ProfilePreviousValues
-}
-
-input ProfileSubscriptionWhereInput {
-  mutation_in: [MutationType!]
-  updatedFields_contains: String
-  updatedFields_contains_every: [String!]
-  updatedFields_contains_some: [String!]
-  node: ProfileWhereInput
-  AND: [ProfileSubscriptionWhereInput!]
-  OR: [ProfileSubscriptionWhereInput!]
-  NOT: [ProfileSubscriptionWhereInput!]
-}
-
-input ProfileUpdateInput {
-  account: AccountUpdateOneRequiredWithoutProfileInput
-}
-
-input ProfileUpdateOneRequiredWithoutAccountInput {
-  create: ProfileCreateWithoutAccountInput
-  connect: ProfileWhereUniqueInput
-}
-
-input ProfileWhereInput {
+input TestScalarWhereInput {
   id: ID
   id_not: ID
   id_in: [ID!]
@@ -366,33 +398,228 @@ input ProfileWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
-  account: AccountWhereInput
-  AND: [ProfileWhereInput!]
-  OR: [ProfileWhereInput!]
-  NOT: [ProfileWhereInput!]
+  cpm: Int
+  cpm_not: Int
+  cpm_in: [Int!]
+  cpm_not_in: [Int!]
+  cpm_lt: Int
+  cpm_lte: Int
+  cpm_gt: Int
+  cpm_gte: Int
+  rawCpm: Int
+  rawCpm_not: Int
+  rawCpm_in: [Int!]
+  rawCpm_not_in: [Int!]
+  rawCpm_lt: Int
+  rawCpm_lte: Int
+  rawCpm_gt: Int
+  rawCpm_gte: Int
+  wpm: Int
+  wpm_not: Int
+  wpm_in: [Int!]
+  wpm_not_in: [Int!]
+  wpm_lt: Int
+  wpm_lte: Int
+  wpm_gt: Int
+  wpm_gte: Int
+  correct: Int
+  correct_not: Int
+  correct_in: [Int!]
+  correct_not_in: [Int!]
+  correct_lt: Int
+  correct_lte: Int
+  correct_gt: Int
+  correct_gte: Int
+  incorrect: Int
+  incorrect_not: Int
+  incorrect_in: [Int!]
+  incorrect_not_in: [Int!]
+  incorrect_lt: Int
+  incorrect_lte: Int
+  incorrect_gt: Int
+  incorrect_gte: Int
+  corrections: Int
+  corrections_not: Int
+  corrections_in: [Int!]
+  corrections_not_in: [Int!]
+  corrections_lt: Int
+  corrections_lte: Int
+  corrections_gt: Int
+  corrections_gte: Int
+  AND: [TestScalarWhereInput!]
+  OR: [TestScalarWhereInput!]
+  NOT: [TestScalarWhereInput!]
 }
 
-input ProfileWhereUniqueInput {
+type TestSubscriptionPayload {
+  mutation: MutationType!
+  node: Test
+  updatedFields: [String!]
+  previousValues: TestPreviousValues
+}
+
+input TestSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: TestWhereInput
+  AND: [TestSubscriptionWhereInput!]
+  OR: [TestSubscriptionWhereInput!]
+  NOT: [TestSubscriptionWhereInput!]
+}
+
+input TestUpdateInput {
+  cpm: Int
+  rawCpm: Int
+  wpm: Int
+  correct: Int
+  incorrect: Int
+  corrections: Int
+  account: AccountUpdateOneRequiredWithoutResultsInput
+}
+
+input TestUpdateManyDataInput {
+  cpm: Int
+  rawCpm: Int
+  wpm: Int
+  correct: Int
+  incorrect: Int
+  corrections: Int
+}
+
+input TestUpdateManyMutationInput {
+  cpm: Int
+  rawCpm: Int
+  wpm: Int
+  correct: Int
+  incorrect: Int
+  corrections: Int
+}
+
+input TestUpdateManyWithoutAccountInput {
+  create: [TestCreateWithoutAccountInput!]
+  delete: [TestWhereUniqueInput!]
+  connect: [TestWhereUniqueInput!]
+  set: [TestWhereUniqueInput!]
+  disconnect: [TestWhereUniqueInput!]
+  update: [TestUpdateWithWhereUniqueWithoutAccountInput!]
+  upsert: [TestUpsertWithWhereUniqueWithoutAccountInput!]
+  deleteMany: [TestScalarWhereInput!]
+  updateMany: [TestUpdateManyWithWhereNestedInput!]
+}
+
+input TestUpdateManyWithWhereNestedInput {
+  where: TestScalarWhereInput!
+  data: TestUpdateManyDataInput!
+}
+
+input TestUpdateWithoutAccountDataInput {
+  cpm: Int
+  rawCpm: Int
+  wpm: Int
+  correct: Int
+  incorrect: Int
+  corrections: Int
+}
+
+input TestUpdateWithWhereUniqueWithoutAccountInput {
+  where: TestWhereUniqueInput!
+  data: TestUpdateWithoutAccountDataInput!
+}
+
+input TestUpsertWithWhereUniqueWithoutAccountInput {
+  where: TestWhereUniqueInput!
+  update: TestUpdateWithoutAccountDataInput!
+  create: TestCreateWithoutAccountInput!
+}
+
+input TestWhereInput {
   id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  cpm: Int
+  cpm_not: Int
+  cpm_in: [Int!]
+  cpm_not_in: [Int!]
+  cpm_lt: Int
+  cpm_lte: Int
+  cpm_gt: Int
+  cpm_gte: Int
+  rawCpm: Int
+  rawCpm_not: Int
+  rawCpm_in: [Int!]
+  rawCpm_not_in: [Int!]
+  rawCpm_lt: Int
+  rawCpm_lte: Int
+  rawCpm_gt: Int
+  rawCpm_gte: Int
+  wpm: Int
+  wpm_not: Int
+  wpm_in: [Int!]
+  wpm_not_in: [Int!]
+  wpm_lt: Int
+  wpm_lte: Int
+  wpm_gt: Int
+  wpm_gte: Int
+  correct: Int
+  correct_not: Int
+  correct_in: [Int!]
+  correct_not_in: [Int!]
+  correct_lt: Int
+  correct_lte: Int
+  correct_gt: Int
+  correct_gte: Int
+  incorrect: Int
+  incorrect_not: Int
+  incorrect_in: [Int!]
+  incorrect_not_in: [Int!]
+  incorrect_lt: Int
+  incorrect_lte: Int
+  incorrect_gt: Int
+  incorrect_gte: Int
+  corrections: Int
+  corrections_not: Int
+  corrections_in: [Int!]
+  corrections_not_in: [Int!]
+  corrections_lt: Int
+  corrections_lte: Int
+  corrections_gt: Int
+  corrections_gte: Int
+  account: AccountWhereInput
+  AND: [TestWhereInput!]
+  OR: [TestWhereInput!]
+  NOT: [TestWhereInput!]
 }
 
-type Query {
-  account(where: AccountWhereUniqueInput!): Account
-  accounts(where: AccountWhereInput, orderBy: AccountOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Account]!
-  accountsConnection(where: AccountWhereInput, orderBy: AccountOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AccountConnection!
-  profile(where: ProfileWhereUniqueInput!): Profile
-  profiles(where: ProfileWhereInput, orderBy: ProfileOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Profile]!
-  profilesConnection(where: ProfileWhereInput, orderBy: ProfileOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProfileConnection!
-  node(id: ID!): Node
-}
-
-enum Role {
-  USER
-  ADMIN
-}
-
-type Subscription {
-  account(where: AccountSubscriptionWhereInput): AccountSubscriptionPayload
-  profile(where: ProfileSubscriptionWhereInput): ProfileSubscriptionPayload
+input TestWhereUniqueInput {
+  id: ID
 }
 `

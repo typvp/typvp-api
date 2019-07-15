@@ -1,5 +1,6 @@
 type Query {
   account(id: ID!): Account!
+  me: Account!
 }
 
 type Mutation {
@@ -9,7 +10,7 @@ type Mutation {
     password: String!
     username: String!
   ): AuthPayload!
-  login(email: String!, password: String!): AuthPayload!
+  login(username: String!, password: String!): AuthPayload!
   # createAccount(email: String!, password: String!, role: Role!): Account!
   # deleteAccount(id: ID!): Account!
 

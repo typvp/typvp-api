@@ -4,7 +4,7 @@ import * as jwt from 'jsonwebtoken'
 import {Context} from '../../types'
 
 export const Auth = {
-  signup: async (_, {email, password, username}, ctx: Context) => {
+  signup: async (_: any, {email, password, username}: any, ctx: Context) => {
     try {
       const accountExists = await ctx.prisma.$exists.account({
         email,
@@ -31,7 +31,7 @@ export const Auth = {
       throw err
     }
   },
-  login: async (_, {username, password}, ctx: Context) => {
+  login: async (_: any, {username, password}: any, ctx: Context) => {
     try {
       // make sure the account exists first
       const account = await ctx.prisma.account({username: username})

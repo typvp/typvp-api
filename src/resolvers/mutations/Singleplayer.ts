@@ -3,8 +3,8 @@ import {getAccountId} from '../../utils'
 
 export const SingleplayerMutations = {
   addResults: async (
-    _,
-    {cpm, rawCpm, wpm, correct, incorrect, corrections},
+    _: any,
+    {cpm, rawCpm, wpm, correct, incorrect, corrections}: any,
     ctx: Context,
   ) => {
     const accountId = getAccountId(ctx)

@@ -1,6 +1,7 @@
 type Query {
   account(id: ID!): Account!
   me: Account!
+  leaderboard: [Test!]!
 }
 
 type Mutation {

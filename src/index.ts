@@ -17,6 +17,7 @@ const isAuthenticated = rule()(
 const permissions = shield({
   Query: {
     account: allow,
+    leaderboard: allow,
   },
   Mutation: {
     addResults: isAuthenticated,

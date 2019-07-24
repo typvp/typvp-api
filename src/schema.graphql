@@ -17,6 +17,7 @@ type Mutation {
 
   # Singleplayer Typing Test
   addResults(cpm: Int!, rawCpm: Int!, wpm: Int!, correct: Int!, incorrect: Int!, corrections: Int!): Test!
+  joinRace: Test
 }
 
 type AuthPayload {

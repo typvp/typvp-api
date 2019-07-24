@@ -22,8 +22,40 @@ type Test {
   account: Account! @relation(name: "UsersTests")
 }
 
+type Race {
+  id: ID! @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  leader: Account! @relation(name: "RaceLeader")
+  players: [Account!]! @relation(name: "PlayersInRace")
+  raceState: RaceState!
+  room: Room!
+  wordSet: String!
+}
+
+type Room {
+  id: ID! @id
+  createdAt: DateTime @createdAt
+  updatedAt: DateTime @updatedAt
+  roomState: RoomState!
+  race: Race! @relation(link: INLINE)
+}
+
 enum Role {
   USER
   ADMIN
 }
 
+enum RoomState {
+  IDLE
+  FULL
+  AWAITING
+  BUSY
+}
+
+enum RaceState {
+  IN_PROGRESS
+  AWAITING
+  COUNTDOWN
+  FINISHED
+}

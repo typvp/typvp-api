@@ -4,3 +4,8 @@ datamodel: datamodel.prisma
 generate:
   - generator: typescript-client
     output: ../src/generated/prisma-client/
+
+seed:
+  run: yarn ts-node ./prisma/seed.ts
+
+secret: ${env:PRISMA_SECRET}

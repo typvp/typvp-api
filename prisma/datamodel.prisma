@@ -26,7 +26,7 @@ type Race {
   id: ID! @id
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
-  leader: Account! @relation(name: "RaceLeader")
+  # leader: Account! @relation(name: "RaceLeader")
   players: [Account!]! @relation(name: "PlayersInRace")
   raceState: RaceState!
   room: Room!

@@ -218,8 +218,6 @@ export interface ClientConstructor<T> {
  * Types
  */
 
-export type Role = "USER" | "ADMIN";
-
 export type TestOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -239,6 +237,8 @@ export type TestOrderByInput =
   | "incorrect_DESC"
   | "corrections_ASC"
   | "corrections_DESC";
+
+export type Role = "USER" | "ADMIN";
 
 export type AccountOrderByInput =
   | "id_ASC"
@@ -280,15 +280,139 @@ export type RoomOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC"
   | "roomState_ASC"
-  | "roomState_DESC";
+  | "roomState_DESC"
+  | "roomHost_ASC"
+  | "roomHost_DESC";
 
 export type MutationType = "CREATED" | "UPDATED" | "DELETED";
+
+export interface TestUpdateManyDataInput {
+  cpm?: Maybe<Int>;
+  rawCpm?: Maybe<Int>;
+  wpm?: Maybe<Int>;
+  correct?: Maybe<Int>;
+  incorrect?: Maybe<Int>;
+  corrections?: Maybe<Int>;
+}
 
 export type AccountWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
   email?: Maybe<String>;
   username?: Maybe<String>;
 }>;
+
+export interface AccountCreateInput {
+  id?: Maybe<ID_Input>;
+  email: String;
+  username: String;
+  password: String;
+  results?: Maybe<TestCreateManyWithoutAccountInput>;
+  role: Role;
+}
+
+export interface RoomUpdateWithoutRaceDataInput {
+  roomState?: Maybe<RoomState>;
+  roomHost?: Maybe<ID_Input>;
+}
+
+export interface TestCreateManyWithoutAccountInput {
+  create?: Maybe<
+    TestCreateWithoutAccountInput[] | TestCreateWithoutAccountInput
+  >;
+  connect?: Maybe<TestWhereUniqueInput[] | TestWhereUniqueInput>;
+}
+
+export interface AccountCreateManyInput {
+  create?: Maybe<AccountCreateInput[] | AccountCreateInput>;
+  connect?: Maybe<AccountWhereUniqueInput[] | AccountWhereUniqueInput>;
+}
+
+export interface TestCreateWithoutAccountInput {
+  id?: Maybe<ID_Input>;
+  cpm: Int;
+  rawCpm: Int;
+  wpm: Int;
+  correct: Int;
+  incorrect: Int;
+  corrections: Int;
+}
+
+export interface RoomSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<RoomWhereInput>;
+  AND?: Maybe<RoomSubscriptionWhereInput[] | RoomSubscriptionWhereInput>;
+  OR?: Maybe<RoomSubscriptionWhereInput[] | RoomSubscriptionWhereInput>;
+  NOT?: Maybe<RoomSubscriptionWhereInput[] | RoomSubscriptionWhereInput>;
+}
+
+export interface AccountUpdateInput {
+  email?: Maybe<String>;
+  username?: Maybe<String>;
+  password?: Maybe<String>;
+  results?: Maybe<TestUpdateManyWithoutAccountInput>;
+  role?: Maybe<Role>;
+}
+
+export interface AccountSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<AccountWhereInput>;
+  AND?: Maybe<AccountSubscriptionWhereInput[] | AccountSubscriptionWhereInput>;
+  OR?: Maybe<AccountSubscriptionWhereInput[] | AccountSubscriptionWhereInput>;
+  NOT?: Maybe<AccountSubscriptionWhereInput[] | AccountSubscriptionWhereInput>;
+}
+
+export interface TestUpdateManyWithoutAccountInput {
+  create?: Maybe<
+    TestCreateWithoutAccountInput[] | TestCreateWithoutAccountInput
+  >;
+  delete?: Maybe<TestWhereUniqueInput[] | TestWhereUniqueInput>;
+  connect?: Maybe<TestWhereUniqueInput[] | TestWhereUniqueInput>;
+  set?: Maybe<TestWhereUniqueInput[] | TestWhereUniqueInput>;
+  disconnect?: Maybe<TestWhereUniqueInput[] | TestWhereUniqueInput>;
+  update?: Maybe<
+    | TestUpdateWithWhereUniqueWithoutAccountInput[]
+    | TestUpdateWithWhereUniqueWithoutAccountInput
+  >;
+  upsert?: Maybe<
+    | TestUpsertWithWhereUniqueWithoutAccountInput[]
+    | TestUpsertWithWhereUniqueWithoutAccountInput
+  >;
+  deleteMany?: Maybe<TestScalarWhereInput[] | TestScalarWhereInput>;
+  updateMany?: Maybe<
+    TestUpdateManyWithWhereNestedInput[] | TestUpdateManyWithWhereNestedInput
+  >;
+}
+
+export type RaceWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface TestUpdateWithWhereUniqueWithoutAccountInput {
+  where: TestWhereUniqueInput;
+  data: TestUpdateWithoutAccountDataInput;
+}
+
+export interface AccountUpdateWithoutResultsDataInput {
+  email?: Maybe<String>;
+  username?: Maybe<String>;
+  password?: Maybe<String>;
+  role?: Maybe<Role>;
+}
+
+export interface TestUpdateWithoutAccountDataInput {
+  cpm?: Maybe<Int>;
+  rawCpm?: Maybe<Int>;
+  wpm?: Maybe<Int>;
+  correct?: Maybe<Int>;
+  incorrect?: Maybe<Int>;
+  corrections?: Maybe<Int>;
+}
 
 export interface TestWhereInput {
   id?: Maybe<ID_Input>;
@@ -373,6 +497,240 @@ export interface TestWhereInput {
   AND?: Maybe<TestWhereInput[] | TestWhereInput>;
   OR?: Maybe<TestWhereInput[] | TestWhereInput>;
   NOT?: Maybe<TestWhereInput[] | TestWhereInput>;
+}
+
+export interface TestUpsertWithWhereUniqueWithoutAccountInput {
+  where: TestWhereUniqueInput;
+  update: TestUpdateWithoutAccountDataInput;
+  create: TestCreateWithoutAccountInput;
+}
+
+export interface RoomWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  roomState?: Maybe<RoomState>;
+  roomState_not?: Maybe<RoomState>;
+  roomState_in?: Maybe<RoomState[] | RoomState>;
+  roomState_not_in?: Maybe<RoomState[] | RoomState>;
+  race?: Maybe<RaceWhereInput>;
+  roomHost?: Maybe<ID_Input>;
+  roomHost_not?: Maybe<ID_Input>;
+  roomHost_in?: Maybe<ID_Input[] | ID_Input>;
+  roomHost_not_in?: Maybe<ID_Input[] | ID_Input>;
+  roomHost_lt?: Maybe<ID_Input>;
+  roomHost_lte?: Maybe<ID_Input>;
+  roomHost_gt?: Maybe<ID_Input>;
+  roomHost_gte?: Maybe<ID_Input>;
+  roomHost_contains?: Maybe<ID_Input>;
+  roomHost_not_contains?: Maybe<ID_Input>;
+  roomHost_starts_with?: Maybe<ID_Input>;
+  roomHost_not_starts_with?: Maybe<ID_Input>;
+  roomHost_ends_with?: Maybe<ID_Input>;
+  roomHost_not_ends_with?: Maybe<ID_Input>;
+  AND?: Maybe<RoomWhereInput[] | RoomWhereInput>;
+  OR?: Maybe<RoomWhereInput[] | RoomWhereInput>;
+  NOT?: Maybe<RoomWhereInput[] | RoomWhereInput>;
+}
+
+export interface TestScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  cpm?: Maybe<Int>;
+  cpm_not?: Maybe<Int>;
+  cpm_in?: Maybe<Int[] | Int>;
+  cpm_not_in?: Maybe<Int[] | Int>;
+  cpm_lt?: Maybe<Int>;
+  cpm_lte?: Maybe<Int>;
+  cpm_gt?: Maybe<Int>;
+  cpm_gte?: Maybe<Int>;
+  rawCpm?: Maybe<Int>;
+  rawCpm_not?: Maybe<Int>;
+  rawCpm_in?: Maybe<Int[] | Int>;
+  rawCpm_not_in?: Maybe<Int[] | Int>;
+  rawCpm_lt?: Maybe<Int>;
+  rawCpm_lte?: Maybe<Int>;
+  rawCpm_gt?: Maybe<Int>;
+  rawCpm_gte?: Maybe<Int>;
+  wpm?: Maybe<Int>;
+  wpm_not?: Maybe<Int>;
+  wpm_in?: Maybe<Int[] | Int>;
+  wpm_not_in?: Maybe<Int[] | Int>;
+  wpm_lt?: Maybe<Int>;
+  wpm_lte?: Maybe<Int>;
+  wpm_gt?: Maybe<Int>;
+  wpm_gte?: Maybe<Int>;
+  correct?: Maybe<Int>;
+  correct_not?: Maybe<Int>;
+  correct_in?: Maybe<Int[] | Int>;
+  correct_not_in?: Maybe<Int[] | Int>;
+  correct_lt?: Maybe<Int>;
+  correct_lte?: Maybe<Int>;
+  correct_gt?: Maybe<Int>;
+  correct_gte?: Maybe<Int>;
+  incorrect?: Maybe<Int>;
+  incorrect_not?: Maybe<Int>;
+  incorrect_in?: Maybe<Int[] | Int>;
+  incorrect_not_in?: Maybe<Int[] | Int>;
+  incorrect_lt?: Maybe<Int>;
+  incorrect_lte?: Maybe<Int>;
+  incorrect_gt?: Maybe<Int>;
+  incorrect_gte?: Maybe<Int>;
+  corrections?: Maybe<Int>;
+  corrections_not?: Maybe<Int>;
+  corrections_in?: Maybe<Int[] | Int>;
+  corrections_not_in?: Maybe<Int[] | Int>;
+  corrections_lt?: Maybe<Int>;
+  corrections_lte?: Maybe<Int>;
+  corrections_gt?: Maybe<Int>;
+  corrections_gte?: Maybe<Int>;
+  AND?: Maybe<TestScalarWhereInput[] | TestScalarWhereInput>;
+  OR?: Maybe<TestScalarWhereInput[] | TestScalarWhereInput>;
+  NOT?: Maybe<TestScalarWhereInput[] | TestScalarWhereInput>;
+}
+
+export interface AccountCreateWithoutResultsInput {
+  id?: Maybe<ID_Input>;
+  email: String;
+  username: String;
+  password: String;
+  role: Role;
+}
+
+export interface TestUpdateManyWithWhereNestedInput {
+  where: TestScalarWhereInput;
+  data: TestUpdateManyDataInput;
+}
+
+export interface TestCreateInput {
+  id?: Maybe<ID_Input>;
+  cpm: Int;
+  rawCpm: Int;
+  wpm: Int;
+  correct: Int;
+  incorrect: Int;
+  corrections: Int;
+  account: AccountCreateOneWithoutResultsInput;
+}
+
+export interface RoomCreateInput {
+  id?: Maybe<ID_Input>;
+  roomState: RoomState;
+  race: RaceCreateOneWithoutRoomInput;
+  roomHost?: Maybe<ID_Input>;
+}
+
+export interface RoomUpdateManyMutationInput {
+  roomState?: Maybe<RoomState>;
+  roomHost?: Maybe<ID_Input>;
+}
+
+export interface AccountUpdateManyMutationInput {
+  email?: Maybe<String>;
+  username?: Maybe<String>;
+  password?: Maybe<String>;
+  role?: Maybe<Role>;
+}
+
+export interface RaceUpdateWithoutRoomDataInput {
+  players?: Maybe<AccountUpdateManyInput>;
+  raceState?: Maybe<RaceState>;
+  wordSet?: Maybe<String>;
+}
+
+export interface RaceUpdateManyMutationInput {
+  raceState?: Maybe<RaceState>;
+  wordSet?: Maybe<String>;
+}
+
+export type TestWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface RoomUpsertWithoutRaceInput {
+  update: RoomUpdateWithoutRaceDataInput;
+  create: RoomCreateWithoutRaceInput;
+}
+
+export interface RaceCreateWithoutRoomInput {
+  id?: Maybe<ID_Input>;
+  players?: Maybe<AccountCreateManyInput>;
+  raceState: RaceState;
+  wordSet: String;
+}
+
+export interface RaceCreateInput {
+  id?: Maybe<ID_Input>;
+  players?: Maybe<AccountCreateManyInput>;
+  raceState: RaceState;
+  room: RoomCreateOneWithoutRaceInput;
+  wordSet: String;
+}
+
+export interface RaceSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<RaceWhereInput>;
+  AND?: Maybe<RaceSubscriptionWhereInput[] | RaceSubscriptionWhereInput>;
+  OR?: Maybe<RaceSubscriptionWhereInput[] | RaceSubscriptionWhereInput>;
+  NOT?: Maybe<RaceSubscriptionWhereInput[] | RaceSubscriptionWhereInput>;
 }
 
 export interface AccountWhereInput {
@@ -460,9 +818,15 @@ export interface AccountWhereInput {
   NOT?: Maybe<AccountWhereInput[] | AccountWhereInput>;
 }
 
-export type RaceWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-}>;
+export interface AccountUpsertWithoutResultsInput {
+  update: AccountUpdateWithoutResultsDataInput;
+  create: AccountCreateWithoutResultsInput;
+}
+
+export interface RoomCreateOneWithoutRaceInput {
+  create?: Maybe<RoomCreateWithoutRaceInput>;
+  connect?: Maybe<RoomWhereUniqueInput>;
+}
 
 export interface RaceWhereInput {
   id?: Maybe<ID_Input>;
@@ -522,257 +886,15 @@ export interface RaceWhereInput {
   NOT?: Maybe<RaceWhereInput[] | RaceWhereInput>;
 }
 
-export interface RoomWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  roomState?: Maybe<RoomState>;
-  roomState_not?: Maybe<RoomState>;
-  roomState_in?: Maybe<RoomState[] | RoomState>;
-  roomState_not_in?: Maybe<RoomState[] | RoomState>;
-  race?: Maybe<RaceWhereInput>;
-  AND?: Maybe<RoomWhereInput[] | RoomWhereInput>;
-  OR?: Maybe<RoomWhereInput[] | RoomWhereInput>;
-  NOT?: Maybe<RoomWhereInput[] | RoomWhereInput>;
-}
-
-export type RoomWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-}>;
-
-export type TestWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-}>;
-
-export interface AccountCreateInput {
-  id?: Maybe<ID_Input>;
-  email: String;
-  username: String;
-  password: String;
-  results?: Maybe<TestCreateManyWithoutAccountInput>;
-  role: Role;
-}
-
-export interface TestCreateManyWithoutAccountInput {
-  create?: Maybe<
-    TestCreateWithoutAccountInput[] | TestCreateWithoutAccountInput
-  >;
-  connect?: Maybe<TestWhereUniqueInput[] | TestWhereUniqueInput>;
-}
-
-export interface TestCreateWithoutAccountInput {
-  id?: Maybe<ID_Input>;
-  cpm: Int;
-  rawCpm: Int;
-  wpm: Int;
-  correct: Int;
-  incorrect: Int;
-  corrections: Int;
-}
-
-export interface AccountUpdateInput {
-  email?: Maybe<String>;
-  username?: Maybe<String>;
-  password?: Maybe<String>;
-  results?: Maybe<TestUpdateManyWithoutAccountInput>;
-  role?: Maybe<Role>;
-}
-
-export interface TestUpdateManyWithoutAccountInput {
-  create?: Maybe<
-    TestCreateWithoutAccountInput[] | TestCreateWithoutAccountInput
-  >;
-  delete?: Maybe<TestWhereUniqueInput[] | TestWhereUniqueInput>;
-  connect?: Maybe<TestWhereUniqueInput[] | TestWhereUniqueInput>;
-  set?: Maybe<TestWhereUniqueInput[] | TestWhereUniqueInput>;
-  disconnect?: Maybe<TestWhereUniqueInput[] | TestWhereUniqueInput>;
-  update?: Maybe<
-    | TestUpdateWithWhereUniqueWithoutAccountInput[]
-    | TestUpdateWithWhereUniqueWithoutAccountInput
-  >;
-  upsert?: Maybe<
-    | TestUpsertWithWhereUniqueWithoutAccountInput[]
-    | TestUpsertWithWhereUniqueWithoutAccountInput
-  >;
-  deleteMany?: Maybe<TestScalarWhereInput[] | TestScalarWhereInput>;
-  updateMany?: Maybe<
-    TestUpdateManyWithWhereNestedInput[] | TestUpdateManyWithWhereNestedInput
-  >;
-}
-
-export interface TestUpdateWithWhereUniqueWithoutAccountInput {
-  where: TestWhereUniqueInput;
-  data: TestUpdateWithoutAccountDataInput;
-}
-
-export interface TestUpdateWithoutAccountDataInput {
-  cpm?: Maybe<Int>;
-  rawCpm?: Maybe<Int>;
-  wpm?: Maybe<Int>;
-  correct?: Maybe<Int>;
-  incorrect?: Maybe<Int>;
-  corrections?: Maybe<Int>;
-}
-
-export interface TestUpsertWithWhereUniqueWithoutAccountInput {
-  where: TestWhereUniqueInput;
-  update: TestUpdateWithoutAccountDataInput;
-  create: TestCreateWithoutAccountInput;
-}
-
-export interface TestScalarWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  cpm?: Maybe<Int>;
-  cpm_not?: Maybe<Int>;
-  cpm_in?: Maybe<Int[] | Int>;
-  cpm_not_in?: Maybe<Int[] | Int>;
-  cpm_lt?: Maybe<Int>;
-  cpm_lte?: Maybe<Int>;
-  cpm_gt?: Maybe<Int>;
-  cpm_gte?: Maybe<Int>;
-  rawCpm?: Maybe<Int>;
-  rawCpm_not?: Maybe<Int>;
-  rawCpm_in?: Maybe<Int[] | Int>;
-  rawCpm_not_in?: Maybe<Int[] | Int>;
-  rawCpm_lt?: Maybe<Int>;
-  rawCpm_lte?: Maybe<Int>;
-  rawCpm_gt?: Maybe<Int>;
-  rawCpm_gte?: Maybe<Int>;
-  wpm?: Maybe<Int>;
-  wpm_not?: Maybe<Int>;
-  wpm_in?: Maybe<Int[] | Int>;
-  wpm_not_in?: Maybe<Int[] | Int>;
-  wpm_lt?: Maybe<Int>;
-  wpm_lte?: Maybe<Int>;
-  wpm_gt?: Maybe<Int>;
-  wpm_gte?: Maybe<Int>;
-  correct?: Maybe<Int>;
-  correct_not?: Maybe<Int>;
-  correct_in?: Maybe<Int[] | Int>;
-  correct_not_in?: Maybe<Int[] | Int>;
-  correct_lt?: Maybe<Int>;
-  correct_lte?: Maybe<Int>;
-  correct_gt?: Maybe<Int>;
-  correct_gte?: Maybe<Int>;
-  incorrect?: Maybe<Int>;
-  incorrect_not?: Maybe<Int>;
-  incorrect_in?: Maybe<Int[] | Int>;
-  incorrect_not_in?: Maybe<Int[] | Int>;
-  incorrect_lt?: Maybe<Int>;
-  incorrect_lte?: Maybe<Int>;
-  incorrect_gt?: Maybe<Int>;
-  incorrect_gte?: Maybe<Int>;
-  corrections?: Maybe<Int>;
-  corrections_not?: Maybe<Int>;
-  corrections_in?: Maybe<Int[] | Int>;
-  corrections_not_in?: Maybe<Int[] | Int>;
-  corrections_lt?: Maybe<Int>;
-  corrections_lte?: Maybe<Int>;
-  corrections_gt?: Maybe<Int>;
-  corrections_gte?: Maybe<Int>;
-  AND?: Maybe<TestScalarWhereInput[] | TestScalarWhereInput>;
-  OR?: Maybe<TestScalarWhereInput[] | TestScalarWhereInput>;
-  NOT?: Maybe<TestScalarWhereInput[] | TestScalarWhereInput>;
-}
-
-export interface TestUpdateManyWithWhereNestedInput {
-  where: TestScalarWhereInput;
-  data: TestUpdateManyDataInput;
-}
-
-export interface TestUpdateManyDataInput {
-  cpm?: Maybe<Int>;
-  rawCpm?: Maybe<Int>;
-  wpm?: Maybe<Int>;
-  correct?: Maybe<Int>;
-  incorrect?: Maybe<Int>;
-  corrections?: Maybe<Int>;
-}
-
-export interface AccountUpdateManyMutationInput {
-  email?: Maybe<String>;
-  username?: Maybe<String>;
-  password?: Maybe<String>;
-  role?: Maybe<Role>;
-}
-
-export interface RaceCreateInput {
-  id?: Maybe<ID_Input>;
-  players?: Maybe<AccountCreateManyInput>;
-  raceState: RaceState;
-  room: RoomCreateOneWithoutRaceInput;
-  wordSet: String;
-}
-
-export interface AccountCreateManyInput {
-  create?: Maybe<AccountCreateInput[] | AccountCreateInput>;
-  connect?: Maybe<AccountWhereUniqueInput[] | AccountWhereUniqueInput>;
-}
-
-export interface RoomCreateOneWithoutRaceInput {
-  create?: Maybe<RoomCreateWithoutRaceInput>;
-  connect?: Maybe<RoomWhereUniqueInput>;
-}
-
 export interface RoomCreateWithoutRaceInput {
   id?: Maybe<ID_Input>;
   roomState: RoomState;
+  roomHost?: Maybe<ID_Input>;
+}
+
+export interface AccountCreateOneWithoutResultsInput {
+  create?: Maybe<AccountCreateWithoutResultsInput>;
+  connect?: Maybe<AccountWhereUniqueInput>;
 }
 
 export interface RaceUpdateInput {
@@ -780,6 +902,11 @@ export interface RaceUpdateInput {
   raceState?: Maybe<RaceState>;
   room?: Maybe<RoomUpdateOneRequiredWithoutRaceInput>;
   wordSet?: Maybe<String>;
+}
+
+export interface RaceUpsertWithoutRoomInput {
+  update: RaceUpdateWithoutRoomDataInput;
+  create: RaceCreateWithoutRoomInput;
 }
 
 export interface AccountUpdateManyInput {
@@ -803,9 +930,26 @@ export interface AccountUpdateManyInput {
   >;
 }
 
+export interface RoomUpdateInput {
+  roomState?: Maybe<RoomState>;
+  race?: Maybe<RaceUpdateOneRequiredWithoutRoomInput>;
+  roomHost?: Maybe<ID_Input>;
+}
+
 export interface AccountUpdateWithWhereUniqueNestedInput {
   where: AccountWhereUniqueInput;
   data: AccountUpdateDataInput;
+}
+
+export interface TestSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<TestWhereInput>;
+  AND?: Maybe<TestSubscriptionWhereInput[] | TestSubscriptionWhereInput>;
+  OR?: Maybe<TestSubscriptionWhereInput[] | TestSubscriptionWhereInput>;
+  NOT?: Maybe<TestSubscriptionWhereInput[] | TestSubscriptionWhereInput>;
 }
 
 export interface AccountUpdateDataInput {
@@ -816,10 +960,40 @@ export interface AccountUpdateDataInput {
   role?: Maybe<Role>;
 }
 
+export interface AccountUpdateOneRequiredWithoutResultsInput {
+  create?: Maybe<AccountCreateWithoutResultsInput>;
+  update?: Maybe<AccountUpdateWithoutResultsDataInput>;
+  upsert?: Maybe<AccountUpsertWithoutResultsInput>;
+  connect?: Maybe<AccountWhereUniqueInput>;
+}
+
 export interface AccountUpsertWithWhereUniqueNestedInput {
   where: AccountWhereUniqueInput;
   update: AccountUpdateDataInput;
   create: AccountCreateInput;
+}
+
+export type RoomWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface RoomUpdateOneRequiredWithoutRaceInput {
+  create?: Maybe<RoomCreateWithoutRaceInput>;
+  update?: Maybe<RoomUpdateWithoutRaceDataInput>;
+  upsert?: Maybe<RoomUpsertWithoutRaceInput>;
+  connect?: Maybe<RoomWhereUniqueInput>;
+}
+
+export interface AccountUpdateManyDataInput {
+  email?: Maybe<String>;
+  username?: Maybe<String>;
+  password?: Maybe<String>;
+  role?: Maybe<Role>;
+}
+
+export interface AccountUpdateManyWithWhereNestedInput {
+  where: AccountScalarWhereInput;
+  data: AccountUpdateManyDataInput;
 }
 
 export interface AccountScalarWhereInput {
@@ -904,106 +1078,11 @@ export interface AccountScalarWhereInput {
   NOT?: Maybe<AccountScalarWhereInput[] | AccountScalarWhereInput>;
 }
 
-export interface AccountUpdateManyWithWhereNestedInput {
-  where: AccountScalarWhereInput;
-  data: AccountUpdateManyDataInput;
-}
-
-export interface AccountUpdateManyDataInput {
-  email?: Maybe<String>;
-  username?: Maybe<String>;
-  password?: Maybe<String>;
-  role?: Maybe<Role>;
-}
-
-export interface RoomUpdateOneRequiredWithoutRaceInput {
-  create?: Maybe<RoomCreateWithoutRaceInput>;
-  update?: Maybe<RoomUpdateWithoutRaceDataInput>;
-  upsert?: Maybe<RoomUpsertWithoutRaceInput>;
-  connect?: Maybe<RoomWhereUniqueInput>;
-}
-
-export interface RoomUpdateWithoutRaceDataInput {
-  roomState?: Maybe<RoomState>;
-}
-
-export interface RoomUpsertWithoutRaceInput {
-  update: RoomUpdateWithoutRaceDataInput;
-  create: RoomCreateWithoutRaceInput;
-}
-
-export interface RaceUpdateManyMutationInput {
-  raceState?: Maybe<RaceState>;
-  wordSet?: Maybe<String>;
-}
-
-export interface RoomCreateInput {
-  id?: Maybe<ID_Input>;
-  roomState: RoomState;
-  race: RaceCreateOneWithoutRoomInput;
-}
-
-export interface RaceCreateOneWithoutRoomInput {
-  create?: Maybe<RaceCreateWithoutRoomInput>;
-  connect?: Maybe<RaceWhereUniqueInput>;
-}
-
-export interface RaceCreateWithoutRoomInput {
-  id?: Maybe<ID_Input>;
-  players?: Maybe<AccountCreateManyInput>;
-  raceState: RaceState;
-  wordSet: String;
-}
-
-export interface RoomUpdateInput {
-  roomState?: Maybe<RoomState>;
-  race?: Maybe<RaceUpdateOneRequiredWithoutRoomInput>;
-}
-
 export interface RaceUpdateOneRequiredWithoutRoomInput {
   create?: Maybe<RaceCreateWithoutRoomInput>;
   update?: Maybe<RaceUpdateWithoutRoomDataInput>;
   upsert?: Maybe<RaceUpsertWithoutRoomInput>;
   connect?: Maybe<RaceWhereUniqueInput>;
-}
-
-export interface RaceUpdateWithoutRoomDataInput {
-  players?: Maybe<AccountUpdateManyInput>;
-  raceState?: Maybe<RaceState>;
-  wordSet?: Maybe<String>;
-}
-
-export interface RaceUpsertWithoutRoomInput {
-  update: RaceUpdateWithoutRoomDataInput;
-  create: RaceCreateWithoutRoomInput;
-}
-
-export interface RoomUpdateManyMutationInput {
-  roomState?: Maybe<RoomState>;
-}
-
-export interface TestCreateInput {
-  id?: Maybe<ID_Input>;
-  cpm: Int;
-  rawCpm: Int;
-  wpm: Int;
-  correct: Int;
-  incorrect: Int;
-  corrections: Int;
-  account: AccountCreateOneWithoutResultsInput;
-}
-
-export interface AccountCreateOneWithoutResultsInput {
-  create?: Maybe<AccountCreateWithoutResultsInput>;
-  connect?: Maybe<AccountWhereUniqueInput>;
-}
-
-export interface AccountCreateWithoutResultsInput {
-  id?: Maybe<ID_Input>;
-  email: String;
-  username: String;
-  password: String;
-  role: Role;
 }
 
 export interface TestUpdateInput {
@@ -1016,25 +1095,6 @@ export interface TestUpdateInput {
   account?: Maybe<AccountUpdateOneRequiredWithoutResultsInput>;
 }
 
-export interface AccountUpdateOneRequiredWithoutResultsInput {
-  create?: Maybe<AccountCreateWithoutResultsInput>;
-  update?: Maybe<AccountUpdateWithoutResultsDataInput>;
-  upsert?: Maybe<AccountUpsertWithoutResultsInput>;
-  connect?: Maybe<AccountWhereUniqueInput>;
-}
-
-export interface AccountUpdateWithoutResultsDataInput {
-  email?: Maybe<String>;
-  username?: Maybe<String>;
-  password?: Maybe<String>;
-  role?: Maybe<Role>;
-}
-
-export interface AccountUpsertWithoutResultsInput {
-  update: AccountUpdateWithoutResultsDataInput;
-  create: AccountCreateWithoutResultsInput;
-}
-
 export interface TestUpdateManyMutationInput {
   cpm?: Maybe<Int>;
   rawCpm?: Maybe<Int>;
@@ -1044,52 +1104,360 @@ export interface TestUpdateManyMutationInput {
   corrections?: Maybe<Int>;
 }
 
-export interface AccountSubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<AccountWhereInput>;
-  AND?: Maybe<AccountSubscriptionWhereInput[] | AccountSubscriptionWhereInput>;
-  OR?: Maybe<AccountSubscriptionWhereInput[] | AccountSubscriptionWhereInput>;
-  NOT?: Maybe<AccountSubscriptionWhereInput[] | AccountSubscriptionWhereInput>;
-}
-
-export interface RaceSubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<RaceWhereInput>;
-  AND?: Maybe<RaceSubscriptionWhereInput[] | RaceSubscriptionWhereInput>;
-  OR?: Maybe<RaceSubscriptionWhereInput[] | RaceSubscriptionWhereInput>;
-  NOT?: Maybe<RaceSubscriptionWhereInput[] | RaceSubscriptionWhereInput>;
-}
-
-export interface RoomSubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<RoomWhereInput>;
-  AND?: Maybe<RoomSubscriptionWhereInput[] | RoomSubscriptionWhereInput>;
-  OR?: Maybe<RoomSubscriptionWhereInput[] | RoomSubscriptionWhereInput>;
-  NOT?: Maybe<RoomSubscriptionWhereInput[] | RoomSubscriptionWhereInput>;
-}
-
-export interface TestSubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<TestWhereInput>;
-  AND?: Maybe<TestSubscriptionWhereInput[] | TestSubscriptionWhereInput>;
-  OR?: Maybe<TestSubscriptionWhereInput[] | TestSubscriptionWhereInput>;
-  NOT?: Maybe<TestSubscriptionWhereInput[] | TestSubscriptionWhereInput>;
+export interface RaceCreateOneWithoutRoomInput {
+  create?: Maybe<RaceCreateWithoutRoomInput>;
+  connect?: Maybe<RaceWhereUniqueInput>;
 }
 
 export interface NodeNode {
   id: ID_Output;
+}
+
+export interface TestPreviousValues {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  cpm: Int;
+  rawCpm: Int;
+  wpm: Int;
+  correct: Int;
+  incorrect: Int;
+  corrections: Int;
+}
+
+export interface TestPreviousValuesPromise
+  extends Promise<TestPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  cpm: () => Promise<Int>;
+  rawCpm: () => Promise<Int>;
+  wpm: () => Promise<Int>;
+  correct: () => Promise<Int>;
+  incorrect: () => Promise<Int>;
+  corrections: () => Promise<Int>;
+}
+
+export interface TestPreviousValuesSubscription
+  extends Promise<AsyncIterator<TestPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  cpm: () => Promise<AsyncIterator<Int>>;
+  rawCpm: () => Promise<AsyncIterator<Int>>;
+  wpm: () => Promise<AsyncIterator<Int>>;
+  correct: () => Promise<AsyncIterator<Int>>;
+  incorrect: () => Promise<AsyncIterator<Int>>;
+  corrections: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface AccountConnection {
+  pageInfo: PageInfo;
+  edges: AccountEdge[];
+}
+
+export interface AccountConnectionPromise
+  extends Promise<AccountConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<AccountEdge>>() => T;
+  aggregate: <T = AggregateAccountPromise>() => T;
+}
+
+export interface AccountConnectionSubscription
+  extends Promise<AsyncIterator<AccountConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<AccountEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateAccountSubscription>() => T;
+}
+
+export interface PageInfo {
+  hasNextPage: Boolean;
+  hasPreviousPage: Boolean;
+  startCursor?: String;
+  endCursor?: String;
+}
+
+export interface PageInfoPromise extends Promise<PageInfo>, Fragmentable {
+  hasNextPage: () => Promise<Boolean>;
+  hasPreviousPage: () => Promise<Boolean>;
+  startCursor: () => Promise<String>;
+  endCursor: () => Promise<String>;
+}
+
+export interface PageInfoSubscription
+  extends Promise<AsyncIterator<PageInfo>>,
+    Fragmentable {
+  hasNextPage: () => Promise<AsyncIterator<Boolean>>;
+  hasPreviousPage: () => Promise<AsyncIterator<Boolean>>;
+  startCursor: () => Promise<AsyncIterator<String>>;
+  endCursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface Room {
+  id: ID_Output;
+  createdAt?: DateTimeOutput;
+  updatedAt?: DateTimeOutput;
+  roomState: RoomState;
+  roomHost?: ID_Output;
+}
+
+export interface RoomPromise extends Promise<Room>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  roomState: () => Promise<RoomState>;
+  race: <T = RacePromise>() => T;
+  roomHost: () => Promise<ID_Output>;
+}
+
+export interface RoomSubscription
+  extends Promise<AsyncIterator<Room>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  roomState: () => Promise<AsyncIterator<RoomState>>;
+  race: <T = RaceSubscription>() => T;
+  roomHost: () => Promise<AsyncIterator<ID_Output>>;
+}
+
+export interface RoomNullablePromise
+  extends Promise<Room | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  roomState: () => Promise<RoomState>;
+  race: <T = RacePromise>() => T;
+  roomHost: () => Promise<ID_Output>;
+}
+
+export interface Test {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  cpm: Int;
+  rawCpm: Int;
+  wpm: Int;
+  correct: Int;
+  incorrect: Int;
+  corrections: Int;
+}
+
+export interface TestPromise extends Promise<Test>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  cpm: () => Promise<Int>;
+  rawCpm: () => Promise<Int>;
+  wpm: () => Promise<Int>;
+  correct: () => Promise<Int>;
+  incorrect: () => Promise<Int>;
+  corrections: () => Promise<Int>;
+  account: <T = AccountPromise>() => T;
+}
+
+export interface TestSubscription
+  extends Promise<AsyncIterator<Test>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  cpm: () => Promise<AsyncIterator<Int>>;
+  rawCpm: () => Promise<AsyncIterator<Int>>;
+  wpm: () => Promise<AsyncIterator<Int>>;
+  correct: () => Promise<AsyncIterator<Int>>;
+  incorrect: () => Promise<AsyncIterator<Int>>;
+  corrections: () => Promise<AsyncIterator<Int>>;
+  account: <T = AccountSubscription>() => T;
+}
+
+export interface TestNullablePromise
+  extends Promise<Test | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  cpm: () => Promise<Int>;
+  rawCpm: () => Promise<Int>;
+  wpm: () => Promise<Int>;
+  correct: () => Promise<Int>;
+  incorrect: () => Promise<Int>;
+  corrections: () => Promise<Int>;
+  account: <T = AccountPromise>() => T;
+}
+
+export interface BatchPayload {
+  count: Long;
+}
+
+export interface BatchPayloadPromise
+  extends Promise<BatchPayload>,
+    Fragmentable {
+  count: () => Promise<Long>;
+}
+
+export interface BatchPayloadSubscription
+  extends Promise<AsyncIterator<BatchPayload>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Long>>;
+}
+
+export interface AggregateTest {
+  count: Int;
+}
+
+export interface AggregateTestPromise
+  extends Promise<AggregateTest>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateTestSubscription
+  extends Promise<AsyncIterator<AggregateTest>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface Race {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  raceState: RaceState;
+  wordSet: String;
+}
+
+export interface RacePromise extends Promise<Race>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  players: <T = FragmentableArray<Account>>(args?: {
+    where?: AccountWhereInput;
+    orderBy?: AccountOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  raceState: () => Promise<RaceState>;
+  room: <T = RoomPromise>() => T;
+  wordSet: () => Promise<String>;
+}
+
+export interface RaceSubscription
+  extends Promise<AsyncIterator<Race>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  players: <T = Promise<AsyncIterator<AccountSubscription>>>(args?: {
+    where?: AccountWhereInput;
+    orderBy?: AccountOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  raceState: () => Promise<AsyncIterator<RaceState>>;
+  room: <T = RoomSubscription>() => T;
+  wordSet: () => Promise<AsyncIterator<String>>;
+}
+
+export interface RaceNullablePromise
+  extends Promise<Race | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  players: <T = FragmentableArray<Account>>(args?: {
+    where?: AccountWhereInput;
+    orderBy?: AccountOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  raceState: () => Promise<RaceState>;
+  room: <T = RoomPromise>() => T;
+  wordSet: () => Promise<String>;
+}
+
+export interface TestConnection {
+  pageInfo: PageInfo;
+  edges: TestEdge[];
+}
+
+export interface TestConnectionPromise
+  extends Promise<TestConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<TestEdge>>() => T;
+  aggregate: <T = AggregateTestPromise>() => T;
+}
+
+export interface TestConnectionSubscription
+  extends Promise<AsyncIterator<TestConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<TestEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateTestSubscription>() => T;
+}
+
+export interface AggregateAccount {
+  count: Int;
+}
+
+export interface AggregateAccountPromise
+  extends Promise<AggregateAccount>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateAccountSubscription
+  extends Promise<AsyncIterator<AggregateAccount>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface RoomEdge {
+  node: Room;
+  cursor: String;
+}
+
+export interface RoomEdgePromise extends Promise<RoomEdge>, Fragmentable {
+  node: <T = RoomPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface RoomEdgeSubscription
+  extends Promise<AsyncIterator<RoomEdge>>,
+    Fragmentable {
+  node: <T = RoomSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AccountEdge {
+  node: Account;
+  cursor: String;
+}
+
+export interface AccountEdgePromise extends Promise<AccountEdge>, Fragmentable {
+  node: <T = AccountPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface AccountEdgeSubscription
+  extends Promise<AsyncIterator<AccountEdge>>,
+    Fragmentable {
+  node: <T = AccountSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
 }
 
 export interface Account {
@@ -1163,258 +1531,32 @@ export interface AccountNullablePromise
   role: () => Promise<Role>;
 }
 
-export interface Test {
-  id: ID_Output;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-  cpm: Int;
-  rawCpm: Int;
-  wpm: Int;
-  correct: Int;
-  incorrect: Int;
-  corrections: Int;
-}
-
-export interface TestPromise extends Promise<Test>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-  cpm: () => Promise<Int>;
-  rawCpm: () => Promise<Int>;
-  wpm: () => Promise<Int>;
-  correct: () => Promise<Int>;
-  incorrect: () => Promise<Int>;
-  corrections: () => Promise<Int>;
-  account: <T = AccountPromise>() => T;
-}
-
-export interface TestSubscription
-  extends Promise<AsyncIterator<Test>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  cpm: () => Promise<AsyncIterator<Int>>;
-  rawCpm: () => Promise<AsyncIterator<Int>>;
-  wpm: () => Promise<AsyncIterator<Int>>;
-  correct: () => Promise<AsyncIterator<Int>>;
-  incorrect: () => Promise<AsyncIterator<Int>>;
-  corrections: () => Promise<AsyncIterator<Int>>;
-  account: <T = AccountSubscription>() => T;
-}
-
-export interface TestNullablePromise
-  extends Promise<Test | null>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-  cpm: () => Promise<Int>;
-  rawCpm: () => Promise<Int>;
-  wpm: () => Promise<Int>;
-  correct: () => Promise<Int>;
-  incorrect: () => Promise<Int>;
-  corrections: () => Promise<Int>;
-  account: <T = AccountPromise>() => T;
-}
-
-export interface AccountConnection {
-  pageInfo: PageInfo;
-  edges: AccountEdge[];
-}
-
-export interface AccountConnectionPromise
-  extends Promise<AccountConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<AccountEdge>>() => T;
-  aggregate: <T = AggregateAccountPromise>() => T;
-}
-
-export interface AccountConnectionSubscription
-  extends Promise<AsyncIterator<AccountConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<AccountEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateAccountSubscription>() => T;
-}
-
-export interface PageInfo {
-  hasNextPage: Boolean;
-  hasPreviousPage: Boolean;
-  startCursor?: String;
-  endCursor?: String;
-}
-
-export interface PageInfoPromise extends Promise<PageInfo>, Fragmentable {
-  hasNextPage: () => Promise<Boolean>;
-  hasPreviousPage: () => Promise<Boolean>;
-  startCursor: () => Promise<String>;
-  endCursor: () => Promise<String>;
-}
-
-export interface PageInfoSubscription
-  extends Promise<AsyncIterator<PageInfo>>,
-    Fragmentable {
-  hasNextPage: () => Promise<AsyncIterator<Boolean>>;
-  hasPreviousPage: () => Promise<AsyncIterator<Boolean>>;
-  startCursor: () => Promise<AsyncIterator<String>>;
-  endCursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface AccountEdge {
-  node: Account;
-  cursor: String;
-}
-
-export interface AccountEdgePromise extends Promise<AccountEdge>, Fragmentable {
-  node: <T = AccountPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface AccountEdgeSubscription
-  extends Promise<AsyncIterator<AccountEdge>>,
-    Fragmentable {
-  node: <T = AccountSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface AggregateAccount {
-  count: Int;
-}
-
-export interface AggregateAccountPromise
-  extends Promise<AggregateAccount>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateAccountSubscription
-  extends Promise<AsyncIterator<AggregateAccount>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface Race {
-  id: ID_Output;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-  raceState: RaceState;
-  wordSet: String;
-}
-
-export interface RacePromise extends Promise<Race>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-  players: <T = FragmentableArray<Account>>(args?: {
-    where?: AccountWhereInput;
-    orderBy?: AccountOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-  raceState: () => Promise<RaceState>;
-  room: <T = RoomPromise>() => T;
-  wordSet: () => Promise<String>;
-}
-
-export interface RaceSubscription
-  extends Promise<AsyncIterator<Race>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  players: <T = Promise<AsyncIterator<AccountSubscription>>>(args?: {
-    where?: AccountWhereInput;
-    orderBy?: AccountOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-  raceState: () => Promise<AsyncIterator<RaceState>>;
-  room: <T = RoomSubscription>() => T;
-  wordSet: () => Promise<AsyncIterator<String>>;
-}
-
-export interface RaceNullablePromise
-  extends Promise<Race | null>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-  players: <T = FragmentableArray<Account>>(args?: {
-    where?: AccountWhereInput;
-    orderBy?: AccountOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-  raceState: () => Promise<RaceState>;
-  room: <T = RoomPromise>() => T;
-  wordSet: () => Promise<String>;
-}
-
-export interface Room {
+export interface RoomPreviousValues {
   id: ID_Output;
   createdAt?: DateTimeOutput;
   updatedAt?: DateTimeOutput;
   roomState: RoomState;
+  roomHost?: ID_Output;
 }
 
-export interface RoomPromise extends Promise<Room>, Fragmentable {
+export interface RoomPreviousValuesPromise
+  extends Promise<RoomPreviousValues>,
+    Fragmentable {
   id: () => Promise<ID_Output>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
   roomState: () => Promise<RoomState>;
-  race: <T = RacePromise>() => T;
+  roomHost: () => Promise<ID_Output>;
 }
 
-export interface RoomSubscription
-  extends Promise<AsyncIterator<Room>>,
+export interface RoomPreviousValuesSubscription
+  extends Promise<AsyncIterator<RoomPreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   roomState: () => Promise<AsyncIterator<RoomState>>;
-  race: <T = RaceSubscription>() => T;
-}
-
-export interface RoomNullablePromise
-  extends Promise<Room | null>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-  roomState: () => Promise<RoomState>;
-  race: <T = RacePromise>() => T;
-}
-
-export interface RaceConnection {
-  pageInfo: PageInfo;
-  edges: RaceEdge[];
-}
-
-export interface RaceConnectionPromise
-  extends Promise<RaceConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<RaceEdge>>() => T;
-  aggregate: <T = AggregateRacePromise>() => T;
-}
-
-export interface RaceConnectionSubscription
-  extends Promise<AsyncIterator<RaceConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<RaceEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateRaceSubscription>() => T;
+  roomHost: () => Promise<AsyncIterator<ID_Output>>;
 }
 
 export interface RaceEdge {
@@ -1432,146 +1574,6 @@ export interface RaceEdgeSubscription
     Fragmentable {
   node: <T = RaceSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface AggregateRace {
-  count: Int;
-}
-
-export interface AggregateRacePromise
-  extends Promise<AggregateRace>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateRaceSubscription
-  extends Promise<AsyncIterator<AggregateRace>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface RoomConnection {
-  pageInfo: PageInfo;
-  edges: RoomEdge[];
-}
-
-export interface RoomConnectionPromise
-  extends Promise<RoomConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<RoomEdge>>() => T;
-  aggregate: <T = AggregateRoomPromise>() => T;
-}
-
-export interface RoomConnectionSubscription
-  extends Promise<AsyncIterator<RoomConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<RoomEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateRoomSubscription>() => T;
-}
-
-export interface RoomEdge {
-  node: Room;
-  cursor: String;
-}
-
-export interface RoomEdgePromise extends Promise<RoomEdge>, Fragmentable {
-  node: <T = RoomPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface RoomEdgeSubscription
-  extends Promise<AsyncIterator<RoomEdge>>,
-    Fragmentable {
-  node: <T = RoomSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface AggregateRoom {
-  count: Int;
-}
-
-export interface AggregateRoomPromise
-  extends Promise<AggregateRoom>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateRoomSubscription
-  extends Promise<AsyncIterator<AggregateRoom>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface TestConnection {
-  pageInfo: PageInfo;
-  edges: TestEdge[];
-}
-
-export interface TestConnectionPromise
-  extends Promise<TestConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<TestEdge>>() => T;
-  aggregate: <T = AggregateTestPromise>() => T;
-}
-
-export interface TestConnectionSubscription
-  extends Promise<AsyncIterator<TestConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<TestEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateTestSubscription>() => T;
-}
-
-export interface TestEdge {
-  node: Test;
-  cursor: String;
-}
-
-export interface TestEdgePromise extends Promise<TestEdge>, Fragmentable {
-  node: <T = TestPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface TestEdgeSubscription
-  extends Promise<AsyncIterator<TestEdge>>,
-    Fragmentable {
-  node: <T = TestSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface AggregateTest {
-  count: Int;
-}
-
-export interface AggregateTestPromise
-  extends Promise<AggregateTest>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateTestSubscription
-  extends Promise<AsyncIterator<AggregateTest>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface BatchPayload {
-  count: Long;
-}
-
-export interface BatchPayloadPromise
-  extends Promise<BatchPayload>,
-    Fragmentable {
-  count: () => Promise<Long>;
-}
-
-export interface BatchPayloadSubscription
-  extends Promise<AsyncIterator<BatchPayload>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Long>>;
 }
 
 export interface AccountSubscriptionPayload {
@@ -1597,6 +1599,125 @@ export interface AccountSubscriptionPayloadSubscription
   node: <T = AccountSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
   previousValues: <T = AccountPreviousValuesSubscription>() => T;
+}
+
+export interface TestSubscriptionPayload {
+  mutation: MutationType;
+  node: Test;
+  updatedFields: String[];
+  previousValues: TestPreviousValues;
+}
+
+export interface TestSubscriptionPayloadPromise
+  extends Promise<TestSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = TestPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = TestPreviousValuesPromise>() => T;
+}
+
+export interface TestSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<TestSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = TestSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = TestPreviousValuesSubscription>() => T;
+}
+
+export interface AggregateRoom {
+  count: Int;
+}
+
+export interface AggregateRoomPromise
+  extends Promise<AggregateRoom>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateRoomSubscription
+  extends Promise<AsyncIterator<AggregateRoom>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface RacePreviousValues {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  raceState: RaceState;
+  wordSet: String;
+}
+
+export interface RacePreviousValuesPromise
+  extends Promise<RacePreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  raceState: () => Promise<RaceState>;
+  wordSet: () => Promise<String>;
+}
+
+export interface RacePreviousValuesSubscription
+  extends Promise<AsyncIterator<RacePreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  raceState: () => Promise<AsyncIterator<RaceState>>;
+  wordSet: () => Promise<AsyncIterator<String>>;
+}
+
+export interface RaceSubscriptionPayload {
+  mutation: MutationType;
+  node: Race;
+  updatedFields: String[];
+  previousValues: RacePreviousValues;
+}
+
+export interface RaceSubscriptionPayloadPromise
+  extends Promise<RaceSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = RacePromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = RacePreviousValuesPromise>() => T;
+}
+
+export interface RaceSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<RaceSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = RaceSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = RacePreviousValuesSubscription>() => T;
+}
+
+export interface RoomSubscriptionPayload {
+  mutation: MutationType;
+  node: Room;
+  updatedFields: String[];
+  previousValues: RoomPreviousValues;
+}
+
+export interface RoomSubscriptionPayloadPromise
+  extends Promise<RoomSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = RoomPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = RoomPreviousValuesPromise>() => T;
+}
+
+export interface RoomSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<RoomSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = RoomSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = RoomPreviousValuesSubscription>() => T;
 }
 
 export interface AccountPreviousValues {
@@ -1633,184 +1754,93 @@ export interface AccountPreviousValuesSubscription
   role: () => Promise<AsyncIterator<Role>>;
 }
 
-export interface RaceSubscriptionPayload {
-  mutation: MutationType;
-  node: Race;
-  updatedFields: String[];
-  previousValues: RacePreviousValues;
+export interface RoomConnection {
+  pageInfo: PageInfo;
+  edges: RoomEdge[];
 }
 
-export interface RaceSubscriptionPayloadPromise
-  extends Promise<RaceSubscriptionPayload>,
+export interface RoomConnectionPromise
+  extends Promise<RoomConnection>,
     Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = RacePromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = RacePreviousValuesPromise>() => T;
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<RoomEdge>>() => T;
+  aggregate: <T = AggregateRoomPromise>() => T;
 }
 
-export interface RaceSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<RaceSubscriptionPayload>>,
+export interface RoomConnectionSubscription
+  extends Promise<AsyncIterator<RoomConnection>>,
     Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = RaceSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = RacePreviousValuesSubscription>() => T;
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<RoomEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateRoomSubscription>() => T;
 }
 
-export interface RacePreviousValues {
-  id: ID_Output;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-  raceState: RaceState;
-  wordSet: String;
-}
-
-export interface RacePreviousValuesPromise
-  extends Promise<RacePreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-  raceState: () => Promise<RaceState>;
-  wordSet: () => Promise<String>;
-}
-
-export interface RacePreviousValuesSubscription
-  extends Promise<AsyncIterator<RacePreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  raceState: () => Promise<AsyncIterator<RaceState>>;
-  wordSet: () => Promise<AsyncIterator<String>>;
-}
-
-export interface RoomSubscriptionPayload {
-  mutation: MutationType;
-  node: Room;
-  updatedFields: String[];
-  previousValues: RoomPreviousValues;
-}
-
-export interface RoomSubscriptionPayloadPromise
-  extends Promise<RoomSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = RoomPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = RoomPreviousValuesPromise>() => T;
-}
-
-export interface RoomSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<RoomSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = RoomSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = RoomPreviousValuesSubscription>() => T;
-}
-
-export interface RoomPreviousValues {
-  id: ID_Output;
-  createdAt?: DateTimeOutput;
-  updatedAt?: DateTimeOutput;
-  roomState: RoomState;
-}
-
-export interface RoomPreviousValuesPromise
-  extends Promise<RoomPreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-  roomState: () => Promise<RoomState>;
-}
-
-export interface RoomPreviousValuesSubscription
-  extends Promise<AsyncIterator<RoomPreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  roomState: () => Promise<AsyncIterator<RoomState>>;
-}
-
-export interface TestSubscriptionPayload {
-  mutation: MutationType;
+export interface TestEdge {
   node: Test;
-  updatedFields: String[];
-  previousValues: TestPreviousValues;
+  cursor: String;
 }
 
-export interface TestSubscriptionPayloadPromise
-  extends Promise<TestSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
+export interface TestEdgePromise extends Promise<TestEdge>, Fragmentable {
   node: <T = TestPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = TestPreviousValuesPromise>() => T;
+  cursor: () => Promise<String>;
 }
 
-export interface TestSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<TestSubscriptionPayload>>,
+export interface TestEdgeSubscription
+  extends Promise<AsyncIterator<TestEdge>>,
     Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
   node: <T = TestSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = TestPreviousValuesSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
 }
 
-export interface TestPreviousValues {
-  id: ID_Output;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-  cpm: Int;
-  rawCpm: Int;
-  wpm: Int;
-  correct: Int;
-  incorrect: Int;
-  corrections: Int;
+export interface RaceConnection {
+  pageInfo: PageInfo;
+  edges: RaceEdge[];
 }
 
-export interface TestPreviousValuesPromise
-  extends Promise<TestPreviousValues>,
+export interface RaceConnectionPromise
+  extends Promise<RaceConnection>,
     Fragmentable {
-  id: () => Promise<ID_Output>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-  cpm: () => Promise<Int>;
-  rawCpm: () => Promise<Int>;
-  wpm: () => Promise<Int>;
-  correct: () => Promise<Int>;
-  incorrect: () => Promise<Int>;
-  corrections: () => Promise<Int>;
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<RaceEdge>>() => T;
+  aggregate: <T = AggregateRacePromise>() => T;
 }
 
-export interface TestPreviousValuesSubscription
-  extends Promise<AsyncIterator<TestPreviousValues>>,
+export interface RaceConnectionSubscription
+  extends Promise<AsyncIterator<RaceConnection>>,
     Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  cpm: () => Promise<AsyncIterator<Int>>;
-  rawCpm: () => Promise<AsyncIterator<Int>>;
-  wpm: () => Promise<AsyncIterator<Int>>;
-  correct: () => Promise<AsyncIterator<Int>>;
-  incorrect: () => Promise<AsyncIterator<Int>>;
-  corrections: () => Promise<AsyncIterator<Int>>;
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<RaceEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateRaceSubscription>() => T;
 }
+
+export interface AggregateRace {
+  count: Int;
+}
+
+export interface AggregateRacePromise
+  extends Promise<AggregateRace>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateRaceSubscription
+  extends Promise<AsyncIterator<AggregateRace>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+/*
+The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
+*/
+export type Int = number;
+
+export type Long = string;
 
 /*
 The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
 */
 export type ID_Input = string | number;
 export type ID_Output = string;
-
-/*
-The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
-*/
-export type String = string;
 
 /*
 DateTime scalar input type, allowing Date
@@ -1823,16 +1853,14 @@ DateTime scalar output type, which is always a string
 export type DateTimeOutput = string;
 
 /*
-The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
+The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
 */
-export type Int = number;
+export type String = string;
 
 /*
 The `Boolean` scalar type represents `true` or `false`.
 */
 export type Boolean = boolean;
-
-export type Long = string;
 
 /**
  * Model Metadata

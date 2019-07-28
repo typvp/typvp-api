@@ -1,23 +1,27 @@
 import {Context} from '../../types'
 import {getAccountId} from '../../utils'
-import {Race} from '../../generated/prisma-client'
+import {Race, Test} from '../../generated/prisma-client'
 
+function compare(a, b) {
+  const lenA = a.race.players.length
+  const lenB = b.race.players.length
+
+  let comparison = 0
+  if (lenA > lenB) {
+    comparison = 1
+  } else if (lenA < lenB) {
+    comparison = -1
+  }
+  return comparison * -1
+}
+
+const MAX_PLAYERS = 5
+// This may not be needed anymore
 export const RaceMutations = {
   joinRace: async (_: any, __: any, ctx: Context) => {
     const accountId = getAccountId(ctx)
 
-    // const availableRaces = await ctx.prisma.races({
-    //   where: {
-    //     room: {
-    //       roomState_not_in: ['BUSY', 'FULL'],
-    //     },
-    //     AND: {
-    //       raceState_not_in: ['COUNTDOWN', 'FINISHED', 'IN_PROGRESS'],
-    //     },
-    //   },
-    // })
-
-    const aR = await ctx.prisma.rooms({
+    const aR: any = await ctx.prisma.rooms({
       where: {
         roomState_not_in: ['BUSY', 'FULL'],
         AND: {
@@ -33,13 +37,43 @@ export const RaceMutations = {
         race {
           id
           raceState
+          players {
+            id
+          }
         }
       }
     `)
 
-    // for (let i = 0; i < availableRaces.length; i++) {
-    //   if (availableRaces[i].)
-    // }
-    console.log(aR)
+    aR.sort(compare)
+
+    for (const room of aR) {
+      console.log(room)
+      if (room.race.players.length < MAX_PLAYERS) {
+        const s = await ctx.prisma.updateRace({
+          where: {
+            id: accountId,
+          },
+          data: {
+            players: {
+              set: {
+                id: accountId,
+              },
+            },
+          },
+        })
+
+        console.log(s)
+      }
+    }
+  },
+  startRace: async (_: any, __: any, ctx: Context) => {
+    const accountId = getAccountId(ctx)
+
+    const race = ctx.prisma
+      .room({roomHost: accountId})
+      .race()
+      .$fragment(`fragment RaceID on Race { id }`)
+
+    // TODO: Update room and race to IN PROGESS
   },
 }

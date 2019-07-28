@@ -39,6 +39,7 @@ type Room {
   updatedAt: DateTime @updatedAt
   roomState: RoomState!
   race: Race! @relation(link: INLINE)
+  roomHost: ID
 }
 
 enum Role {

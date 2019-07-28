@@ -620,6 +620,7 @@ type Room {
   updatedAt: DateTime
   roomState: RoomState!
   race: Race!
+  roomHost: ID
 }
 
 type RoomConnection {
@@ -632,6 +633,7 @@ input RoomCreateInput {
   id: ID
   roomState: RoomState!
   race: RaceCreateOneWithoutRoomInput!
+  roomHost: ID
 }
 
 input RoomCreateOneWithoutRaceInput {
@@ -642,6 +644,7 @@ input RoomCreateOneWithoutRaceInput {
 input RoomCreateWithoutRaceInput {
   id: ID
   roomState: RoomState!
+  roomHost: ID
 }
 
 type RoomEdge {
@@ -658,6 +661,8 @@ enum RoomOrderByInput {
   updatedAt_DESC
   roomState_ASC
   roomState_DESC
+  roomHost_ASC
+  roomHost_DESC
 }
 
 type RoomPreviousValues {
@@ -665,6 +670,7 @@ type RoomPreviousValues {
   createdAt: DateTime
   updatedAt: DateTime
   roomState: RoomState!
+  roomHost: ID
 }
 
 enum RoomState {
@@ -695,10 +701,12 @@ input RoomSubscriptionWhereInput {
 input RoomUpdateInput {
   roomState: RoomState
   race: RaceUpdateOneRequiredWithoutRoomInput
+  roomHost: ID
 }
 
 input RoomUpdateManyMutationInput {
   roomState: RoomState
+  roomHost: ID
 }
 
 input RoomUpdateOneRequiredWithoutRaceInput {
@@ -710,6 +718,7 @@ input RoomUpdateOneRequiredWithoutRaceInput {
 
 input RoomUpdateWithoutRaceDataInput {
   roomState: RoomState
+  roomHost: ID
 }
 
 input RoomUpsertWithoutRaceInput {
@@ -753,6 +762,20 @@ input RoomWhereInput {
   roomState_in: [RoomState!]
   roomState_not_in: [RoomState!]
   race: RaceWhereInput
+  roomHost: ID
+  roomHost_not: ID
+  roomHost_in: [ID!]
+  roomHost_not_in: [ID!]
+  roomHost_lt: ID
+  roomHost_lte: ID
+  roomHost_gt: ID
+  roomHost_gte: ID
+  roomHost_contains: ID
+  roomHost_not_contains: ID
+  roomHost_starts_with: ID
+  roomHost_not_starts_with: ID
+  roomHost_ends_with: ID
+  roomHost_not_ends_with: ID
   AND: [RoomWhereInput!]
   OR: [RoomWhereInput!]
   NOT: [RoomWhereInput!]

@@ -1,11 +1,10 @@
-
-version: "3"
+version: '3'
 services:
   typvp-api:
     image: prismagraphql/prisma:1.34
     restart: always
     ports:
-      - "${PRISMA_PORT}:${PRISMA_PORT}"
+      - '${PRISMA_PORT}:${PRISMA_PORT}'
     environment:
       PRISMA_CONFIG: |
         port: ${PRISMA_PORT}

@@ -1,16 +1,23 @@
 import {Context} from '../../types'
 import {getAccountId} from '../../utils'
 import {RoomFragment} from '../fragments/RoomFragment'
-import {createGzip} from 'zlib'
-import {Race} from '../../generated/prisma-client'
 
+const MAX_LENGTH = 5 // max number of players in a race
+
+/**
+ * User may create a room if they wish, becoming a roomHost.
+ * This will add another open room to the available room list.
+ *
+ * returns: type Room
+ */
 export const RoomMutations = {
   createRoom: async (_: any, __: any, ctx: Context) => {
     const accountId = getAccountId(ctx)
 
-    const room = await ctx.prisma
+    return await ctx.prisma
       .createRoom({
         roomState: 'AWAITING',
+        roomHost: accountId, // not a real error, not sure why it is complaining
         race: {
           create: {
             players: {
@@ -22,18 +29,20 @@ export const RoomMutations = {
             wordSet: '',
           },
         },
-        roomHost: accountId,
       })
       .$fragment(RoomFragment)
-
-    console.log(room)
-
-    return room
   },
+  /**
+   * Users can join a "quick match" which will
+   * add them to the most currently active room
+   * (most players)
+   *
+   * returns: type Room
+   */
   quickMatch: async (_: any, __: any, ctx: Context) => {
     const accountId = getAccountId(ctx)
 
-    const firstAvailableRoom: any = await ctx.prisma
+    const availableRooms: any = await ctx.prisma
       .rooms({
         where: {
           roomState_not_in: ['BUSY', 'FULL'],
@@ -43,74 +52,142 @@ export const RoomMutations = {
             },
           },
         },
-        first: 1,
       })
       .$fragment(RoomFragment)
 
-    // TODO: Check max length of players in room
+    // Make sure nothing went wrong before incase
+    // we try accessing an undefined array
+    if (availableRooms !== null) {
+      // Sort room by most players to least,
+      // this allows us to retrieve the first room
+      // in the array which will be the most active
+      // room in the array
+      availableRooms.sort((a, b) => {
+        return b.race.players.length - a.race.players.length
+      })
 
-    // TODO: Sort room by largest and add user to the most filled room
+      // Check to see if we have availableRooms
+      if (availableRooms.length != 0) {
+        // We need to see if the user joining would be the
+        // last player to join before hitting the room limit.
+        // Just update the room with the new user if 1= max - 1
+        if (availableRooms[0].race.players.length != MAX_LENGTH - 1) {
+          return await ctx.prisma
+            .updateRoom({
+              where: {
+                id: availableRooms[0].id,
+              },
+              data: {
+                race: {
+                  update: {
+                    players: {
+                      connect: [
+                        {
+                          id: accountId,
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+            })
+            .$fragment(RoomFragment)
+        } else {
+          // If the user is the last player to join
+          // we need to let other users know the room is full
+          return await ctx.prisma
+            .updateRoom({
+              where: {
+                id: availableRooms[0].id,
+              },
+              data: {
+                roomState: 'FULL',
+                race: {
+                  update: {
+                    players: {
+                      connect: [
+                        {
+                          id: accountId,
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+            })
+            .$fragment(RoomFragment)
+        }
+      }
+    }
+  },
+  /**
+   * Users can decide to join a room from a
+   * list of available rooms.
+   *
+   * NOTE: This may be used as well as private invites
+   * once implemented.
+   *
+   * returns: type Room
+   */
+  joinRoom: async (_: any, {roomId}: any, ctx: Context) => {
+    const accountId = getAccountId(ctx)
 
-    if (firstAvailableRoom !== null) {
-      const room = await ctx.prisma
+    // We need to get the race from the room
+    // the user is trying to join
+    const race: any = await ctx.prisma
+      .room({id: roomId})
+      .race()
+      .$fragment(`fragment RacePlayers on Race { players }`)
+
+    // We need to check whether the user is the last
+    // player to join before hitting the room player limit
+    // Just update room with user if != max - 1
+    if (race.players.length != MAX_LENGTH - 1) {
+      return await ctx.prisma
         .updateRoom({
           where: {
-            id: firstAvailableRoom.id,
+            id: roomId,
           },
-          roomState: 'AWAITING', // TODO: Not really an error, but need to conform to generated schema types
-          roomHost: '',
-          race: {
-            update: {
-              where: {
-                id: firstAvailableRoom.race.id,
-              },
-              players: {
-                connect: {
-                  id: accountId,
+          data: {
+            race: {
+              update: {
+                players: {
+                  connect: [
+                    {
+                      id: accountId,
+                    },
+                  ],
                 },
               },
             },
           },
         })
         .$fragment(RoomFragment)
-
-      console.log(room)
-
-      return room
-    }
-
-    // TODO: Logic if all rooms are full, or become full at the time of joining
-  },
-
-  joinRoom: async (_: any, {roomId}: any, ctx: Context) => {
-    const accountId = getAccountId(ctx)
-
-    const race = (await ctx.prisma
-      .room({id: roomId})
-      .race()
-      .$fragment(`fragment RaceFragment on Race { id }`)) as Race
-
-    const room = await ctx.prisma
-      .updateRoom({
-        where: {
-          id: roomId,
-        },
-        roomState: 'AWAITING', // TODO: Not really an error, but need to conform to generated schema types
-        race: {
-          update: {
-            where: {
-              id: race.id,
-            },
-            players: {
-              connect: {
-                id: accountId,
+    } else {
+      // If the user is the last player to join
+      // we need to let other users know the room is full
+      return await ctx.prisma
+        .updateRoom({
+          where: {
+            id: roomId,
+          },
+          data: {
+            roomState: 'FULL',
+            race: {
+              update: {
+                raceState: 'IN_PROGRESS',
+                players: {
+                  connect: [
+                    {
+                      id: accountId,
+                    },
+                  ],
+                },
               },
             },
           },
-        },
-      })
-      .$fragment(RoomFragment)
-
-    return room
+        })
+        .$fragment(RoomFragment)
+    }
   },
 }

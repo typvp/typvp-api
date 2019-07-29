@@ -27,7 +27,7 @@ type Mutation {
 
   # Rooms
   createRoom: Room
-  joinRoom: Room
+  joinRoom(roomId: ID!): Room
   quickMatch: Room
 }
 

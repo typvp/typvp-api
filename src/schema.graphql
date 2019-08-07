@@ -24,7 +24,7 @@ type Mutation {
   addResults(cpm: Int!, rawCpm: Int!, wpm: Int!, correct: Int!, incorrect: Int!, corrections: Int!): Test!
 
   # Trail Typing Test
-  addResultsToTrial(trailId: ID!, cpm: Int!, rawCpm: Int!, wpm: Int!, correct: Int!, incorrect: Int!, corrections: Int!): Test!
+  addResultsToTrial(trialId: ID!, cpm: Int!, rawCpm: Int!, wpm: Int!, correct: Int!, incorrect: Int!, corrections: Int!): Test!
 }
 
 type AuthPayload {
@@ -53,6 +53,7 @@ type Test {
   incorrect: Int!
   corrections: Int!
   account: Account!
+  type: ResultType!
 }
 
 type Trial {
@@ -63,6 +64,12 @@ type Trial {
   wordSet: String!
   name: String!
   difficulty: Difficulty
+}
+
+enum ResultType {
+  SINGLEPLAYER
+  RACE
+  TRIAL
 }
 
 enum Difficulty {

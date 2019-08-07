@@ -23,6 +23,7 @@ const permissions = shield({
   },
   Mutation: {
     addResults: isAuthenticated,
+    addResultsToTrial: isAuthenticated,
   },
 })
 

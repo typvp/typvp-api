@@ -27,6 +27,7 @@ export const TrialMutations = {
             correct,
             incorrect,
             corrections,
+            type: 'TRIAL',
           },
         },
       },

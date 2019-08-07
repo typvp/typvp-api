@@ -181,6 +181,8 @@ export interface ClientConstructor<T> {
 
 export type Role = "USER" | "ADMIN";
 
+export type ResultType = "SINGLEPLAYER" | "RACE" | "TRIAL";
+
 export type TestOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -199,7 +201,9 @@ export type TestOrderByInput =
   | "incorrect_ASC"
   | "incorrect_DESC"
   | "corrections_ASC"
-  | "corrections_DESC";
+  | "corrections_DESC"
+  | "type_ASC"
+  | "type_DESC";
 
 export type AccountOrderByInput =
   | "id_ASC"
@@ -321,6 +325,10 @@ export interface TestWhereInput {
   corrections_gt?: Maybe<Int>;
   corrections_gte?: Maybe<Int>;
   account?: Maybe<AccountWhereInput>;
+  type?: Maybe<ResultType>;
+  type_not?: Maybe<ResultType>;
+  type_in?: Maybe<ResultType[] | ResultType>;
+  type_not_in?: Maybe<ResultType[] | ResultType>;
   AND?: Maybe<TestWhereInput[] | TestWhereInput>;
   OR?: Maybe<TestWhereInput[] | TestWhereInput>;
   NOT?: Maybe<TestWhereInput[] | TestWhereInput>;
@@ -514,6 +522,7 @@ export interface TestCreateWithoutAccountInput {
   correct: Int;
   incorrect: Int;
   corrections: Int;
+  type: ResultType;
 }
 
 export interface AccountUpdateInput {
@@ -558,6 +567,7 @@ export interface TestUpdateWithoutAccountDataInput {
   correct?: Maybe<Int>;
   incorrect?: Maybe<Int>;
   corrections?: Maybe<Int>;
+  type?: Maybe<ResultType>;
 }
 
 export interface TestUpsertWithWhereUniqueWithoutAccountInput {
@@ -645,6 +655,10 @@ export interface TestScalarWhereInput {
   corrections_lte?: Maybe<Int>;
   corrections_gt?: Maybe<Int>;
   corrections_gte?: Maybe<Int>;
+  type?: Maybe<ResultType>;
+  type_not?: Maybe<ResultType>;
+  type_in?: Maybe<ResultType[] | ResultType>;
+  type_not_in?: Maybe<ResultType[] | ResultType>;
   AND?: Maybe<TestScalarWhereInput[] | TestScalarWhereInput>;
   OR?: Maybe<TestScalarWhereInput[] | TestScalarWhereInput>;
   NOT?: Maybe<TestScalarWhereInput[] | TestScalarWhereInput>;
@@ -662,6 +676,7 @@ export interface TestUpdateManyDataInput {
   correct?: Maybe<Int>;
   incorrect?: Maybe<Int>;
   corrections?: Maybe<Int>;
+  type?: Maybe<ResultType>;
 }
 
 export interface AccountUpdateManyMutationInput {
@@ -680,6 +695,7 @@ export interface TestCreateInput {
   incorrect: Int;
   corrections: Int;
   account: AccountCreateOneWithoutResultsInput;
+  type: ResultType;
 }
 
 export interface AccountCreateOneWithoutResultsInput {
@@ -703,6 +719,7 @@ export interface TestUpdateInput {
   incorrect?: Maybe<Int>;
   corrections?: Maybe<Int>;
   account?: Maybe<AccountUpdateOneRequiredWithoutResultsInput>;
+  type?: Maybe<ResultType>;
 }
 
 export interface AccountUpdateOneRequiredWithoutResultsInput {
@@ -731,6 +748,7 @@ export interface TestUpdateManyMutationInput {
   correct?: Maybe<Int>;
   incorrect?: Maybe<Int>;
   corrections?: Maybe<Int>;
+  type?: Maybe<ResultType>;
 }
 
 export interface TrialCreateInput {
@@ -786,6 +804,7 @@ export interface TestUpdateDataInput {
   incorrect?: Maybe<Int>;
   corrections?: Maybe<Int>;
   account?: Maybe<AccountUpdateOneRequiredWithoutResultsInput>;
+  type?: Maybe<ResultType>;
 }
 
 export interface TestUpsertWithWhereUniqueNestedInput {
@@ -918,6 +937,7 @@ export interface Test {
   correct: Int;
   incorrect: Int;
   corrections: Int;
+  type: ResultType;
 }
 
 export interface TestPromise extends Promise<Test>, Fragmentable {
@@ -931,6 +951,7 @@ export interface TestPromise extends Promise<Test>, Fragmentable {
   incorrect: () => Promise<Int>;
   corrections: () => Promise<Int>;
   account: <T = AccountPromise>() => T;
+  type: () => Promise<ResultType>;
 }
 
 export interface TestSubscription
@@ -946,6 +967,7 @@ export interface TestSubscription
   incorrect: () => Promise<AsyncIterator<Int>>;
   corrections: () => Promise<AsyncIterator<Int>>;
   account: <T = AccountSubscription>() => T;
+  type: () => Promise<AsyncIterator<ResultType>>;
 }
 
 export interface TestNullablePromise
@@ -961,6 +983,7 @@ export interface TestNullablePromise
   incorrect: () => Promise<Int>;
   corrections: () => Promise<Int>;
   account: <T = AccountPromise>() => T;
+  type: () => Promise<ResultType>;
 }
 
 export interface AccountConnection {
@@ -1325,6 +1348,7 @@ export interface TestPreviousValues {
   correct: Int;
   incorrect: Int;
   corrections: Int;
+  type: ResultType;
 }
 
 export interface TestPreviousValuesPromise
@@ -1339,6 +1363,7 @@ export interface TestPreviousValuesPromise
   correct: () => Promise<Int>;
   incorrect: () => Promise<Int>;
   corrections: () => Promise<Int>;
+  type: () => Promise<ResultType>;
 }
 
 export interface TestPreviousValuesSubscription
@@ -1353,6 +1378,7 @@ export interface TestPreviousValuesSubscription
   correct: () => Promise<AsyncIterator<Int>>;
   incorrect: () => Promise<AsyncIterator<Int>>;
   corrections: () => Promise<AsyncIterator<Int>>;
+  type: () => Promise<AsyncIterator<ResultType>>;
 }
 
 export interface TrialSubscriptionPayload {
@@ -1462,6 +1488,10 @@ export const models: Model[] = [
     embedded: false
   },
   {
+    name: "ResultType",
+    embedded: false
+  },
+  {
     name: "Difficulty",
     embedded: false
   },
@@ -1478,6 +1508,7 @@ export const models: Model[] = [
 export const Prisma = makePrismaClientClass<ClientConstructor<Prisma>>({
   typeDefs,
   models,
-  endpoint: `http://localhost:4466`
+  endpoint: `http://localhost:4466`,
+  secret: `${process.env["PRISMA_SECRET"]}`
 });
 export const prisma = new Prisma();

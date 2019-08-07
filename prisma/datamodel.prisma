@@ -20,6 +20,7 @@ type Test {
   incorrect: Int!
   corrections: Int!
   account: Account! @relation(name: "UsersTests")
+  type: ResultType!
 }
 
 type Trial {
@@ -30,6 +31,12 @@ type Trial {
   wordSet: String!
   name: String!
   difficulty: Difficulty
+}
+
+enum ResultType {
+  SINGLEPLAYER
+  RACE
+  TRIAL
 }
 
 enum Difficulty {

@@ -293,6 +293,12 @@ type Query {
   node(id: ID!): Node
 }
 
+enum ResultType {
+  SINGLEPLAYER
+  RACE
+  TRIAL
+}
+
 enum Role {
   USER
   ADMIN
@@ -315,6 +321,7 @@ type Test {
   incorrect: Int!
   corrections: Int!
   account: Account!
+  type: ResultType!
 }
 
 type TestConnection {
@@ -332,6 +339,7 @@ input TestCreateInput {
   incorrect: Int!
   corrections: Int!
   account: AccountCreateOneWithoutResultsInput!
+  type: ResultType!
 }
 
 input TestCreateManyInput {
@@ -352,6 +360,7 @@ input TestCreateWithoutAccountInput {
   correct: Int!
   incorrect: Int!
   corrections: Int!
+  type: ResultType!
 }
 
 type TestEdge {
@@ -378,6 +387,8 @@ enum TestOrderByInput {
   incorrect_DESC
   corrections_ASC
   corrections_DESC
+  type_ASC
+  type_DESC
 }
 
 type TestPreviousValues {
@@ -390,6 +401,7 @@ type TestPreviousValues {
   correct: Int!
   incorrect: Int!
   corrections: Int!
+  type: ResultType!
 }
 
 input TestScalarWhereInput {
@@ -471,6 +483,10 @@ input TestScalarWhereInput {
   corrections_lte: Int
   corrections_gt: Int
   corrections_gte: Int
+  type: ResultType
+  type_not: ResultType
+  type_in: [ResultType!]
+  type_not_in: [ResultType!]
   AND: [TestScalarWhereInput!]
   OR: [TestScalarWhereInput!]
   NOT: [TestScalarWhereInput!]
@@ -502,6 +518,7 @@ input TestUpdateDataInput {
   incorrect: Int
   corrections: Int
   account: AccountUpdateOneRequiredWithoutResultsInput
+  type: ResultType
 }
 
 input TestUpdateInput {
@@ -512,6 +529,7 @@ input TestUpdateInput {
   incorrect: Int
   corrections: Int
   account: AccountUpdateOneRequiredWithoutResultsInput
+  type: ResultType
 }
 
 input TestUpdateManyDataInput {
@@ -521,6 +539,7 @@ input TestUpdateManyDataInput {
   correct: Int
   incorrect: Int
   corrections: Int
+  type: ResultType
 }
 
 input TestUpdateManyInput {
@@ -542,6 +561,7 @@ input TestUpdateManyMutationInput {
   correct: Int
   incorrect: Int
   corrections: Int
+  type: ResultType
 }
 
 input TestUpdateManyWithoutAccountInput {
@@ -568,6 +588,7 @@ input TestUpdateWithoutAccountDataInput {
   correct: Int
   incorrect: Int
   corrections: Int
+  type: ResultType
 }
 
 input TestUpdateWithWhereUniqueNestedInput {
@@ -672,6 +693,10 @@ input TestWhereInput {
   corrections_gt: Int
   corrections_gte: Int
   account: AccountWhereInput
+  type: ResultType
+  type_not: ResultType
+  type_in: [ResultType!]
+  type_not_in: [ResultType!]
   AND: [TestWhereInput!]
   OR: [TestWhereInput!]
   NOT: [TestWhereInput!]

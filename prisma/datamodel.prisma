@@ -22,6 +22,22 @@ type Test {
   account: Account! @relation(name: "UsersTests")
 }
 
+type Trial {
+  id: ID! @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  results: [Test!] @relation(name: "TrailResults")
+  wordSet: String!
+  name: String!
+  difficulty: Difficulty
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
 enum Role {
   USER
   ADMIN

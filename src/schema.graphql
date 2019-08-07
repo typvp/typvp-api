@@ -17,6 +17,9 @@ type Mutation {
 
   # Singleplayer Typing Test
   addResults(cpm: Int!, rawCpm: Int!, wpm: Int!, correct: Int!, incorrect: Int!, corrections: Int!): Test!
+
+  # Trail Typing Test
+  completeTrail(trailId: ID!, cpm: Int!, rawCpm: Int!, wpm: Int!, correct: Int!, incorrect: Int!, corrections: Int!): Test!
 }
 
 type AuthPayload {
@@ -45,6 +48,22 @@ type Test {
   incorrect: Int!
   corrections: Int!
   account: Account!
+}
+
+type Trail {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  results: [Test!]
+  wordSet: String!
+  name: String!
+  difficulty: Difficulty
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
 }
 
 enum Role {

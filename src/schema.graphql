@@ -2,6 +2,11 @@ type Query {
   account(id: ID!): Account!
   me: Account!
   leaderboard: [Test!]!
+
+  # Trial Typing Test
+  trials: [Trial!]!
+  trial(trialId: ID!): Trial!
+  trialLeaders(trialId: ID!): [Test!]!
 }
 
 type Mutation {
@@ -19,7 +24,7 @@ type Mutation {
   addResults(cpm: Int!, rawCpm: Int!, wpm: Int!, correct: Int!, incorrect: Int!, corrections: Int!): Test!
 
   # Trail Typing Test
-  completeTrail(trailId: ID!, cpm: Int!, rawCpm: Int!, wpm: Int!, correct: Int!, incorrect: Int!, corrections: Int!): Test!
+  addResultsToTrial(trailId: ID!, cpm: Int!, rawCpm: Int!, wpm: Int!, correct: Int!, incorrect: Int!, corrections: Int!): Test!
 }
 
 type AuthPayload {
@@ -50,7 +55,7 @@ type Test {
   account: Account!
 }
 
-type Trail {
+type Trial {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!

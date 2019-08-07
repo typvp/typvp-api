@@ -2,7 +2,7 @@ import {Context} from '../../types'
 import {getAccountId} from '../../utils'
 
 export const TrialMutations = {
-  addResults: async (
+  addResultsToTrial: async (
     _: any,
     {trialId, cpm, rawCpm, wpm, correct, incorrect, corrections}: any,
     ctx: Context,

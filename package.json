@@ -14,6 +14,7 @@
     "stop:docker": "docker-compose -f 'prisma/docker-compose.yml' down"
   },
   "dependencies": {
+    "@typvp/gen": "^0.2.1",
     "bcryptjs": "^2.4.3",
     "dotenv": "^8.0.0",
     "graphql-shield": "^6.0.4",

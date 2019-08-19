@@ -42,6 +42,10 @@ const options = {
   endpoint: '/',
   subscriptions: '/sub',
   playground: '/playground',
+  cors: {
+    credentials: true,
+    origin: ['https://typvp.xyz', 'http://localhost:8080'],
+  },
 }
 
 server.start(options, ({port}: any) => {

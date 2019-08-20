@@ -21,6 +21,7 @@ export const SingleplayerMutations = {
       correct,
       incorrect,
       corrections,
+      type: 'SINGLEPLAYER',
     })
   },
 }

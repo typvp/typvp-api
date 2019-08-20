@@ -13,6 +13,7 @@ export const AccountFragment = `
       incorrect
       corrections
       createdAt
+      type
     }
   }
 `

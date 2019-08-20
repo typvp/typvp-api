@@ -64,6 +64,8 @@ type Trial {
   wordSet: String!
   name: String!
   difficulty: Difficulty
+  minWordLength: Int
+  maxWordLength: Int
 }
 
 enum ResultType {
@@ -74,6 +76,7 @@ enum ResultType {
 
 enum Difficulty {
   EASY
+  NORMAL
   MEDIUM
   HARD
 }

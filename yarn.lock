@@ -164,10 +164,10 @@
   resolved "https://registry.yarnpkg.com/@types/zen-observable/-/zen-observable-0.5.4.tgz#b863a4191e525206819e008097ebf0fb2e3a1cdc"
   integrity sha512-sW6xN96wUak4tgc89d0tbTg7QDGYhGv5hvQIS6h4mRCd8h2btiZ80loPU8cyLwsBbA4ZeQt0FjvUhJ4rNhdsGg==
 
-"@typvp/gen@^0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@typvp/gen/-/gen-0.2.1.tgz#168cd62f54dfa9da9bc25586ccf82fc7a1be0351"
-  integrity sha512-e9c2v5hSBkRND34vc7EXn1Jo+jI18ZziO8r50UiK0U8Pfd6513ubMecC2E69rdOLLzbyIcSLYpc6ZDDHOTbqXA==
+"@typvp/gen@^0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@typvp/gen/-/gen-0.2.2.tgz#fbedbb5e3739ce6f88cf970d2c96699e34f16936"
+  integrity sha512-IDIL/qdCzNhU0tQYR510Zm1Ffwmlf7D6N25BUBVC1DoN2mRFWJ0pwWAMIUUUd7KhHLN4sEUtx/0bHsUdiE0i1w==
 
 "@wry/equality@^0.1.2":
   version "0.1.9"

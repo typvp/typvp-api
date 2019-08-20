@@ -3,6 +3,8 @@ export const TrialFragment = `
     id
     name
     difficulty
+    minWordLength
+    maxWordLength
     wordSet
     results {
       id

@@ -20,6 +20,32 @@ type Test {
   incorrect: Int!
   corrections: Int!
   account: Account! @relation(name: "UsersTests")
+  type: ResultType!
+}
+
+type Trial {
+  id: ID! @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  results: [Test!] @relation(name: "TrailResults")
+  wordSet: String!
+  name: String!
+  difficulty: Difficulty
+  minWordLength: Int
+  maxWordLength: Int
+}
+
+enum ResultType {
+  SINGLEPLAYER
+  RACE
+  TRIAL
+}
+
+enum Difficulty {
+  EASY
+  NORMAL
+  MEDIUM
+  HARD
 }
 
 enum Role {

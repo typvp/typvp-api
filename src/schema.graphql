@@ -2,6 +2,11 @@ type Query {
   account(id: ID!): Account!
   me: Account!
   leaderboard: [Test!]!
+
+  # Trial Typing Test
+  trials: [Trial!]!
+  trial(trialId: ID!): Trial!
+  trialLeaders(trialId: ID!): [Test!]!
 }
 
 type Mutation {
@@ -17,6 +22,9 @@ type Mutation {
 
   # Singleplayer Typing Test
   addResults(cpm: Int!, rawCpm: Int!, wpm: Int!, correct: Int!, incorrect: Int!, corrections: Int!): Test!
+
+  # Trail Typing Test
+  addResultsToTrial(trialId: ID!, cpm: Int!, rawCpm: Int!, wpm: Int!, correct: Int!, incorrect: Int!, corrections: Int!): Test!
 }
 
 type AuthPayload {
@@ -45,6 +53,32 @@ type Test {
   incorrect: Int!
   corrections: Int!
   account: Account!
+  type: ResultType!
+}
+
+type Trial {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  results: [Test!]
+  wordSet: String!
+  name: String!
+  difficulty: Difficulty
+  minWordLength: Int
+  maxWordLength: Int
+}
+
+enum ResultType {
+  SINGLEPLAYER
+  RACE
+  TRIAL
+}
+
+enum Difficulty {
+  EASY
+  NORMAL
+  MEDIUM
+  HARD
 }
 
 enum Role {

@@ -38,11 +38,11 @@ const server = new GraphQLServer({
   }),
 })
 
-if (process.env.NODE_ENV !== 'development') {
-  const ips = [process.env.FRONTEND_IP, process.env.API_IP]
-  console.log(ips)
-  server.express.use(ipfilter(ips, {mode: 'allow'}))
-}
+// if (process.env.NODE_ENV !== 'development') {
+//   const ips = [process.env.FRONTEND_IP, process.env.API_IP]
+//   console.log(ips)
+//   server.express.use(ipfilter(ips, {mode: 'allow'}))
+// }
 
 const options = {
   port: process.env.PORT,

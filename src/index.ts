@@ -51,7 +51,7 @@ const options = {
   playground: '/playground',
   cors: {
     credentials: true,
-    origin: ['https://typvp.xyz', 'http://localhost:8080'],
+    origin: ['https://typvp.xyz'],
   },
 }
 

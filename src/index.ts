@@ -2,7 +2,6 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 import {GraphQLServer} from 'graphql-yoga'
 import {rule, shield, allow} from 'graphql-shield'
-import {IpFilter as ipfilter} from 'express-ipfilter'
 
 import resolvers from './resolvers'
 import {prisma} from './generated/prisma-client'
@@ -38,21 +37,15 @@ const server = new GraphQLServer({
   }),
 })
 
-// if (process.env.NODE_ENV !== 'development') {
-//   const ips = [process.env.FRONTEND_IP, process.env.API_IP]
-//   console.log(ips)
-//   server.express.use(ipfilter(ips, {mode: 'allow'}))
-// }
-
 const options = {
   port: process.env.PORT,
   endpoint: '/',
   subscriptions: '/sub',
   playground: '/playground',
-  // cors: {
-  //   credentials: true,
-  //   origin: ['https://typvp.xyz', 'http://localhost:8080'],
-  // },
+  cors: {
+    credentials: true,
+    origin: ['https://typvp.xyz', 'http://localhost:8080'],
+  },
 }
 
 server.start(options, ({port}: any) => {

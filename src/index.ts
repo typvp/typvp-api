@@ -1,6 +1,9 @@
+import {readFileSync} from 'fs'
 import * as dotenv from 'dotenv'
 dotenv.config()
-import {GraphQLServer} from 'graphql-yoga'
+import {ApolloServer, gql} from 'apollo-server'
+import {makeExecutableSchema} from 'graphql-tools'
+import {applyMiddleware} from 'graphql-middleware'
 import {rule, shield, allow} from 'graphql-shield'
 
 import resolvers from './resolvers'
@@ -27,10 +30,25 @@ const permissions = shield({
   },
 })
 
-const server = new GraphQLServer({
-  typeDefs: './src/schema.graphql',
-  resolvers,
-  middlewares: [permissions],
+const typeDefs = gql(readFileSync(__dirname.concat('/schema.graphql'), 'utf8'))
+
+const schema = applyMiddleware(
+  makeExecutableSchema({typeDefs, resolvers}),
+  permissions,
+)
+
+const server = new ApolloServer({
+  subscriptions: {
+    path: '/sub',
+  },
+  playground: {
+    subscriptionEndpoint: '/sub',
+  },
+  schema,
+  cors: {
+    credentials: true,
+    origin: ['https://typvp.xyz', 'http://localhost:8080'],
+  },
   context: (request: any) => ({
     ...request,
     prisma,
@@ -42,12 +60,8 @@ const options = {
   endpoint: '/',
   subscriptions: '/sub',
   playground: '/playground',
-  cors: {
-    credentials: true,
-    origin: ['https://typvp.xyz', 'http://localhost:8080'],
-  },
 }
 
-server.start(options, ({port}: any) => {
-  console.log(`typvp-api has started — ${port}`)
+server.listen({port: process.env.PORT}).then(({url}) => {
+  console.log(`typvp-api has started - ${url}`)
 })

@@ -1,10 +1,11 @@
-import {readFileSync} from 'fs'
+import {resolve} from 'path'
 import * as dotenv from 'dotenv'
 dotenv.config()
 import {ApolloServer, gql} from 'apollo-server'
 import {makeExecutableSchema} from 'graphql-tools'
 import {applyMiddleware} from 'graphql-middleware'
 import {rule, shield, allow} from 'graphql-shield'
+import {importSchema} from 'graphql-import'
 
 import resolvers from './resolvers'
 import {prisma} from './generated/prisma-client'
@@ -30,7 +31,7 @@ const permissions = shield({
   },
 })
 
-const typeDefs = gql(readFileSync(__dirname.concat('/schema.graphql'), 'utf8'))
+const typeDefs = gql(importSchema(resolve('./src/schema.graphql')))
 
 const schema = applyMiddleware(
   makeExecutableSchema({typeDefs, resolvers}),

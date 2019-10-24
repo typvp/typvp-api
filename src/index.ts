@@ -4,10 +4,7 @@ dotenv.config()
 import {ApolloServer} from 'apollo-server'
 import {buildSchema} from 'type-graphql'
 
-import resolvers from './resolvers'
 import {prisma} from './generated/prisma-client'
-import {getAccountId} from './utils'
-import {Context} from './types'
 import {AuthorizationCheck} from './middleware/Auth'
 
 async function bootstrap() {

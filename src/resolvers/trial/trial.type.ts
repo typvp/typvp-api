@@ -1,5 +1,5 @@
 import {ObjectType, Field, ID, Int, registerEnumType} from 'type-graphql'
-import {Test} from '../TypingTest/test.type'
+import {Test} from '../typingTest/test.type'
 
 export enum Difficulty {
   EASY = 'EASY',

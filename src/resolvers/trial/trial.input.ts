@@ -1,5 +1,5 @@
 import {Field, InputType, Int, ID} from 'type-graphql'
-import {Test} from '../TypingTest/test.type'
+import {Test} from '../typingTest/test.type'
 
 @InputType()
 export class NewTrialResultInput implements Partial<Test> {

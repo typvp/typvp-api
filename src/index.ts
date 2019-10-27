@@ -3,17 +3,18 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 import {ApolloServer} from 'apollo-server'
 import {buildSchema} from 'type-graphql'
+import {GraphQLSchema} from 'graphql'
 
 import {prisma} from './generated/prisma-client'
 import {AuthorizationCheck} from './middleware/Auth'
 
 async function bootstrap() {
-  const schema = await buildSchema({
+  const schema = (await buildSchema({
     resolvers: [__dirname + '/resolvers/**/*.resolver.ts'],
     authChecker: AuthorizationCheck,
   }).catch(e => {
     console.log(e)
-  })
+  })) as GraphQLSchema
 
   const server = new ApolloServer({
     subscriptions: {
@@ -41,7 +42,7 @@ async function bootstrap() {
     playground: '/playground',
   }
 
-  server.listen({port: process.env.PORT}).then(({url}) => {
+  server.listen({port: process.env.PORT}).then(({url}: any) => {
     console.log(`typvp-api has started - ${url}`)
   })
 }

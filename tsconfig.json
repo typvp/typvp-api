@@ -18,5 +18,6 @@
     "experimentalDecorators": true,
     "esModuleInterop": true
   },
-  "exclude": ["prisma"]
+  "exclude": ["prisma", "node_modules"],
+  "files": ["src/graphql.d.ts"]
 }

@@ -24,10 +24,11 @@ export class TrialResolver {
     @Ctx() ctx: Context,
   ): Promise<Boolean> {
     const id = getAccountId(ctx)
+    const {trialId, correct, corrections, cpm, incorrect, rawCpm, wpm} = input
     await ctx.prisma
       .updateTrial({
         where: {
-          id,
+          id: trialId,
         },
         data: {
           results: {
@@ -37,8 +38,13 @@ export class TrialResolver {
                   id,
                 },
               },
-              ...input,
+              correct,
+              corrections,
+              cpm,
+              incorrect,
+              rawCpm,
               type: 'TRIAL',
+              wpm,
             },
           },
         },

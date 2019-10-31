@@ -1,5 +1,5 @@
-import {ObjectType, Field, ID, Int, registerEnumType} from 'type-graphql'
-import {Test} from '../typingTest/test.type'
+import {ObjectType, Field, ID, registerEnumType, Float} from 'type-graphql'
+import {Test, ResultType} from '../typingTest/test.type'
 
 export enum Role {
   USER = 'USER',
@@ -32,6 +32,12 @@ export class Account {
 
   @Field(type => [Test])
   results?: Test[]
+
+  @Field(type => Float, {nullable: true})
+  lastSeen?: number
+
+  @Field(type => ResultType, {nullable: true})
+  lastPlayed?: keyof typeof ResultType
 }
 
 @ObjectType()

@@ -2,9 +2,9 @@ import {ObjectType, Field, ID, Int, registerEnumType} from 'type-graphql'
 import {Account} from '../account/account.type'
 
 export enum ResultType {
-  SINGLEPLAYER,
-  RACE,
-  TRIAL,
+  SINGLEPLAYER = 'SINGLEPLAYER',
+  RACE = 'RACE',
+  TRIAL = 'TRIAL',
 }
 
 registerEnumType(ResultType, {
@@ -39,6 +39,9 @@ export class Test {
 
   @Field(type => Int)
   corrections: number
+
+  @Field(type => Int)
+  wordIndex: number
 
   @Field(type => Account)
   account: Account

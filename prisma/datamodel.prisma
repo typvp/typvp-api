@@ -7,6 +7,8 @@ type Account {
   password: String!
   results: [Test!] @relation(name: "UsersTests")
   role: Role!
+  lastSeen: Float
+  lastPlayed: ResultType
 }
 
 type Test {
@@ -19,6 +21,7 @@ type Test {
   correct: Int!
   incorrect: Int!
   corrections: Int!
+  wordIndex: Int!
   account: Account! @relation(name: "UsersTests")
   type: ResultType!
 }

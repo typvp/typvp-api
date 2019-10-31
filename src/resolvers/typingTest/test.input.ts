@@ -20,4 +20,7 @@ export class NewTestInput implements Partial<Test> {
 
   @Field(type => Int)
   corrections: number
+
+  @Field(type => Int)
+  wordIndex: number
 }

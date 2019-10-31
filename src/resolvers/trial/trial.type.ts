@@ -17,10 +17,10 @@ export class Trial {
   @Field(type => ID)
   id: string
 
-  @Field(type => Date)
+  @Field()
   createdAt: Date
 
-  @Field(type => Date)
+  @Field()
   updatedAt: Date
 
   @Field(type => [Test])

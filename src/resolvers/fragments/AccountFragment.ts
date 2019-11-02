@@ -4,6 +4,8 @@ export const AccountFragment = `
     email
     username
     role
+    lastSeen
+    lastPlayed
     results {
       id
       cpm
@@ -14,6 +16,7 @@ export const AccountFragment = `
       corrections
       createdAt
       type
+      wordIndex
     }
   }
 `

@@ -16,6 +16,7 @@ import {IsAuthenticated} from '../../middleware/Auth'
 import {LogAccess} from '../../middleware/Log'
 import {AccountSignupInput, AccountLoginInput} from './account.input'
 import {Account, AuthPayload, Role} from './account.type'
+import {AccountFragment} from '../fragments/AccountFragment'
 
 @Resolver()
 export class AccountResolver {
@@ -86,7 +87,7 @@ export class AccountResolver {
   @UseMiddleware(LogAccess)
   async me(@Ctx() ctx: Context): Promise<Account> {
     const userId = getAccountId(ctx)
-    return await ctx.prisma.account({id: userId})
+    return await ctx.prisma.account({id: userId}).$fragment(AccountFragment)
   }
 
   @Query(returns => Account)

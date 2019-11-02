@@ -29,7 +29,11 @@ async function bootstrap() {
     schema,
     cors: {
       credentials: true,
-      origin: ['https://typvp.xyz', 'http://localhost:8082'],
+      origin: [
+        'https://typvp.xyz',
+        'https://next.typvp.xyz',
+        'http://localhost:8082',
+      ],
     },
     context: ({req, res}) => ({
       req,

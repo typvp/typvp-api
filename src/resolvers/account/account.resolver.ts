@@ -17,6 +17,7 @@ import {LogAccess} from '../../middleware/Log'
 import {AccountSignupInput, AccountLoginInput} from './account.input'
 import {Account, AuthPayload, Role} from './account.type'
 import {AccountFragment} from '../fragments/AccountFragment'
+import {Test} from '../typingTest/test.type'
 
 @Resolver()
 export class AccountResolver {
@@ -83,16 +84,32 @@ export class AccountResolver {
     }
   }
 
-  @Query(returns => Account)
-  @UseMiddleware(IsAuthenticated, LogAccess)
-  async me(@Ctx() ctx: Context): Promise<Account> {
-    const userId = getAccountId(ctx) as string
-    return await ctx.prisma.account({id: userId}).$fragment(AccountFragment)
+  @Query(returns => Account, {nullable: true})
+  @UseMiddleware(LogAccess)
+  async me(@Ctx() ctx: Context): Promise<Account | null> {
+    const id = getAccountId(ctx)
+    if (id) {
+      return await ctx.prisma.account({id}).$fragment(AccountFragment)
+    }
+    return null
   }
 
   @Query(returns => Account)
   @UseMiddleware(LogAccess)
   async account(@Arg('id', type => ID) id: string, @Ctx() ctx: Context) {
     return await ctx.prisma.account({id})
+  }
+
+  @Query(returns => [Test])
+  @UseMiddleware(IsAuthenticated, LogAccess)
+  async myResults(@Ctx() ctx: Context): Promise<any> {
+    const id = getAccountId(ctx) as string
+    return await ctx.prisma.tests({
+      where: {
+        account: {
+          id,
+        },
+      },
+    })
   }
 }

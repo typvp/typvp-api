@@ -84,9 +84,9 @@ export class AccountResolver {
   }
 
   @Query(returns => Account)
-  @UseMiddleware(LogAccess)
+  @UseMiddleware(IsAuthenticated, LogAccess)
   async me(@Ctx() ctx: Context): Promise<Account> {
-    const userId = getAccountId(ctx)
+    const userId = getAccountId(ctx) as string
     return await ctx.prisma.account({id: userId}).$fragment(AccountFragment)
   }
 

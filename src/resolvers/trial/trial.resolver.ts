@@ -23,7 +23,7 @@ export class TrialResolver {
     @Arg('result') input: NewTrialResultInput,
     @Ctx() ctx: Context,
   ): Promise<Boolean> {
-    const id = getAccountId(ctx)
+    const id = getAccountId(ctx) as string
     const {
       trialId,
       correct,

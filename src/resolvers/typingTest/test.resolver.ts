@@ -14,7 +14,7 @@ export class TestResolver {
   @Mutation(returns => Boolean)
   @UseMiddleware(IsAuthenticated, LogAccess)
   async addNewResult(@Arg('result') input: NewTestInput, @Ctx() ctx: Context) {
-    const id = getAccountId(ctx)
+    const id = getAccountId(ctx) as string
     await ctx.prisma
       .createTest({
         account: {
@@ -55,14 +55,16 @@ export class TestResolver {
   @UseMiddleware(LogAccess)
   async seen(@Ctx() ctx: Context): Promise<Boolean> {
     const id = getAccountId(ctx)
-    await ctx.prisma.updateAccount({
-      where: {
-        id,
-      },
-      data: {
-        lastSeen: Date.now(),
-      },
-    })
-    return true
+    if (id) {
+      await ctx.prisma.updateAccount({
+        where: {
+          id,
+        },
+        data: {
+          lastSeen: Date.now(),
+        },
+      })
+      return true
+    }
   }
 }

@@ -14,7 +14,7 @@ export function getAccountId(ctx: Context) {
     return accountId
   }
 
-  throw new Error('not auth')
+  return false
 }
 
 interface IStickyKeys {

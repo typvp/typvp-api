@@ -18,8 +18,8 @@ export const AuthorizationCheck: AuthChecker<Context> = (
 
   if (authHeader) {
     const token = authHeader.replace('Bearer ', '')
-    const {userId} = jwt.verify(token, process.env.APP_SECRET) as {
-      userId: string
+    const {accountId} = jwt.verify(token, process.env.APP_SECRET) as {
+      accountId: string
     }
 
     // NOTE: As of now RBAC isn't implemented within the DB and may

@@ -6,6 +6,7 @@ export const TrialFragment = `
     minWordLength
     maxWordLength
     wordSet
+    createdAt
     results {
       id
       createdAt

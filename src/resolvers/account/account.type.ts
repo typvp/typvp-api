@@ -15,10 +15,10 @@ export class Account {
   @Field(type => ID)
   id: string
 
-  @Field(type => Date)
+  @Field(type => String)
   createdAt: string
 
-  @Field(type => Date)
+  @Field(type => String)
   updatedAt: string
 
   @Field(type => String)

@@ -15,6 +15,7 @@ async function bootstrap() {
   const schema = (await buildSchema({
     resolvers: [TrialResolver, AccountResolver, TestResolver],
     authChecker: AuthorizationCheck,
+    dateScalarMode: 'isoDate',
   }).catch(e => {
     console.log(e)
   })) as GraphQLSchema

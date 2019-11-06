@@ -6,6 +6,8 @@ export const AccountFragment = `
     role
     lastSeen
     lastPlayed
+    updatedAt
+    createdAt
     results {
       id
       cpm

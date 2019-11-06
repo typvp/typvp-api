@@ -16,11 +16,11 @@ export class Test {
   @Field(type => ID)
   id: string
 
-  @Field(type => Date)
-  createdAt: Date
+  @Field(type => String)
+  createdAt: string
 
-  @Field(type => Date)
-  updatedAt: Date
+  @Field(type => String)
+  updatedAt: string
 
   @Field(type => Int)
   cpm: number

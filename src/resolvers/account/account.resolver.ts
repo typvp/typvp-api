@@ -15,7 +15,8 @@ import {Context} from '../../types'
 import {IsAuthenticated} from '../../middleware/Auth'
 import {LogAccess} from '../../middleware/Log'
 import {AccountSignupInput, AccountLoginInput} from './account.input'
-import {Account, AuthPayload, Role} from './account.type'
+import {PaginationArgs} from '../generic.args'
+import {Account, AuthPayload} from './account.type'
 import {AccountFragment} from '../fragments/AccountFragment'
 import {Test} from '../typingTest/test.type'
 
@@ -102,7 +103,10 @@ export class AccountResolver {
 
   @Query(returns => [Test])
   @UseMiddleware(IsAuthenticated, LogAccess)
-  async myResults(@Ctx() ctx: Context): Promise<any> {
+  async myResults(
+    @Arg('filter') filter: PaginationArgs,
+    @Ctx() ctx: Context,
+  ): Promise<any> {
     const id = getAccountId(ctx) as string
     return await ctx.prisma.tests({
       where: {
@@ -110,6 +114,9 @@ export class AccountResolver {
           id,
         },
       },
+      skip: filter.skip,
+      first: filter.first,
+      orderBy: 'createdAt_DESC',
     })
   }
 }

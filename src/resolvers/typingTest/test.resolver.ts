@@ -1,4 +1,4 @@
-import {Resolver, Mutation, Arg, Ctx, UseMiddleware} from 'type-graphql'
+import {Resolver, Mutation, Arg, Ctx, UseMiddleware, Query} from 'type-graphql'
 import {generate} from '@typvp/gen'
 
 import {getAccountId} from '../../utils'
@@ -6,6 +6,8 @@ import {Context} from '../../types'
 import {IsAuthenticated} from '../../middleware/Auth'
 import {LogAccess} from '../../middleware/Log'
 import {NewTestInput} from './test.input'
+import {Test} from './test.type'
+import {PaginationArgs} from '../generic.args'
 
 const wsCache: {[key: string]: string | string[]} = {}
 
@@ -49,6 +51,19 @@ export class TestResolver {
       wsCache[id] = wordList
     }
     return wordList
+  }
+
+  @Query(returns => [Test])
+  @UseMiddleware(LogAccess)
+  async leaderboard(
+    @Arg('filter') filter: PaginationArgs,
+    @Ctx() ctx: Context,
+  ) {
+    return ctx.prisma.tests({
+      skip: filter.skip,
+      first: filter.first,
+      orderBy: 'wpm_DESC',
+    })
   }
 
   @Mutation(returns => Boolean)

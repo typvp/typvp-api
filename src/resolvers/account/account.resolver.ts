@@ -8,6 +8,8 @@ import {
   UseMiddleware,
   Query,
   ID,
+  FieldResolver,
+  Root,
 } from 'type-graphql'
 
 import {getAccountId} from '../../utils'
@@ -18,9 +20,9 @@ import {AccountSignupInput, AccountLoginInput} from './account.input'
 import {PaginationArgs} from '../generic.args'
 import {Account, AuthPayload} from './account.type'
 import {AccountFragment} from '../fragments/AccountFragment'
-import {Test} from '../typingTest/test.type'
+import {TestsWithCount} from '../typingTest/test.type'
 
-@Resolver()
+@Resolver(of => Account)
 export class AccountResolver {
   @Mutation(returns => AuthPayload)
   @UseMiddleware(LogAccess)
@@ -101,22 +103,27 @@ export class AccountResolver {
     return await ctx.prisma.account({id})
   }
 
-  @Query(returns => [Test])
+  @Query(returns => TestsWithCount)
   @UseMiddleware(IsAuthenticated, LogAccess)
   async myResults(
     @Arg('filter') filter: PaginationArgs,
     @Ctx() ctx: Context,
-  ): Promise<any> {
+  ): Promise<TestsWithCount> {
     const id = getAccountId(ctx) as string
-    return await ctx.prisma.tests({
-      where: {
-        account: {
-          id,
-        },
-      },
+    const results = await ctx.prisma.account({id}).results({
       skip: filter.skip,
       first: filter.first,
       orderBy: 'createdAt_DESC',
     })
+    return {
+      results,
+      count: results.length,
+    }
+  }
+
+  @FieldResolver()
+  async testCount(@Root() account: Account, @Ctx() ctx: Context) {
+    const l = await ctx.prisma.account({id: account.id}).results()
+    return l.length
   }
 }

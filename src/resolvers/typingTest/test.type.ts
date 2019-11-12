@@ -44,8 +44,17 @@ export class Test {
   wordIndex: number
 
   @Field(type => Account)
-  account: Account
+  account?: Account
 
   @Field(type => ResultType)
-  type: ResultType
+  type: keyof typeof ResultType
+}
+
+@ObjectType()
+export class TestsWithCount {
+  @Field(type => [Test])
+  results: Test[]
+
+  @Field(type => Int)
+  count: number
 }

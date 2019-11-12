@@ -1,4 +1,4 @@
-import {ObjectType, Field, ID, registerEnumType, Float} from 'type-graphql'
+import {ObjectType, Field, ID, registerEnumType, Float, Int} from 'type-graphql'
 import {Test, ResultType} from '../typingTest/test.type'
 
 export enum Role {
@@ -38,6 +38,9 @@ export class Account {
 
   @Field(type => ResultType, {nullable: true})
   lastPlayed?: keyof typeof ResultType
+
+  @Field(type => Int, {nullable: true})
+  testCount?: number
 }
 
 @ObjectType()

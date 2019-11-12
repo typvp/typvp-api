@@ -65,21 +65,4 @@ export class TestResolver {
       orderBy: 'wpm_DESC',
     })
   }
-
-  @Mutation(returns => Boolean)
-  @UseMiddleware(LogAccess)
-  async seen(@Ctx() ctx: Context): Promise<Boolean> {
-    const id = getAccountId(ctx)
-    if (id) {
-      await ctx.prisma.updateAccount({
-        where: {
-          id,
-        },
-        data: {
-          lastSeen: Date.now(),
-        },
-      })
-      return true
-    }
-  }
 }

@@ -56,5 +56,5 @@ export class TestsWithCount {
   results: Test[]
 
   @Field(type => Int)
-  count: number
+  testCount: number
 }

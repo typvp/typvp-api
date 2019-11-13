@@ -10,6 +10,7 @@ import {
   ID,
   FieldResolver,
   Root,
+  Int,
 } from 'type-graphql'
 
 import {getAccountId} from '../../utils'
@@ -117,13 +118,21 @@ export class AccountResolver {
     })
     return {
       results,
-      count: results.length,
+      testCount: await this.testCount({id} as Account, ctx),
     }
   }
 
-  @FieldResolver()
+  @FieldResolver(returns => Int)
   async testCount(@Root() account: Account, @Ctx() ctx: Context) {
-    const l = await ctx.prisma.account({id: account.id}).results()
-    return l.length
+    const {count} = await ctx.prisma
+      .testsConnection({
+        where: {
+          account: {
+            id: account.id,
+          },
+        },
+      })
+      .aggregate()
+    return count
   }
 }

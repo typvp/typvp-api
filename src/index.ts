@@ -4,12 +4,15 @@ dotenv.config()
 import {ApolloServer} from 'apollo-server'
 import {buildSchema} from 'type-graphql'
 import {GraphQLSchema} from 'graphql'
+import Redis from 'ioredis'
 
 import {prisma} from './generated/prisma-client'
 import {AuthorizationCheck} from './middleware/Auth'
 import {TrialResolver} from './resolvers/trial/trial.resolver'
 import {AccountResolver} from './resolvers/account/account.resolver'
 import {TestResolver} from './resolvers/typingTest/test.resolver'
+
+export const redis = new Redis(process.env.REDIS_PORT)
 
 async function bootstrap() {
   const schema = (await buildSchema({
@@ -37,6 +40,7 @@ async function bootstrap() {
       ],
     },
     context: ({req, res}) => ({
+      redis,
       req,
       res,
       prisma,

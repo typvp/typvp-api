@@ -46,7 +46,7 @@ export class TestResolver {
 
   @Mutation(returns => String)
   @UseMiddleware(LogAccess)
-  async getWordSet(@Ctx() ctx: Context): Promise<string | string[]> {
+  async getWordSet(@Ctx() ctx: Context): Promise<string> {
     const id = getAccountId(ctx)
     const wordList = generate(250, {
       minLength: 3,

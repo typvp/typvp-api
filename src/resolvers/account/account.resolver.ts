@@ -122,6 +122,20 @@ export class AccountResolver {
     }
   }
 
+  @Mutation(returns => Boolean, {nullable: true})
+  @UseMiddleware(IsAuthenticated, LogAccess)
+  async seen(@Ctx() ctx: Context): Promise<void> {
+    const id = getAccountId(ctx) as string
+    await ctx.prisma.updateAccount({
+      where: {
+        id,
+      },
+      data: {
+        lastSeen: Date.now(),
+      },
+    })
+  }
+
   @FieldResolver(returns => Int)
   async testCount(@Root() account: Account, @Ctx() ctx: Context) {
     const {count} = await ctx.prisma

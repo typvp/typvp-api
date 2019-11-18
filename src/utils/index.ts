@@ -3,6 +3,7 @@ import * as jwt from 'jsonwebtoken'
 import {Context} from '../types'
 import {NewTestInput} from '../resolvers/typingTest/test.input'
 import {Account} from '../resolvers/account/account.type'
+import {ResultType} from '../resolvers/typingTest/test.type'
 
 export function getAccountId(ctx: Context) {
   const Authorization = ctx.req.get('Authorization')
@@ -17,15 +18,21 @@ export function getAccountId(ctx: Context) {
   return false
 }
 
-interface IStickyKeys {
-  (results: NewTestInput, user: Account, options: any): boolean
+interface IStickyKeysOptions {
+  wordList: string
+  mode: keyof typeof ResultType
 }
 
-export const stickyKeys: IStickyKeys = function(
-  results,
-  user,
-  options,
-): boolean {
+interface IStickyKeys {
+  (results: NewTestInput, user: Account, options: IStickyKeysOptions): boolean
+}
+
+export const stickyKeys: IStickyKeys = function(results, user, options) {
+  if (!options.wordList) {
+    console.log('failed no cached wordlist')
+    return false
+  }
+
   const _cpm = options.wordList.length
   console.log(`total length: ${_cpm}`)
 
@@ -35,7 +42,7 @@ export const stickyKeys: IStickyKeys = function(
   const arraySlice = _listToArray.slice(0, results.wordIndex - 1)
 
   let acCPM = 0
-  arraySlice.map((word: string, idx: number) => {
+  arraySlice.map((word: string) => {
     acCPM += word.length
   })
 
@@ -57,7 +64,10 @@ export const stickyKeys: IStickyKeys = function(
     return false
   }
   // Either a delayed ass mutation, or some form of fudging
-  if (Date.now() - user.lastSeen > 90 || Date.now() - user.lastSeen < 60) {
+  if (
+    (Date.now() - user.lastSeen) / 1000 > 90 ||
+    (Date.now() - user.lastSeen) / 1000 < 60
+  ) {
     console.log('failed date')
     return false
   }

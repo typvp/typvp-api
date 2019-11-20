@@ -37,6 +37,9 @@ services:
       - redis-data:/data
     ports:
       - ${REDIS_PORTS}
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - DISABLE_COMMANDS=FLUSHDB,FLUSHALL,CONFIG,KEYS,PEXPIRE,DEL,SHUTDOWN,BGREWRITEAOF,BGSLAVE,SAVE,SPOP,SREM,DEBUG,RENAME
 volumes:
   postgres:
   redis-data:

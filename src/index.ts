@@ -12,7 +12,9 @@ import {TrialResolver} from './resolvers/trial/trial.resolver'
 import {AccountResolver} from './resolvers/account/account.resolver'
 import {TestResolver} from './resolvers/typingTest/test.resolver'
 
-export const redis = new Redis(process.env.REDIS_PORT)
+export const redis = new Redis(process.env.REDIS_PORT, {
+  password: process.env.REDIS_PASSWORD,
+})
 
 async function bootstrap() {
   const schema = (await buildSchema({

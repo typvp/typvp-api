@@ -1,7 +1,7 @@
 import * as jwt from 'jsonwebtoken'
 import {Context} from '../types'
 import {AuthChecker, MiddlewareFn} from 'type-graphql'
-import {AuthenticationError} from 'apollo-server'
+import {AuthenticationError} from 'apollo-server-express'
 
 /**
  * Authorization middleware that verifies a user is of the right role

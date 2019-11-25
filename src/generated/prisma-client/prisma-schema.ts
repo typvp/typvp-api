@@ -8,6 +8,7 @@ export const typeDefs = /* GraphQL */ `type Account {
   updatedAt: DateTime!
   email: String!
   username: String!
+  usernameLowercase: String
   password: String!
   results(where: TestWhereInput, orderBy: TestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Test!]
   role: Role!
@@ -26,6 +27,7 @@ input AccountCreateInput {
   id: ID
   email: String!
   username: String!
+  usernameLowercase: String
   password: String!
   results: TestCreateManyWithoutAccountInput
   role: Role!
@@ -43,6 +45,7 @@ input AccountCreateWithoutResultsInput {
   id: ID
   email: String!
   username: String!
+  usernameLowercase: String
   password: String!
   role: Role!
   lastSeen: Float
@@ -66,6 +69,8 @@ enum AccountOrderByInput {
   email_DESC
   username_ASC
   username_DESC
+  usernameLowercase_ASC
+  usernameLowercase_DESC
   password_ASC
   password_DESC
   role_ASC
@@ -84,6 +89,7 @@ type AccountPreviousValues {
   updatedAt: DateTime!
   email: String!
   username: String!
+  usernameLowercase: String
   password: String!
   role: Role!
   lastSeen: Float
@@ -112,6 +118,7 @@ input AccountSubscriptionWhereInput {
 input AccountUpdateInput {
   email: String
   username: String
+  usernameLowercase: String
   password: String
   results: TestUpdateManyWithoutAccountInput
   role: Role
@@ -123,6 +130,7 @@ input AccountUpdateInput {
 input AccountUpdateManyMutationInput {
   email: String
   username: String
+  usernameLowercase: String
   password: String
   role: Role
   lastSeen: Float
@@ -140,6 +148,7 @@ input AccountUpdateOneRequiredWithoutResultsInput {
 input AccountUpdateWithoutResultsDataInput {
   email: String
   username: String
+  usernameLowercase: String
   password: String
   role: Role
   lastSeen: Float
@@ -211,6 +220,20 @@ input AccountWhereInput {
   username_not_starts_with: String
   username_ends_with: String
   username_not_ends_with: String
+  usernameLowercase: String
+  usernameLowercase_not: String
+  usernameLowercase_in: [String!]
+  usernameLowercase_not_in: [String!]
+  usernameLowercase_lt: String
+  usernameLowercase_lte: String
+  usernameLowercase_gt: String
+  usernameLowercase_gte: String
+  usernameLowercase_contains: String
+  usernameLowercase_not_contains: String
+  usernameLowercase_starts_with: String
+  usernameLowercase_not_starts_with: String
+  usernameLowercase_ends_with: String
+  usernameLowercase_not_ends_with: String
   password: String
   password_not: String
   password_in: [String!]
@@ -255,6 +278,7 @@ input AccountWhereUniqueInput {
   id: ID
   email: String
   username: String
+  usernameLowercase: String
 }
 
 type AggregateAccount {

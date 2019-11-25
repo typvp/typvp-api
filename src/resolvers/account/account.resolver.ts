@@ -34,19 +34,27 @@ export class AccountResolver {
   ): Promise<AuthPayload> {
     try {
       const accountExists = await ctx.prisma.$exists.account({
-        email: input.email,
+        OR: [
+          {
+            email: input.email.toLowerCase(),
+          },
+          {
+            usernameLowercase: input.username.toLowerCase(),
+          },
+        ],
       })
 
       if (accountExists) {
-        throw new Error('Account with email already exists')
+        throw new Error('Email or Username already taken')
       }
 
       const password = await bcrypt.hash(input.password, 10)
 
       const account = await ctx.prisma.createAccount({
-        email: input.email,
+        email: input.email.toLowerCase(),
         password,
         username: input.username,
+        usernameLowercase: input.username.toLowerCase(),
         role: 'USER',
       })
 

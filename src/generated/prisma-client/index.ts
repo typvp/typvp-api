@@ -218,6 +218,8 @@ export type AccountOrderByInput =
   | "email_DESC"
   | "username_ASC"
   | "username_DESC"
+  | "usernameLowercase_ASC"
+  | "usernameLowercase_DESC"
   | "password_ASC"
   | "password_DESC"
   | "role_ASC"
@@ -255,6 +257,7 @@ export type AccountWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
   email?: Maybe<String>;
   username?: Maybe<String>;
+  usernameLowercase?: Maybe<String>;
 }>;
 
 export interface TestWhereInput {
@@ -413,6 +416,20 @@ export interface AccountWhereInput {
   username_not_starts_with?: Maybe<String>;
   username_ends_with?: Maybe<String>;
   username_not_ends_with?: Maybe<String>;
+  usernameLowercase?: Maybe<String>;
+  usernameLowercase_not?: Maybe<String>;
+  usernameLowercase_in?: Maybe<String[] | String>;
+  usernameLowercase_not_in?: Maybe<String[] | String>;
+  usernameLowercase_lt?: Maybe<String>;
+  usernameLowercase_lte?: Maybe<String>;
+  usernameLowercase_gt?: Maybe<String>;
+  usernameLowercase_gte?: Maybe<String>;
+  usernameLowercase_contains?: Maybe<String>;
+  usernameLowercase_not_contains?: Maybe<String>;
+  usernameLowercase_starts_with?: Maybe<String>;
+  usernameLowercase_not_starts_with?: Maybe<String>;
+  usernameLowercase_ends_with?: Maybe<String>;
+  usernameLowercase_not_ends_with?: Maybe<String>;
   password?: Maybe<String>;
   password_not?: Maybe<String>;
   password_in?: Maybe<String[] | String>;
@@ -552,6 +569,7 @@ export interface AccountCreateInput {
   id?: Maybe<ID_Input>;
   email: String;
   username: String;
+  usernameLowercase?: Maybe<String>;
   password: String;
   results?: Maybe<TestCreateManyWithoutAccountInput>;
   role: Role;
@@ -582,6 +600,7 @@ export interface TestCreateWithoutAccountInput {
 export interface AccountUpdateInput {
   email?: Maybe<String>;
   username?: Maybe<String>;
+  usernameLowercase?: Maybe<String>;
   password?: Maybe<String>;
   results?: Maybe<TestUpdateManyWithoutAccountInput>;
   role?: Maybe<Role>;
@@ -749,6 +768,7 @@ export interface TestUpdateManyDataInput {
 export interface AccountUpdateManyMutationInput {
   email?: Maybe<String>;
   username?: Maybe<String>;
+  usernameLowercase?: Maybe<String>;
   password?: Maybe<String>;
   role?: Maybe<Role>;
   lastSeen?: Maybe<Float>;
@@ -778,6 +798,7 @@ export interface AccountCreateWithoutResultsInput {
   id?: Maybe<ID_Input>;
   email: String;
   username: String;
+  usernameLowercase?: Maybe<String>;
   password: String;
   role: Role;
   lastSeen?: Maybe<Float>;
@@ -807,6 +828,7 @@ export interface AccountUpdateOneRequiredWithoutResultsInput {
 export interface AccountUpdateWithoutResultsDataInput {
   email?: Maybe<String>;
   username?: Maybe<String>;
+  usernameLowercase?: Maybe<String>;
   password?: Maybe<String>;
   role?: Maybe<Role>;
   lastSeen?: Maybe<Float>;
@@ -948,6 +970,7 @@ export interface Account {
   updatedAt: DateTimeOutput;
   email: String;
   username: String;
+  usernameLowercase?: String;
   password: String;
   role: Role;
   lastSeen?: Float;
@@ -961,6 +984,7 @@ export interface AccountPromise extends Promise<Account>, Fragmentable {
   updatedAt: () => Promise<DateTimeOutput>;
   email: () => Promise<String>;
   username: () => Promise<String>;
+  usernameLowercase: () => Promise<String>;
   password: () => Promise<String>;
   results: <T = FragmentableArray<Test>>(args?: {
     where?: TestWhereInput;
@@ -985,6 +1009,7 @@ export interface AccountSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   email: () => Promise<AsyncIterator<String>>;
   username: () => Promise<AsyncIterator<String>>;
+  usernameLowercase: () => Promise<AsyncIterator<String>>;
   password: () => Promise<AsyncIterator<String>>;
   results: <T = Promise<AsyncIterator<TestSubscription>>>(args?: {
     where?: TestWhereInput;
@@ -1009,6 +1034,7 @@ export interface AccountNullablePromise
   updatedAt: () => Promise<DateTimeOutput>;
   email: () => Promise<String>;
   username: () => Promise<String>;
+  usernameLowercase: () => Promise<String>;
   password: () => Promise<String>;
   results: <T = FragmentableArray<Test>>(args?: {
     where?: TestWhereInput;
@@ -1395,6 +1421,7 @@ export interface AccountPreviousValues {
   updatedAt: DateTimeOutput;
   email: String;
   username: String;
+  usernameLowercase?: String;
   password: String;
   role: Role;
   lastSeen?: Float;
@@ -1410,6 +1437,7 @@ export interface AccountPreviousValuesPromise
   updatedAt: () => Promise<DateTimeOutput>;
   email: () => Promise<String>;
   username: () => Promise<String>;
+  usernameLowercase: () => Promise<String>;
   password: () => Promise<String>;
   role: () => Promise<Role>;
   lastSeen: () => Promise<Float>;
@@ -1425,6 +1453,7 @@ export interface AccountPreviousValuesSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   email: () => Promise<AsyncIterator<String>>;
   username: () => Promise<AsyncIterator<String>>;
+  usernameLowercase: () => Promise<AsyncIterator<String>>;
   password: () => Promise<AsyncIterator<String>>;
   role: () => Promise<AsyncIterator<Role>>;
   lastSeen: () => Promise<AsyncIterator<Float>>;

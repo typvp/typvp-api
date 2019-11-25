@@ -4,6 +4,7 @@ type Account {
   updatedAt: DateTime! @updatedAt
   email: String! @unique
   username: String! @unique
+  usernameLowercase: String @unique
   password: String!
   results: [Test!] @relation(name: "UsersTests")
   role: Role!

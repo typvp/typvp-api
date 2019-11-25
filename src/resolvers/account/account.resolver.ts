@@ -22,6 +22,7 @@ import {FilterArgs} from '../generic.args'
 import {Account, AuthPayload} from './account.type'
 import {AccountFragment} from '../fragments/AccountFragment'
 import {TestsWithCount} from '../typingTest/test.type'
+import {startEmailConfirmationProcess} from '../../utils/createConfirmEmailLink'
 
 @Resolver(of => Account)
 export class AccountResolver {
@@ -48,6 +49,8 @@ export class AccountResolver {
         username: input.username,
         role: 'USER',
       })
+
+      startEmailConfirmationProcess(account, ctx.req)
 
       return {
         token: jwt.sign({accountId: account.id}, process.env.APP_SECRET),

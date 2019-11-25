@@ -9,6 +9,7 @@ type Account {
   role: Role!
   lastSeen: Float
   lastPlayed: ResultType
+  confirmed: Boolean! @default(value: false)
 }
 
 type Test {
@@ -54,5 +55,6 @@ enum Difficulty {
 enum Role {
   USER
   ADMIN
+  PRO
 }
 

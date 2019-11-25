@@ -179,7 +179,7 @@ export interface ClientConstructor<T> {
  * Types
  */
 
-export type Role = "USER" | "ADMIN";
+export type Role = "USER" | "ADMIN" | "PRO";
 
 export type ResultType = "SINGLEPLAYER" | "RACE" | "TRIAL";
 
@@ -225,7 +225,9 @@ export type AccountOrderByInput =
   | "lastSeen_ASC"
   | "lastSeen_DESC"
   | "lastPlayed_ASC"
-  | "lastPlayed_DESC";
+  | "lastPlayed_DESC"
+  | "confirmed_ASC"
+  | "confirmed_DESC";
 
 export type Difficulty = "EASY" | "NORMAL" | "MEDIUM" | "HARD";
 
@@ -444,6 +446,8 @@ export interface AccountWhereInput {
   lastPlayed_not?: Maybe<ResultType>;
   lastPlayed_in?: Maybe<ResultType[] | ResultType>;
   lastPlayed_not_in?: Maybe<ResultType[] | ResultType>;
+  confirmed?: Maybe<Boolean>;
+  confirmed_not?: Maybe<Boolean>;
   AND?: Maybe<AccountWhereInput[] | AccountWhereInput>;
   OR?: Maybe<AccountWhereInput[] | AccountWhereInput>;
   NOT?: Maybe<AccountWhereInput[] | AccountWhereInput>;
@@ -553,6 +557,7 @@ export interface AccountCreateInput {
   role: Role;
   lastSeen?: Maybe<Float>;
   lastPlayed?: Maybe<ResultType>;
+  confirmed?: Maybe<Boolean>;
 }
 
 export interface TestCreateManyWithoutAccountInput {
@@ -582,6 +587,7 @@ export interface AccountUpdateInput {
   role?: Maybe<Role>;
   lastSeen?: Maybe<Float>;
   lastPlayed?: Maybe<ResultType>;
+  confirmed?: Maybe<Boolean>;
 }
 
 export interface TestUpdateManyWithoutAccountInput {
@@ -747,6 +753,7 @@ export interface AccountUpdateManyMutationInput {
   role?: Maybe<Role>;
   lastSeen?: Maybe<Float>;
   lastPlayed?: Maybe<ResultType>;
+  confirmed?: Maybe<Boolean>;
 }
 
 export interface TestCreateInput {
@@ -775,6 +782,7 @@ export interface AccountCreateWithoutResultsInput {
   role: Role;
   lastSeen?: Maybe<Float>;
   lastPlayed?: Maybe<ResultType>;
+  confirmed?: Maybe<Boolean>;
 }
 
 export interface TestUpdateInput {
@@ -803,6 +811,7 @@ export interface AccountUpdateWithoutResultsDataInput {
   role?: Maybe<Role>;
   lastSeen?: Maybe<Float>;
   lastPlayed?: Maybe<ResultType>;
+  confirmed?: Maybe<Boolean>;
 }
 
 export interface AccountUpsertWithoutResultsInput {
@@ -943,6 +952,7 @@ export interface Account {
   role: Role;
   lastSeen?: Float;
   lastPlayed?: ResultType;
+  confirmed: Boolean;
 }
 
 export interface AccountPromise extends Promise<Account>, Fragmentable {
@@ -964,6 +974,7 @@ export interface AccountPromise extends Promise<Account>, Fragmentable {
   role: () => Promise<Role>;
   lastSeen: () => Promise<Float>;
   lastPlayed: () => Promise<ResultType>;
+  confirmed: () => Promise<Boolean>;
 }
 
 export interface AccountSubscription
@@ -987,6 +998,7 @@ export interface AccountSubscription
   role: () => Promise<AsyncIterator<Role>>;
   lastSeen: () => Promise<AsyncIterator<Float>>;
   lastPlayed: () => Promise<AsyncIterator<ResultType>>;
+  confirmed: () => Promise<AsyncIterator<Boolean>>;
 }
 
 export interface AccountNullablePromise
@@ -1010,6 +1022,7 @@ export interface AccountNullablePromise
   role: () => Promise<Role>;
   lastSeen: () => Promise<Float>;
   lastPlayed: () => Promise<ResultType>;
+  confirmed: () => Promise<Boolean>;
 }
 
 export interface Test {
@@ -1386,6 +1399,7 @@ export interface AccountPreviousValues {
   role: Role;
   lastSeen?: Float;
   lastPlayed?: ResultType;
+  confirmed: Boolean;
 }
 
 export interface AccountPreviousValuesPromise
@@ -1400,6 +1414,7 @@ export interface AccountPreviousValuesPromise
   role: () => Promise<Role>;
   lastSeen: () => Promise<Float>;
   lastPlayed: () => Promise<ResultType>;
+  confirmed: () => Promise<Boolean>;
 }
 
 export interface AccountPreviousValuesSubscription
@@ -1414,6 +1429,7 @@ export interface AccountPreviousValuesSubscription
   role: () => Promise<AsyncIterator<Role>>;
   lastSeen: () => Promise<AsyncIterator<Float>>;
   lastPlayed: () => Promise<AsyncIterator<ResultType>>;
+  confirmed: () => Promise<AsyncIterator<Boolean>>;
 }
 
 export interface TestSubscriptionPayload {

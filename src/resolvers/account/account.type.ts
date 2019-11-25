@@ -4,6 +4,7 @@ import {Test, ResultType} from '../typingTest/test.type'
 export enum Role {
   USER = 'USER',
   ADMIN = 'ADMIN',
+  PRO = 'PRO',
 }
 
 registerEnumType(Role, {
@@ -41,6 +42,9 @@ export class Account {
 
   @Field(type => Int, {nullable: true})
   testCount?: number
+
+  @Field(type => Boolean)
+  confirmed: boolean
 }
 
 @ObjectType()

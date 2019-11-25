@@ -13,6 +13,7 @@ export const typeDefs = /* GraphQL */ `type Account {
   role: Role!
   lastSeen: Float
   lastPlayed: ResultType
+  confirmed: Boolean!
 }
 
 type AccountConnection {
@@ -30,6 +31,7 @@ input AccountCreateInput {
   role: Role!
   lastSeen: Float
   lastPlayed: ResultType
+  confirmed: Boolean
 }
 
 input AccountCreateOneWithoutResultsInput {
@@ -45,6 +47,7 @@ input AccountCreateWithoutResultsInput {
   role: Role!
   lastSeen: Float
   lastPlayed: ResultType
+  confirmed: Boolean
 }
 
 type AccountEdge {
@@ -71,6 +74,8 @@ enum AccountOrderByInput {
   lastSeen_DESC
   lastPlayed_ASC
   lastPlayed_DESC
+  confirmed_ASC
+  confirmed_DESC
 }
 
 type AccountPreviousValues {
@@ -83,6 +88,7 @@ type AccountPreviousValues {
   role: Role!
   lastSeen: Float
   lastPlayed: ResultType
+  confirmed: Boolean!
 }
 
 type AccountSubscriptionPayload {
@@ -111,6 +117,7 @@ input AccountUpdateInput {
   role: Role
   lastSeen: Float
   lastPlayed: ResultType
+  confirmed: Boolean
 }
 
 input AccountUpdateManyMutationInput {
@@ -120,6 +127,7 @@ input AccountUpdateManyMutationInput {
   role: Role
   lastSeen: Float
   lastPlayed: ResultType
+  confirmed: Boolean
 }
 
 input AccountUpdateOneRequiredWithoutResultsInput {
@@ -136,6 +144,7 @@ input AccountUpdateWithoutResultsDataInput {
   role: Role
   lastSeen: Float
   lastPlayed: ResultType
+  confirmed: Boolean
 }
 
 input AccountUpsertWithoutResultsInput {
@@ -235,6 +244,8 @@ input AccountWhereInput {
   lastPlayed_not: ResultType
   lastPlayed_in: [ResultType!]
   lastPlayed_not_in: [ResultType!]
+  confirmed: Boolean
+  confirmed_not: Boolean
   AND: [AccountWhereInput!]
   OR: [AccountWhereInput!]
   NOT: [AccountWhereInput!]
@@ -333,6 +344,7 @@ enum ResultType {
 enum Role {
   USER
   ADMIN
+  PRO
 }
 
 type Subscription {

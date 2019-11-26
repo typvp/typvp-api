@@ -8,6 +8,7 @@ export const AccountFragment = `
     lastPlayed
     updatedAt
     createdAt
+    confirmed
     results {
       id
       cpm

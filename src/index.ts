@@ -19,6 +19,17 @@ export const redis = new Redis(process.env.REDIS_PORT, {
   password: process.env.REDIS_PASSWORD,
 })
 
+const rooms = {
+  room1: {
+    countdown: null,
+    secondsRemaining: 60,
+    acceptUpdates: false,
+    name: 'room1',
+    state: 'waiting',
+    players: {},
+  },
+}
+
 async function bootstrap() {
   const schema = (await buildSchema({
     resolvers: [TrialResolver, AccountResolver, TestResolver],
@@ -71,11 +82,69 @@ async function bootstrap() {
   })
 
   ios.on('connection', (socket: Socket) => {
+    let playerID: string
+    let sendUpdate: boolean = false
     console.log('connection')
-    socket.on('race-find-lobby', data => {
+
+    socket.on('race-matchmake', async data => {
+      // const rooms = await redis.scan(0, 'MATCH', 'room:*')
       console.log(data)
-      const id = data.id
-      ios.emit('race-join-lobby', {id: '12345'})
+      const {id} = data
+      playerID = id
+      socket.join('room1')
+      rooms.room1.players = {...rooms.room1.players, [playerID]: 0}
+      if (Object.keys(rooms.room1.players).length === 2) {
+        rooms.room1.state = 'starting'
+        let seconds = 5
+        const countdown = setInterval(() => {
+          if (seconds === 0) {
+            rooms.room1.countdown = 0
+            rooms.room1.state = 'in-progress'
+            rooms.room1.acceptUpdates = true
+            const duration = setInterval(() => {
+              rooms.room1.secondsRemaining -= 1
+              ios.to('room1').emit('request-race-progress', rooms.room1)
+            }, 1000)
+            setTimeout(() => {
+              rooms.room1.state = 'finished'
+              rooms.room1.acceptUpdates = false
+              ios.to('room1').emit('update', rooms.room1)
+              ios.to('room1').removeAllListeners('room1')
+              clearInterval(duration)
+            }, 60000)
+            clearInterval(countdown)
+            ios.to('room1').emit('update', rooms.room1)
+          } else {
+            rooms.room1.countdown = seconds
+            seconds--
+            ios.to('room1').emit('update', rooms.room1)
+          }
+        }, 1000)
+      }
+
+      ios.to('room1').emit('update', rooms.room1)
+    })
+
+    socket.on('race-progress', data => {
+      console.log(data)
+      rooms.room1.players[playerID] = data.cpm
+      if (sendUpdate) {
+        ios.to('room1').emit('update', rooms.room1)
+        sendUpdate = false
+      }
+      setTimeout(() => {
+        sendUpdate = true
+      }, 1000)
+    })
+
+    socket.on('disconnect', () => {
+      console.log('disconnected')
+      // const newPlayers = rooms.room1.players.filter(
+      //   player => player.playerID !== playerID,
+      // )
+      delete rooms.room1.players[playerID]
+      // rooms.room1.players = [...newPlayers]
+      ios.to('room1').emit('update', rooms.room1)
     })
   })
 

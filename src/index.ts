@@ -6,6 +6,8 @@ import {ApolloServer} from 'apollo-server-express'
 import {buildSchema} from 'type-graphql'
 import {GraphQLSchema} from 'graphql'
 import Redis from 'ioredis'
+import io, {Socket} from 'socket.io'
+import http from 'http'
 
 import {prisma} from './generated/prisma-client'
 import {AuthorizationCheck} from './middleware/Auth'
@@ -54,6 +56,29 @@ async function bootstrap() {
     }
   })
 
+  const socketServer = http.createServer(app)
+  socketServer.listen(8086)
+  const ios = io(socketServer, {
+    handlePreflightRequest: (req, res) => {
+      const headers = {
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        'Access-Control-Allow-Origin': req.headers.origin, //or the specific origin you want to give access to,
+        'Access-Control-Allow-Credentials': true,
+      }
+      res.writeHead(200, headers)
+      res.end()
+    },
+  })
+
+  ios.on('connection', (socket: Socket) => {
+    console.log('connection')
+    socket.on('race-find-lobby', data => {
+      console.log(data)
+      const id = data.id
+      ios.emit('race-join-lobby', {id: '12345'})
+    })
+  })
+
   const server = new ApolloServer({
     subscriptions: {
       path: '/sub',
@@ -62,14 +87,6 @@ async function bootstrap() {
       subscriptionEndpoint: '/sub',
     },
     schema,
-    // cors: {
-    //   credentials: true,
-    //   origin: [
-    //     'https://typvp.xyz',
-    //     'https://next.typvp.xyz',
-    //     'http://localhost:8082',
-    //   ],
-    // },
     context: ({req, res}) => ({
       redis,
       req,
@@ -90,9 +107,7 @@ async function bootstrap() {
     },
     path: '/graphql',
   })
-  // server.listen({port: process.env.PORT}).then(({url}: any) => {
-  //   console.log(`typvp-api has started - ${url}`)
-  // })
+
   app.listen({port: process.env.PORT}, () =>
     console.log(
       `typvp-api has started at http://localhost:${process.env.PORT}/graphql`,

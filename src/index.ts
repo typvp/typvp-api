@@ -15,6 +15,7 @@ import {AuthorizationCheck} from './middleware/Auth'
 import {TrialResolver} from './resolvers/trial/trial.resolver'
 import {AccountResolver} from './resolvers/account/account.resolver'
 import {TestResolver} from './resolvers/typingTest/test.resolver'
+import {generate} from '@typvp/gen'
 
 export const redis = new Redis(process.env.REDIS_PORT, {
   password: process.env.REDIS_PASSWORD,
@@ -115,6 +116,14 @@ async function processQueue() {
 }
 
 async function startRoom(roomUUID: string) {
+  ios.to(`room_${roomUUID}`).emit(
+    'race_send-wordList',
+    generate(250, {
+      minLength: 3,
+      maxLength: 8,
+      join: '|',
+    }) as string,
+  )
   rooms[roomUUID].state = 'starting'
   let seconds = 5
   const countdown = setInterval(() => {
@@ -211,7 +220,7 @@ async function initSocketIO() {
 
     socket.on('race_progress', async data => {
       const info = await redis.hgetall(socket.id)
-      rooms[info.roomId].players[info.id] = data.cpm
+      rooms[info.roomId].players[info.id] = data.wpm
       if (sendUpdate) {
         ios.to(info.roomId).emit('update', rooms[info.roomId])
         sendUpdate = false

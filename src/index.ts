@@ -71,7 +71,7 @@ type TRoom = {
   acceptUpdates: boolean
   name: string
   state: string
-  players: any
+  players: any[]
 }
 
 interface IRoom {
@@ -81,20 +81,23 @@ interface IRoom {
 let rooms: IRoom
 
 const PLAYERS_PER_RACE = 2
-const RACE_DURATION = 60000
+const RACE_DURATION = 61000
+const COUNTDOWN_DURATION_SECONDS = 10
 
 async function processQueue() {
   const queueLength = await redis.llen('queue')
-  console.log(`${queueLength} players in queue `)
+  console.log(`${queueLength} players in queue`)
   if (queueLength >= PLAYERS_PER_RACE) {
     const players = await redis.lrange('queue', 0, PLAYERS_PER_RACE - 1)
-    console.log(players)
-    let playerList = {}
-    players.forEach(async (player: string) => {
-      const playerId = await redis.hget(player, 'id')
-      playerList = {...playerList, [playerId]: 0}
-    })
+    console.log(`lobby created with ids: ${players}`)
     const roomUUID = uuid()
+    let playerList = [] as any
+    for (const player of players) {
+      const playerId = await redis.hget(player, 'id')
+      playerList = [...playerList, {id: playerId, wpm: 0}]
+      await redis.hset(player, 'roomId', roomUUID)
+      ios.sockets.sockets[player].join(`room_${roomUUID}`)
+    }
     rooms = {
       ...rooms,
       [roomUUID]: {
@@ -106,16 +109,35 @@ async function processQueue() {
         players: playerList,
       },
     }
-    players.forEach(async (player: string) => {
-      await redis.hset(player, 'roomId', roomUUID)
-      ios.sockets.sockets[player].join(`room_${roomUUID}`)
-    })
     await redis.ltrim('queue', PLAYERS_PER_RACE, -1)
-    startRoom(roomUUID)
+    startCountdown(roomUUID)
   }
 }
 
-async function startRoom(roomUUID: string) {
+async function startRace(roomUUID: string) {
+  rooms[roomUUID].countdown = 0
+  rooms[roomUUID].state = 'in-progress'
+  rooms[roomUUID].acceptUpdates = true
+  const duration = setInterval(() => {
+    rooms[roomUUID].secondsRemaining -= 1
+    ios.to(`room_${roomUUID}`).emit('race_request-progress', rooms[roomUUID])
+  }, 1000)
+  setTimeout(() => {
+    rooms[roomUUID].state = 'finished'
+    rooms[roomUUID].acceptUpdates = false
+    ios.to(`room_${roomUUID}`).emit('update', rooms[roomUUID])
+    ios.to(`room_${roomUUID}`).clients((_: any, clients: [string]) => {
+      clients.forEach(async socketId => {
+        await redis.hdel(socketId, 'roomId')
+        ios.sockets.sockets[socketId].leave(`room_${roomUUID}`)
+      })
+    })
+    delete rooms[roomUUID]
+    clearInterval(duration)
+  }, RACE_DURATION)
+}
+
+async function startCountdown(roomUUID: string) {
   ios.to(`room_${roomUUID}`).emit(
     'race_send-wordList',
     generate(250, {
@@ -124,38 +146,18 @@ async function startRoom(roomUUID: string) {
       join: '|',
     }) as string,
   )
+
   rooms[roomUUID].state = 'starting'
-  let seconds = 5
-  const countdown = setInterval(() => {
-    if (seconds === 0) {
-      rooms[roomUUID].countdown = 0
-      rooms[roomUUID].state = 'in-progress'
-      rooms[roomUUID].acceptUpdates = true
-      const duration = setInterval(() => {
-        rooms[roomUUID].secondsRemaining -= 1
-        ios
-          .to(`room_${roomUUID}`)
-          .emit('race_request-progress', rooms[roomUUID])
-      }, 1000)
-      setTimeout(() => {
-        rooms[roomUUID].state = 'finished'
-        rooms[roomUUID].acceptUpdates = false
-        ios.to(`room_${roomUUID}`).emit('update', rooms[roomUUID])
-        ios.to(`room_${roomUUID}`).clients((_: any, clients: [string]) => {
-          clients.forEach(async socketId => {
-            await redis.hdel(socketId, 'roomId')
-            ios.sockets.sockets[socketId].leave(`room_${roomUUID}`)
-          })
-        })
-        delete rooms[roomUUID]
-        clearInterval(duration)
-      }, RACE_DURATION)
-      clearInterval(countdown)
-      ios.to(`room_${roomUUID}`).emit('update', rooms[roomUUID])
-    } else {
-      rooms[roomUUID].countdown = seconds
-      seconds--
-      ios.to(`room_${roomUUID}`).emit('update', rooms[roomUUID])
+  let countdown = COUNTDOWN_DURATION_SECONDS
+
+  const countdownInterval = setInterval(() => {
+    rooms[roomUUID].countdown = countdown
+    countdown--
+
+    ios.to(`room_${roomUUID}`).emit('update', rooms[roomUUID])
+    if (countdown === 0) {
+      clearInterval(countdownInterval)
+      startRace(roomUUID)
     }
   }, 1000)
 }
@@ -220,14 +222,17 @@ async function initSocketIO() {
 
     socket.on('race_progress', async data => {
       const info = await redis.hgetall(socket.id)
-      rooms[info.roomId].players[info.id] = data.wpm
-      if (sendUpdate) {
-        ios.to(info.roomId).emit('update', rooms[info.roomId])
-        sendUpdate = false
-      }
-      setTimeout(() => {
-        sendUpdate = true
-      }, 1000)
+      const playerIndex = rooms[info.roomId].players.findIndex(
+        player => player.id === info.id,
+      )
+      rooms[info.roomId].players[playerIndex].wpm = data.wpm
+      // if (sendUpdate) {
+      //   ios.to(`room_${info.roomId}`).emit('update', rooms[info.roomId])
+      //   sendUpdate = false
+      // }
+      // setTimeout(() => {
+      //   sendUpdate = true
+      // }, 1000)
     })
 
     socket.on('disconnect', async () => {

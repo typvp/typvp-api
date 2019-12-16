@@ -9,13 +9,13 @@ import Redis from 'ioredis'
 import io, {Socket} from 'socket.io'
 import http from 'http'
 import uuid from 'uuid'
+import {generate} from '@typvp/gen'
 
 import {prisma} from './generated/prisma-client'
 import {AuthorizationCheck} from './middleware/Auth'
 import {TrialResolver} from './resolvers/trial/trial.resolver'
 import {AccountResolver} from './resolvers/account/account.resolver'
 import {TestResolver} from './resolvers/typingTest/test.resolver'
-import {generate} from '@typvp/gen'
 
 export const redis = new Redis(process.env.REDIS_PORT, {
   password: process.env.REDIS_PASSWORD,
@@ -65,13 +65,21 @@ async function initExpress() {
   })
 }
 
+enum RoomState {
+  'WAITING' = 'WAITING',
+  'IN_PROGRESS' = 'IN_PROGRESS',
+  'FINISHED' = 'FINISHED',
+  'STARTING' = 'STARTING',
+}
+
 type TRoom = {
   countdown: number
   secondsRemaining: number
   acceptUpdates: boolean
   name: string
-  state: string
+  state: RoomState
   players: any[]
+  id: string
 }
 
 interface IRoom {
@@ -80,24 +88,58 @@ interface IRoom {
 
 let rooms: IRoom
 
-const PLAYERS_PER_RACE = 2
+const MAX_PLAYERS_PER_RACE = 4
+const MIN_PLAYER_PER_RACE = 2
 const RACE_DURATION = 61000
 const COUNTDOWN_DURATION_SECONDS = 10
+const QUEUE_WAIT_DURATION = 5000
 
-async function processQueue() {
+async function processQueue2(socketId: Socket['id']) {
   const queueLength = await redis.llen('queue')
   console.log(`${queueLength} players in queue`)
-  if (queueLength >= PLAYERS_PER_RACE) {
-    const players = await redis.lrange('queue', 0, PLAYERS_PER_RACE - 1)
-    console.log(`lobby created with ids: ${players}`)
-    const roomUUID = uuid()
-    let playerList = [] as any
-    for (const player of players) {
-      const playerId = await redis.hget(player, 'id')
-      playerList = [...playerList, {id: playerId, wpm: 0}]
-      await redis.hset(player, 'roomId', roomUUID)
-      ios.sockets.sockets[player].join(`room_${roomUUID}`)
+
+  const playerId = await redis.hget(socketId, 'id')
+
+  let foundRoom: TRoom = null
+  if (rooms) {
+    Object.keys(rooms).forEach(key => {
+      const room = rooms[key]
+      // Find a room that isn't full and is waiting for players
+      if (
+        room.players.length < MAX_PLAYERS_PER_RACE &&
+        room.state === RoomState.WAITING
+      ) {
+        foundRoom = room
+      }
+    })
+  }
+
+  if (foundRoom) {
+    console.log(`found a room, ${foundRoom.id}`)
+    let playerList = [...foundRoom.players, {id: playerId, wpm: 0}]
+    rooms[foundRoom.id].players = playerList
+
+    await redis.hset(socketId, 'roomId', foundRoom.id)
+
+    ios.sockets.sockets[socketId].join(`room_${foundRoom.id}`)
+    ios.to(`room_${foundRoom.id}`).emit('race_room-join', rooms[foundRoom.id])
+
+    if (playerList.length === MAX_PLAYERS_PER_RACE) {
+      startCountdown(foundRoom.id)
+      return
     }
+
+    if (playerList.length >= MIN_PLAYER_PER_RACE) {
+      setTimeout(() => {
+        startCountdown(foundRoom.id)
+      }, QUEUE_WAIT_DURATION)
+    }
+  } else {
+    const roomUUID = uuid()
+    console.log(`didn't find a room. creating. ${roomUUID}`)
+    const playerList = [{id: playerId, wpm: 0}]
+    await redis.hset(socketId, 'roomId', roomUUID)
+    ios.sockets.sockets[socketId].join(`room_${roomUUID}`)
     rooms = {
       ...rooms,
       [roomUUID]: {
@@ -105,25 +147,57 @@ async function processQueue() {
         secondsRemaining: 60,
         acceptUpdates: false,
         name: `room_${roomUUID}`,
-        state: 'waiting',
+        state: RoomState.WAITING,
         players: playerList,
+        id: roomUUID,
       },
     }
-    await redis.ltrim('queue', PLAYERS_PER_RACE, -1)
-    startCountdown(roomUUID)
+    ios.to(`room_${roomUUID}`).emit('race_room-join', rooms[roomUUID])
   }
+  await redis.lrem('queue', 0, socketId)
 }
+
+// async function processQueue() {
+//   const queueLength = await redis.llen('queue')
+//   console.log(`${queueLength} players in queue`)
+//   if (queueLength >= PLAYERS_PER_RACE) {
+//     const players = await redis.lrange('queue', 0, PLAYERS_PER_RACE - 1)
+//     console.log(`lobby created with ids: ${players}`)
+//     const roomUUID = uuid()
+//     let playerList = [] as any
+//     for (const player of players) {
+//       const playerId = await redis.hget(player, 'id')
+//       playerList = [...playerList, {id: playerId, wpm: 0}]
+//       await redis.hset(player, 'roomId', roomUUID)
+//       ios.sockets.sockets[player].join(`room_${roomUUID}`)
+//     }
+//     rooms = {
+//       ...rooms,
+//       [roomUUID]: {
+//         countdown: null,
+//         secondsRemaining: 60,
+//         acceptUpdates: false,
+//         name: `room_${roomUUID}`,
+//         state: RoomState.WAITING,
+//         players: playerList,
+//         id: roomUUID,
+//       },
+//     }
+//     await redis.ltrim('queue', PLAYERS_PER_RACE, -1)
+//     startCountdown(roomUUID)
+//   }
+// }
 
 async function startRace(roomUUID: string) {
   rooms[roomUUID].countdown = 0
-  rooms[roomUUID].state = 'in-progress'
+  rooms[roomUUID].state = RoomState.IN_PROGRESS
   rooms[roomUUID].acceptUpdates = true
   const duration = setInterval(() => {
     rooms[roomUUID].secondsRemaining -= 1
     ios.to(`room_${roomUUID}`).emit('race_request-progress', rooms[roomUUID])
   }, 1000)
   setTimeout(() => {
-    rooms[roomUUID].state = 'finished'
+    rooms[roomUUID].state = RoomState.FINISHED
     rooms[roomUUID].acceptUpdates = false
     ios.to(`room_${roomUUID}`).emit('update', rooms[roomUUID])
     ios.to(`room_${roomUUID}`).clients((_: any, clients: [string]) => {
@@ -147,7 +221,7 @@ async function startCountdown(roomUUID: string) {
     }) as string,
   )
 
-  rooms[roomUUID].state = 'starting'
+  rooms[roomUUID].state = RoomState.STARTING
   let countdown = COUNTDOWN_DURATION_SECONDS
 
   const countdownInterval = setInterval(() => {
@@ -217,7 +291,8 @@ async function initSocketIO() {
       playerID = data.id
       await redis.hset(socket.id, 'id', data.id)
       await redis.rpush('queue', socket.id)
-      processQueue()
+      processQueue2(socket.id)
+      // processQueue()
     })
 
     socket.on('race_progress', async data => {
@@ -243,6 +318,17 @@ async function initSocketIO() {
       // delete rooms.room1.players[playerID]
       // rooms.room1.players = [...newPlayers]
       // ios.to('room1').emit('update', rooms.room1)
+      const info = await redis.hgetall(socket.id)
+      if (info.roomId) {
+        // FIX: This isn't filtering properly
+        const newPlayers = rooms[info.roomId].players.filter(player => {
+          console.log(player.id, info.id)
+          player.id !== info.id
+        })
+        console.log(newPlayers)
+        rooms[info.roomId].players = newPlayers
+        console.log(rooms[info.roomId])
+      }
       await redis.del(socket.id)
       await redis.lrem('queue', 0, socket.id)
       socket.leaveAll()

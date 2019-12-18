@@ -122,7 +122,7 @@ async function processQueue2(socketId: Socket['id']) {
     await redis.hset(socketId, 'roomId', foundRoom.id)
 
     ios.sockets.sockets[socketId].join(`room_${foundRoom.id}`)
-    ios.to(`room_${foundRoom.id}`).emit('race_room-join', rooms[foundRoom.id])
+    ios.to(`room_${foundRoom.id}`).emit('update', rooms[foundRoom.id])
 
     if (playerList.length === MAX_PLAYERS_PER_RACE) {
       startCountdown(foundRoom.id)
@@ -152,7 +152,7 @@ async function processQueue2(socketId: Socket['id']) {
         id: roomUUID,
       },
     }
-    ios.to(`room_${roomUUID}`).emit('race_room-join', rooms[roomUUID])
+    ios.to(`room_${roomUUID}`).emit('update', rooms[roomUUID])
   }
   await redis.lrem('queue', 0, socketId)
 }
@@ -193,22 +193,44 @@ async function startRace(roomUUID: string) {
   rooms[roomUUID].state = RoomState.IN_PROGRESS
   rooms[roomUUID].acceptUpdates = true
   const duration = setInterval(() => {
-    rooms[roomUUID].secondsRemaining -= 1
-    ios.to(`room_${roomUUID}`).emit('race_request-progress', rooms[roomUUID])
-  }, 1000)
-  setTimeout(() => {
-    rooms[roomUUID].state = RoomState.FINISHED
-    rooms[roomUUID].acceptUpdates = false
-    ios.to(`room_${roomUUID}`).emit('update', rooms[roomUUID])
-    ios.to(`room_${roomUUID}`).clients((_: any, clients: [string]) => {
-      clients.forEach(async socketId => {
-        await redis.hdel(socketId, 'roomId')
-        ios.sockets.sockets[socketId].leave(`room_${roomUUID}`)
+    // Exit out early if the room is empty
+    if (rooms[roomUUID].players.length === 0) {
+      clearInterval(duration)
+      return
+      // Clean up if the Race is completed
+    } else if (rooms[roomUUID].secondsRemaining === 0) {
+      clearInterval(duration)
+      rooms[roomUUID].state = RoomState.FINISHED
+      rooms[roomUUID].acceptUpdates = false
+
+      ios.to(`room_${roomUUID}`).emit('update', rooms[roomUUID])
+
+      ios.to(`room_${roomUUID}`).clients(async (_: any, clients: [string]) => {
+        for (const socketId of clients) {
+          await redis.hdel(socketId, 'roomId')
+          ios.sockets.sockets[socketId].leave(`room_${roomUUID}`)
+        }
       })
-    })
-    delete rooms[roomUUID]
-    clearInterval(duration)
-  }, RACE_DURATION)
+      delete rooms[roomUUID]
+      // Otherwise, process the room tick
+    } else {
+      rooms[roomUUID].secondsRemaining -= 1
+      ios.to(`room_${roomUUID}`).emit('race_request-progress', rooms[roomUUID])
+    }
+  }, 1000)
+  // setTimeout(() => {
+  //   rooms[roomUUID].state = RoomState.FINISHED
+  //   rooms[roomUUID].acceptUpdates = false
+  //   ios.to(`room_${roomUUID}`).emit('update', rooms[roomUUID])
+  //   ios.to(`room_${roomUUID}`).clients((_: any, clients: [string]) => {
+  //     clients.forEach(async socketId => {
+  //       await redis.hdel(socketId, 'roomId')
+  //       ios.sockets.sockets[socketId].leave(`room_${roomUUID}`)
+  //     })
+  //   })
+  //   delete rooms[roomUUID]
+  //   clearInterval(duration)
+  // }, RACE_DURATION)
 }
 
 async function startCountdown(roomUUID: string) {
@@ -320,10 +342,9 @@ async function initSocketIO() {
       // ios.to('room1').emit('update', rooms.room1)
       const info = await redis.hgetall(socket.id)
       if (info.roomId) {
-        // FIX: This isn't filtering properly
         const newPlayers = rooms[info.roomId].players.filter(player => {
           console.log(player.id, info.id)
-          player.id !== info.id
+          return player.id !== info.id
         })
         console.log(newPlayers)
         rooms[info.roomId].players = newPlayers

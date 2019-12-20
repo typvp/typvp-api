@@ -10,6 +10,7 @@ import io, {Socket} from 'socket.io'
 import http from 'http'
 import uuid from 'uuid'
 import {generate} from '@typvp/gen'
+import cors from 'cors'
 
 import {prisma} from './generated/prisma-client'
 import {AuthorizationCheck} from './middleware/Auth'
@@ -22,23 +23,32 @@ export const redis = new Redis(process.env.REDIS_PORT, {
 })
 
 const app = express()
-
 const socketServer = http.createServer(app)
 socketServer.listen(8086)
 const ios = io(socketServer, {
-  handlePreflightRequest: (req, res) => {
-    const headers = {
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      'Access-Control-Allow-Origin': req.headers.origin, //or the specific origin you want to give access to,
-      'Access-Control-Allow-Credentials': true,
-    }
-    res.writeHead(200, headers)
-    res.end()
-  },
+  // handlePreflightRequest: (req, res) => {
+  //   const headers = {
+  //     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  //     'Access-Control-Allow-Origin': req.headers.origin, //or the specific origin you want to give access to,
+  //     'Access-Control-Allow-Credentials': true,
+  //   }
+  //   res.writeHead(200, headers)
+  //   res.end()
+  // },
 })
 
 async function initExpress() {
   app.disable('x-powered-by')
+  app.use(
+    cors({
+      credentials: true,
+      origin: [
+        'https://typvp.xyz',
+        'https://next.typvp.xyz',
+        'http://localhost:8082',
+      ],
+    }),
+  )
   app.get('/confirm/:id', async (req, res) => {
     const {id} = req.params
     const userId = await redis.get(id)

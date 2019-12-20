@@ -18,6 +18,7 @@
     "apollo-server-express": "^2.9.12",
     "bcryptjs": "^2.4.3",
     "bull": "^3.12.1",
+    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "ioredis": "^4.14.1",

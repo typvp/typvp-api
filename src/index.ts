@@ -108,7 +108,7 @@ async function processQueue2(socketId: Socket['id']) {
   const queueLength = await redis.llen('queue')
   console.log(`${queueLength} players in queue`)
 
-  const playerId = await redis.hget(socketId, 'id')
+  const {id, name} = await redis.hgetall(socketId)
 
   let foundRoom: TRoom = null
   if (rooms) {
@@ -126,7 +126,7 @@ async function processQueue2(socketId: Socket['id']) {
 
   if (foundRoom) {
     console.log(`found a room, ${foundRoom.id}`)
-    let playerList = [...foundRoom.players, {id: playerId, wpm: 0}]
+    let playerList = [...foundRoom.players, {id, wpm: 0, name}]
     rooms[foundRoom.id].players = playerList
 
     await redis.hset(socketId, 'roomId', foundRoom.id)
@@ -147,7 +147,7 @@ async function processQueue2(socketId: Socket['id']) {
   } else {
     const roomUUID = uuid()
     console.log(`didn't find a room. creating. ${roomUUID}`)
-    const playerList = [{id: playerId, wpm: 0}]
+    const playerList = [{id, wpm: 0, name}]
     await redis.hset(socketId, 'roomId', roomUUID)
     ios.sockets.sockets[socketId].join(`room_${roomUUID}`)
     rooms = {
@@ -321,7 +321,8 @@ async function initSocketIO() {
 
     socket.on('race_queue', async data => {
       playerID = data.id
-      await redis.hset(socket.id, 'id', data.id)
+      // await redis.hset(socket.id, 'id', data.id)
+      redis.hmset(socket.id, ['id', data.id, 'name', data.name])
       await redis.rpush('queue', socket.id)
       processQueue2(socket.id)
       // processQueue()

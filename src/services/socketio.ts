@@ -102,18 +102,15 @@ export async function initSocketIO() {
       lobbies.set(info.lobbyId, lobbyProgressUpdate)
     })
 
-    socket.on('disconnect', async () => {
-      console.log('disconnected')
-
+    socket.on('race_leave', async () => {
       const info = await redis.hgetall(socket.id)
+
       if (info.lobbyId) {
+        console.log(`left lobby: ${info.lobbyId}`)
         const lobby: TLobby = lobbies.get(info.lobbyId)
-        console.log(lobby)
         const newPlayers = lobby.players.filter(player => {
-          console.log(player.id, info.id)
           return player.id !== info.id
         })
-        console.log(newPlayers)
 
         const updatedLobby: TLobby = {
           ...lobby,
@@ -124,6 +121,30 @@ export async function initSocketIO() {
       }
 
       await redis.del(socket.id)
+      await redis.lrem('queue', 0, socket.id)
+      socket.leaveAll()
+    })
+
+    socket.on('disconnect', async () => {
+      console.log('disconnected')
+
+      const info = await redis.hgetall(socket.id)
+      if (info.lobbyId) {
+        const lobby: TLobby = lobbies.get(info.lobbyId)
+        const newPlayers = lobby.players.filter(player => {
+          console.log(player.id, info.id)
+          return player.id !== info.id
+        })
+
+        const updatedLobby: TLobby = {
+          ...lobby,
+          players: newPlayers,
+        }
+
+        lobbies.set(info.lobbyId, updatedLobby)
+      }
+
+      await redis.hdel(socket.id, 'lobbyId')
       await redis.lrem('queue', 0, socket.id)
       socket.leaveAll()
       socket.removeAllListeners()

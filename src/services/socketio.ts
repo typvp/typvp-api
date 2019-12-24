@@ -6,6 +6,12 @@ import {socketServer} from './express'
 import {redis} from './redis'
 import {LobbyState, TLobby} from '../types'
 import {processQueue} from './socketio/processQueue'
+import {startCountdown} from './socketio/startCountdown'
+import {
+  MAX_PLAYERS_PER_RACE,
+  MIN_PLAYER_PER_RACE,
+  QUEUE_WAIT_DURATION,
+} from './socketio/'
 
 export const lobbies = lru(100)
 
@@ -37,6 +43,47 @@ export async function initSocketIO() {
       await redis.rpush('queue', socket.id)
 
       processQueue(socket.id)
+    })
+
+    socket.on('race_join-lobby', async data => {
+      const {lobbyId, id, name} = data
+      console.log(`joining specific lobby ${lobbyId}`)
+
+      redis.hmset(socket.id, ['id', data.id, 'name', data.name])
+
+      const lobbyToJoin: TLobby = lobbies.get(lobbyId)
+      if (lobbyToJoin) {
+        if (
+          lobbyToJoin.players.length < MAX_PLAYERS_PER_RACE &&
+          lobbyToJoin.state === LobbyState.WAITING
+        ) {
+          console.log('lobby to join is valid')
+          const playerList = [...lobbyToJoin.players, {id, wpm: 0, name}]
+
+          const newLobby = {...lobbyToJoin, players: playerList}
+
+          console.log(newLobby)
+          lobbies.set(lobbyToJoin.id, newLobby)
+
+          await redis.hset(socket.id, 'lobbyId', lobbyToJoin.id)
+
+          ios.sockets.sockets[socket.id].join(`lobby_${lobbyToJoin.id}`)
+          ios
+            .to(`lobby_${lobbyToJoin.id}`)
+            .emit('update', lobbies.get(lobbyToJoin.id))
+
+          if (playerList.length === MAX_PLAYERS_PER_RACE) {
+            startCountdown(lobbyToJoin.id)
+            return
+          }
+
+          if (playerList.length >= MIN_PLAYER_PER_RACE) {
+            setTimeout(() => {
+              startCountdown(lobbyToJoin.id)
+            }, QUEUE_WAIT_DURATION)
+          }
+        }
+      }
     })
 
     socket.on('race_progress', async data => {

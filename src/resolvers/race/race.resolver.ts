@@ -1,6 +1,5 @@
 import {Resolver, UseMiddleware, Query} from 'type-graphql'
 
-import {LogAccess} from '../../middleware/Log'
 import {lobbies} from '../../services/socketio'
 import {Lobby} from './race.type'
 import {TLobby} from '../../types'
@@ -8,7 +7,6 @@ import {TLobby} from '../../types'
 @Resolver()
 export class RaceResolver {
   @Query(returns => [Lobby])
-  @UseMiddleware(LogAccess)
   lobbies() {
     const lobbyKeys = lobbies.keys()
     let defaultLobbys: TLobby[] = []

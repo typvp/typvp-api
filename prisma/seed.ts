@@ -5,26 +5,13 @@ dotenv.config()
 import {prisma} from '../src/generated/prisma-client'
 
 async function main() {
-  await prisma.createAccount({
-    email: 'em@k.com',
-    username: 'Evan',
-    password: '$2b$10$dqyYw5XovLjpmkYNiRDEWuwKaRAvLaG45fnXE5b3KTccKZcRPka2m', // "secret42"
-    role: 'ADMIN',
-  })
-  await prisma.createAccount({
-    email: 'bob@prisma.io',
-    username: 'Bob',
-    password: '$2b$10$o6KioO.taArzboM44Ig85O3ZFZYZpR3XD7mI8T29eP4znU/.xyJbW', // "secret43"
-    role: 'USER',
-  })
-
   const normalSet1 = generate(250, {
     minLength: 3,
     maxLength: 8,
     join: '|',
   }) as string
   await prisma.createTrial({
-    name: 'typvp Standard Trail 1',
+    name: 'typvp Standard Trial 1',
     wordSet: normalSet1,
     minWordLength: 3,
     maxWordLength: 8,
@@ -37,7 +24,7 @@ async function main() {
     join: '|',
   }) as string
   await prisma.createTrial({
-    name: 'typvp Standard Trail 2',
+    name: 'typvp Standard Trial 2',
     wordSet: normalSet2,
     minWordLength: 3,
     maxWordLength: 8,
@@ -50,7 +37,7 @@ async function main() {
     join: '|',
   }) as string
   await prisma.createTrial({
-    name: 'typvp Standard Trail 3',
+    name: 'typvp Standard Trial 3',
     wordSet: normalSet3,
     minWordLength: 3,
     maxWordLength: 8,

@@ -14,7 +14,7 @@
     "stop:docker": "cross-env docker-compose -f 'prisma/docker-compose.yml' down"
   },
   "dependencies": {
-    "@typvp/gen": "^0.2.2",
+    "@typvp/gen": "^0.2.3",
     "apollo-server-express": "^2.9.12",
     "bcryptjs": "^2.4.3",
     "bull": "^3.12.1",

@@ -355,10 +355,10 @@
   dependencies:
     "@types/node" "*"
 
-"@typvp/gen@^0.2.2":
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/@typvp/gen/-/gen-0.2.2.tgz#fbedbb5e3739ce6f88cf970d2c96699e34f16936"
-  integrity sha512-IDIL/qdCzNhU0tQYR510Zm1Ffwmlf7D6N25BUBVC1DoN2mRFWJ0pwWAMIUUUd7KhHLN4sEUtx/0bHsUdiE0i1w==
+"@typvp/gen@^0.2.3":
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/@typvp/gen/-/gen-0.2.3.tgz#82561fc70cf87afc4d01d9b44ec1477b9def551c"
+  integrity sha512-aPeNkLvfy545Mv9YXNjhR2+TnqFuuPfSPJmlui4BhZstQFcbkmNUcaCv1i66n8RWNjFB61iUmSCQAu3W+yOCRA==
 
 "@wry/equality@^0.1.2":
   version "0.1.9"

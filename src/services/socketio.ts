@@ -120,7 +120,7 @@ export async function initSocketIO() {
         lobbies.set(info.lobbyId, updatedLobby)
       }
 
-      await redis.del(socket.id)
+      await redis.hdel(socket.id, 'lobbyId')
       await redis.lrem('queue', 0, socket.id)
       socket.leaveAll()
     })
@@ -144,7 +144,7 @@ export async function initSocketIO() {
         lobbies.set(info.lobbyId, updatedLobby)
       }
 
-      await redis.hdel(socket.id, 'lobbyId')
+      await redis.del(socket.id)
       await redis.lrem('queue', 0, socket.id)
       socket.leaveAll()
       socket.removeAllListeners()

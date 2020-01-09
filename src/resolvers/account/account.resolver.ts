@@ -58,7 +58,9 @@ export class AccountResolver {
         role: 'USER',
       })
 
-      startEmailConfirmationProcess(account, ctx.req)
+      if (process.env.NODE_ENV === 'production') {
+        startEmailConfirmationProcess(account, ctx.req)
+      }
 
       return {
         token: jwt.sign({accountId: account.id}, process.env.APP_SECRET),

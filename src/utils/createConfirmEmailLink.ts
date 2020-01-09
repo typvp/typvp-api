@@ -1,7 +1,7 @@
 import {v4} from 'uuid'
 
 import {confirmEmailQueue} from './bull'
-import {redis} from '..'
+import {redis} from '../services/redis'
 import {Account} from '../resolvers/account/account.type'
 
 export const startEmailConfirmationProcess = async (

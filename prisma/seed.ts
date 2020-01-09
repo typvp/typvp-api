@@ -5,6 +5,19 @@ dotenv.config()
 import {prisma} from '../src/generated/prisma-client'
 
 async function main() {
+  const easySet1 = generate(250, {
+    minLength: 3,
+    maxLength: 5,
+    join: '|',
+  }) as string
+  await prisma.createTrial({
+    name: 'typvp Easy Trial 1',
+    wordSet: easySet1,
+    minWordLength: 3,
+    maxWordLength: 5,
+    difficulty: 'EASY',
+  })
+
   const normalSet1 = generate(250, {
     minLength: 3,
     maxLength: 8,
@@ -42,19 +55,6 @@ async function main() {
     minWordLength: 3,
     maxWordLength: 8,
     difficulty: 'NORMAL',
-  })
-
-  const easySet1 = generate(250, {
-    minLength: 3,
-    maxLength: 5,
-    join: '|',
-  }) as string
-  await prisma.createTrial({
-    name: 'typvp Easy Trial 1',
-    wordSet: easySet1,
-    minWordLength: 3,
-    maxWordLength: 5,
-    difficulty: 'EASY',
   })
 
   const mediumSet1 = generate(250, {

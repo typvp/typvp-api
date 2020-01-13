@@ -21,8 +21,15 @@ export type TLobby = {
   acceptUpdates: boolean
   name: string
   state: LobbyState
-  players: any[]
+  players: RacePlayer[]
   id: string
+}
+
+export type RacePlayer = {
+  wpm: number
+  color?: string
+  id: string
+  name: string
 }
 
 export interface ILobby {

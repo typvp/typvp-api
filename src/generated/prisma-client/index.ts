@@ -229,7 +229,9 @@ export type AccountOrderByInput =
   | "lastPlayed_ASC"
   | "lastPlayed_DESC"
   | "confirmed_ASC"
-  | "confirmed_DESC";
+  | "confirmed_DESC"
+  | "color_ASC"
+  | "color_DESC";
 
 export type Difficulty = "EASY" | "NORMAL" | "MEDIUM" | "HARD";
 
@@ -465,6 +467,20 @@ export interface AccountWhereInput {
   lastPlayed_not_in?: Maybe<ResultType[] | ResultType>;
   confirmed?: Maybe<Boolean>;
   confirmed_not?: Maybe<Boolean>;
+  color?: Maybe<String>;
+  color_not?: Maybe<String>;
+  color_in?: Maybe<String[] | String>;
+  color_not_in?: Maybe<String[] | String>;
+  color_lt?: Maybe<String>;
+  color_lte?: Maybe<String>;
+  color_gt?: Maybe<String>;
+  color_gte?: Maybe<String>;
+  color_contains?: Maybe<String>;
+  color_not_contains?: Maybe<String>;
+  color_starts_with?: Maybe<String>;
+  color_not_starts_with?: Maybe<String>;
+  color_ends_with?: Maybe<String>;
+  color_not_ends_with?: Maybe<String>;
   AND?: Maybe<AccountWhereInput[] | AccountWhereInput>;
   OR?: Maybe<AccountWhereInput[] | AccountWhereInput>;
   NOT?: Maybe<AccountWhereInput[] | AccountWhereInput>;
@@ -576,6 +592,7 @@ export interface AccountCreateInput {
   lastSeen?: Maybe<Float>;
   lastPlayed?: Maybe<ResultType>;
   confirmed?: Maybe<Boolean>;
+  color?: Maybe<String>;
 }
 
 export interface TestCreateManyWithoutAccountInput {
@@ -607,6 +624,7 @@ export interface AccountUpdateInput {
   lastSeen?: Maybe<Float>;
   lastPlayed?: Maybe<ResultType>;
   confirmed?: Maybe<Boolean>;
+  color?: Maybe<String>;
 }
 
 export interface TestUpdateManyWithoutAccountInput {
@@ -774,6 +792,7 @@ export interface AccountUpdateManyMutationInput {
   lastSeen?: Maybe<Float>;
   lastPlayed?: Maybe<ResultType>;
   confirmed?: Maybe<Boolean>;
+  color?: Maybe<String>;
 }
 
 export interface TestCreateInput {
@@ -804,6 +823,7 @@ export interface AccountCreateWithoutResultsInput {
   lastSeen?: Maybe<Float>;
   lastPlayed?: Maybe<ResultType>;
   confirmed?: Maybe<Boolean>;
+  color?: Maybe<String>;
 }
 
 export interface TestUpdateInput {
@@ -834,6 +854,7 @@ export interface AccountUpdateWithoutResultsDataInput {
   lastSeen?: Maybe<Float>;
   lastPlayed?: Maybe<ResultType>;
   confirmed?: Maybe<Boolean>;
+  color?: Maybe<String>;
 }
 
 export interface AccountUpsertWithoutResultsInput {
@@ -976,6 +997,7 @@ export interface Account {
   lastSeen?: Float;
   lastPlayed?: ResultType;
   confirmed: Boolean;
+  color?: String;
 }
 
 export interface AccountPromise extends Promise<Account>, Fragmentable {
@@ -999,6 +1021,7 @@ export interface AccountPromise extends Promise<Account>, Fragmentable {
   lastSeen: () => Promise<Float>;
   lastPlayed: () => Promise<ResultType>;
   confirmed: () => Promise<Boolean>;
+  color: () => Promise<String>;
 }
 
 export interface AccountSubscription
@@ -1024,6 +1047,7 @@ export interface AccountSubscription
   lastSeen: () => Promise<AsyncIterator<Float>>;
   lastPlayed: () => Promise<AsyncIterator<ResultType>>;
   confirmed: () => Promise<AsyncIterator<Boolean>>;
+  color: () => Promise<AsyncIterator<String>>;
 }
 
 export interface AccountNullablePromise
@@ -1049,6 +1073,7 @@ export interface AccountNullablePromise
   lastSeen: () => Promise<Float>;
   lastPlayed: () => Promise<ResultType>;
   confirmed: () => Promise<Boolean>;
+  color: () => Promise<String>;
 }
 
 export interface Test {
@@ -1427,6 +1452,7 @@ export interface AccountPreviousValues {
   lastSeen?: Float;
   lastPlayed?: ResultType;
   confirmed: Boolean;
+  color?: String;
 }
 
 export interface AccountPreviousValuesPromise
@@ -1443,6 +1469,7 @@ export interface AccountPreviousValuesPromise
   lastSeen: () => Promise<Float>;
   lastPlayed: () => Promise<ResultType>;
   confirmed: () => Promise<Boolean>;
+  color: () => Promise<String>;
 }
 
 export interface AccountPreviousValuesSubscription
@@ -1459,6 +1486,7 @@ export interface AccountPreviousValuesSubscription
   lastSeen: () => Promise<AsyncIterator<Float>>;
   lastPlayed: () => Promise<AsyncIterator<ResultType>>;
   confirmed: () => Promise<AsyncIterator<Boolean>>;
+  color: () => Promise<AsyncIterator<String>>;
 }
 
 export interface TestSubscriptionPayload {

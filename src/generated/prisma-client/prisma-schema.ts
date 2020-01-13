@@ -15,6 +15,7 @@ export const typeDefs = /* GraphQL */ `type Account {
   lastSeen: Float
   lastPlayed: ResultType
   confirmed: Boolean!
+  color: String
 }
 
 type AccountConnection {
@@ -34,6 +35,7 @@ input AccountCreateInput {
   lastSeen: Float
   lastPlayed: ResultType
   confirmed: Boolean
+  color: String
 }
 
 input AccountCreateOneWithoutResultsInput {
@@ -51,6 +53,7 @@ input AccountCreateWithoutResultsInput {
   lastSeen: Float
   lastPlayed: ResultType
   confirmed: Boolean
+  color: String
 }
 
 type AccountEdge {
@@ -81,6 +84,8 @@ enum AccountOrderByInput {
   lastPlayed_DESC
   confirmed_ASC
   confirmed_DESC
+  color_ASC
+  color_DESC
 }
 
 type AccountPreviousValues {
@@ -95,6 +100,7 @@ type AccountPreviousValues {
   lastSeen: Float
   lastPlayed: ResultType
   confirmed: Boolean!
+  color: String
 }
 
 type AccountSubscriptionPayload {
@@ -125,6 +131,7 @@ input AccountUpdateInput {
   lastSeen: Float
   lastPlayed: ResultType
   confirmed: Boolean
+  color: String
 }
 
 input AccountUpdateManyMutationInput {
@@ -136,6 +143,7 @@ input AccountUpdateManyMutationInput {
   lastSeen: Float
   lastPlayed: ResultType
   confirmed: Boolean
+  color: String
 }
 
 input AccountUpdateOneRequiredWithoutResultsInput {
@@ -154,6 +162,7 @@ input AccountUpdateWithoutResultsDataInput {
   lastSeen: Float
   lastPlayed: ResultType
   confirmed: Boolean
+  color: String
 }
 
 input AccountUpsertWithoutResultsInput {
@@ -269,6 +278,20 @@ input AccountWhereInput {
   lastPlayed_not_in: [ResultType!]
   confirmed: Boolean
   confirmed_not: Boolean
+  color: String
+  color_not: String
+  color_in: [String!]
+  color_not_in: [String!]
+  color_lt: String
+  color_lte: String
+  color_gt: String
+  color_gte: String
+  color_contains: String
+  color_not_contains: String
+  color_starts_with: String
+  color_not_starts_with: String
+  color_ends_with: String
+  color_not_ends_with: String
   AND: [AccountWhereInput!]
   OR: [AccountWhereInput!]
   NOT: [AccountWhereInput!]

@@ -78,7 +78,9 @@ export class AccountResolver {
     @Ctx() ctx: Context,
   ): Promise<AuthPayload> {
     try {
-      const account = await ctx.prisma.account({username: input.username})
+      const account = await ctx.prisma.account({
+        usernameLowercase: input.username.toLowerCase(),
+      })
 
       if (!account) {
         throw new Error(
@@ -148,6 +150,21 @@ export class AccountResolver {
       },
       data: {
         lastSeen: Date.now(),
+      },
+    })
+  }
+
+  @Mutation(returns => Boolean)
+  @UseMiddleware(IsAuthenticated, LogAccess)
+  async updateAccountColor(
+    @Arg('color', type => String) color: string,
+    @Ctx() ctx: Context,
+  ): Promise<Account> {
+    const id = getAccountId(ctx) as string
+    return await ctx.prisma.updateAccount({
+      where: {id},
+      data: {
+        color,
       },
     })
   }

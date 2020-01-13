@@ -11,6 +11,7 @@ type Account {
   lastSeen: Float
   lastPlayed: ResultType
   confirmed: Boolean! @default(value: false)
+  color: String
 }
 
 type Test {

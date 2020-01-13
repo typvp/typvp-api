@@ -154,7 +154,7 @@ export class AccountResolver {
     })
   }
 
-  @Mutation(returns => Boolean)
+  @Mutation(returns => Account)
   @UseMiddleware(IsAuthenticated, LogAccess)
   async updateAccountColor(
     @Arg('color', type => String) color: string,

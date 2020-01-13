@@ -56,5 +56,8 @@ export class TestsWithCount {
   results: Test[]
 
   @Field(type => Int)
-  testCount: number
+  allTestCount: number
+
+  @Field(type => Int)
+  filteredTestCount: number
 }

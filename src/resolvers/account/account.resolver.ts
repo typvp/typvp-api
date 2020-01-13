@@ -21,7 +21,7 @@ import {AccountSignupInput, AccountLoginInput} from './account.input'
 import {FilterArgs} from '../generic.args'
 import {Account, AuthPayload} from './account.type'
 import {AccountFragment} from '../fragments/AccountFragment'
-import {TestsWithCount} from '../typingTest/test.type'
+import {TestsWithCount, ResultType} from '../typingTest/test.type'
 import {startEmailConfirmationProcess} from '../../utils/createConfirmEmailLink'
 
 @Resolver(of => Account)
@@ -136,7 +136,12 @@ export class AccountResolver {
     })
     return {
       results,
-      testCount: await this.testCount({id} as Account, ctx),
+      allTestCount: await this.testCount({id} as Account, ctx),
+      filteredTestCount: await this.testCount(
+        {id} as Account,
+        ctx,
+        filter.type,
+      ),
     }
   }
 
@@ -170,13 +175,18 @@ export class AccountResolver {
   }
 
   @FieldResolver(returns => Int)
-  async testCount(@Root() account: Account, @Ctx() ctx: Context) {
+  async testCount(
+    @Root() account: Account,
+    @Ctx() ctx: Context,
+    filter?: ResultType,
+  ) {
     const {count} = await ctx.prisma
       .testsConnection({
         where: {
           account: {
             id: account.id,
           },
+          type_in: filter ? [filter] : ['SINGLEPLAYER', 'TRIAL'],
         },
       })
       .aggregate()

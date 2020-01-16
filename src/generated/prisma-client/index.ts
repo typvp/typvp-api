@@ -183,6 +183,8 @@ export type Role = "USER" | "ADMIN" | "PRO";
 
 export type ResultType = "SINGLEPLAYER" | "RACE" | "TRIAL";
 
+export type Difficulty = "EASY" | "NORMAL" | "MEDIUM" | "HARD";
+
 export type TestOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -207,6 +209,28 @@ export type TestOrderByInput =
   | "type_ASC"
   | "type_DESC";
 
+export type TrialOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC"
+  | "wordSet_ASC"
+  | "wordSet_DESC"
+  | "name_ASC"
+  | "name_DESC"
+  | "difficulty_ASC"
+  | "difficulty_DESC"
+  | "minWordLength_ASC"
+  | "minWordLength_DESC"
+  | "maxWordLength_ASC"
+  | "maxWordLength_DESC"
+  | "custom_ASC"
+  | "custom_DESC"
+  | "private_ASC"
+  | "private_DESC";
+
 export type AccountOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -230,26 +254,6 @@ export type AccountOrderByInput =
   | "lastPlayed_DESC"
   | "confirmed_ASC"
   | "confirmed_DESC";
-
-export type Difficulty = "EASY" | "NORMAL" | "MEDIUM" | "HARD";
-
-export type TrialOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC"
-  | "wordSet_ASC"
-  | "wordSet_DESC"
-  | "name_ASC"
-  | "name_DESC"
-  | "difficulty_ASC"
-  | "difficulty_DESC"
-  | "minWordLength_ASC"
-  | "minWordLength_DESC"
-  | "maxWordLength_ASC"
-  | "maxWordLength_DESC";
 
 export type MutationType = "CREATED" | "UPDATED" | "DELETED";
 
@@ -465,18 +469,13 @@ export interface AccountWhereInput {
   lastPlayed_not_in?: Maybe<ResultType[] | ResultType>;
   confirmed?: Maybe<Boolean>;
   confirmed_not?: Maybe<Boolean>;
+  personalTrials_every?: Maybe<TrialWhereInput>;
+  personalTrials_some?: Maybe<TrialWhereInput>;
+  personalTrials_none?: Maybe<TrialWhereInput>;
   AND?: Maybe<AccountWhereInput[] | AccountWhereInput>;
   OR?: Maybe<AccountWhereInput[] | AccountWhereInput>;
   NOT?: Maybe<AccountWhereInput[] | AccountWhereInput>;
 }
-
-export type TestWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-}>;
-
-export type TrialWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-}>;
 
 export interface TrialWhereInput {
   id?: Maybe<ID_Input>;
@@ -560,10 +559,23 @@ export interface TrialWhereInput {
   maxWordLength_lte?: Maybe<Int>;
   maxWordLength_gt?: Maybe<Int>;
   maxWordLength_gte?: Maybe<Int>;
+  custom?: Maybe<Boolean>;
+  custom_not?: Maybe<Boolean>;
+  private?: Maybe<Boolean>;
+  private_not?: Maybe<Boolean>;
+  owner?: Maybe<AccountWhereInput>;
   AND?: Maybe<TrialWhereInput[] | TrialWhereInput>;
   OR?: Maybe<TrialWhereInput[] | TrialWhereInput>;
   NOT?: Maybe<TrialWhereInput[] | TrialWhereInput>;
 }
+
+export type TestWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export type TrialWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
 
 export interface AccountCreateInput {
   id?: Maybe<ID_Input>;
@@ -576,6 +588,7 @@ export interface AccountCreateInput {
   lastSeen?: Maybe<Float>;
   lastPlayed?: Maybe<ResultType>;
   confirmed?: Maybe<Boolean>;
+  personalTrials?: Maybe<TrialCreateManyWithoutOwnerInput>;
 }
 
 export interface TestCreateManyWithoutAccountInput {
@@ -597,6 +610,59 @@ export interface TestCreateWithoutAccountInput {
   type: ResultType;
 }
 
+export interface TrialCreateManyWithoutOwnerInput {
+  create?: Maybe<TrialCreateWithoutOwnerInput[] | TrialCreateWithoutOwnerInput>;
+  connect?: Maybe<TrialWhereUniqueInput[] | TrialWhereUniqueInput>;
+}
+
+export interface TrialCreateWithoutOwnerInput {
+  id?: Maybe<ID_Input>;
+  results?: Maybe<TestCreateManyInput>;
+  wordSet: String;
+  name: String;
+  difficulty?: Maybe<Difficulty>;
+  minWordLength?: Maybe<Int>;
+  maxWordLength?: Maybe<Int>;
+  custom?: Maybe<Boolean>;
+  private?: Maybe<Boolean>;
+}
+
+export interface TestCreateManyInput {
+  create?: Maybe<TestCreateInput[] | TestCreateInput>;
+  connect?: Maybe<TestWhereUniqueInput[] | TestWhereUniqueInput>;
+}
+
+export interface TestCreateInput {
+  id?: Maybe<ID_Input>;
+  cpm: Int;
+  rawCpm: Int;
+  wpm: Int;
+  correct: Int;
+  incorrect: Int;
+  corrections: Int;
+  wordIndex: Int;
+  account: AccountCreateOneWithoutResultsInput;
+  type: ResultType;
+}
+
+export interface AccountCreateOneWithoutResultsInput {
+  create?: Maybe<AccountCreateWithoutResultsInput>;
+  connect?: Maybe<AccountWhereUniqueInput>;
+}
+
+export interface AccountCreateWithoutResultsInput {
+  id?: Maybe<ID_Input>;
+  email: String;
+  username: String;
+  usernameLowercase?: Maybe<String>;
+  password: String;
+  role: Role;
+  lastSeen?: Maybe<Float>;
+  lastPlayed?: Maybe<ResultType>;
+  confirmed?: Maybe<Boolean>;
+  personalTrials?: Maybe<TrialCreateManyWithoutOwnerInput>;
+}
+
 export interface AccountUpdateInput {
   email?: Maybe<String>;
   username?: Maybe<String>;
@@ -607,6 +673,7 @@ export interface AccountUpdateInput {
   lastSeen?: Maybe<Float>;
   lastPlayed?: Maybe<ResultType>;
   confirmed?: Maybe<Boolean>;
+  personalTrials?: Maybe<TrialUpdateManyWithoutOwnerInput>;
 }
 
 export interface TestUpdateManyWithoutAccountInput {
@@ -765,115 +832,40 @@ export interface TestUpdateManyDataInput {
   type?: Maybe<ResultType>;
 }
 
-export interface AccountUpdateManyMutationInput {
-  email?: Maybe<String>;
-  username?: Maybe<String>;
-  usernameLowercase?: Maybe<String>;
-  password?: Maybe<String>;
-  role?: Maybe<Role>;
-  lastSeen?: Maybe<Float>;
-  lastPlayed?: Maybe<ResultType>;
-  confirmed?: Maybe<Boolean>;
+export interface TrialUpdateManyWithoutOwnerInput {
+  create?: Maybe<TrialCreateWithoutOwnerInput[] | TrialCreateWithoutOwnerInput>;
+  delete?: Maybe<TrialWhereUniqueInput[] | TrialWhereUniqueInput>;
+  connect?: Maybe<TrialWhereUniqueInput[] | TrialWhereUniqueInput>;
+  set?: Maybe<TrialWhereUniqueInput[] | TrialWhereUniqueInput>;
+  disconnect?: Maybe<TrialWhereUniqueInput[] | TrialWhereUniqueInput>;
+  update?: Maybe<
+    | TrialUpdateWithWhereUniqueWithoutOwnerInput[]
+    | TrialUpdateWithWhereUniqueWithoutOwnerInput
+  >;
+  upsert?: Maybe<
+    | TrialUpsertWithWhereUniqueWithoutOwnerInput[]
+    | TrialUpsertWithWhereUniqueWithoutOwnerInput
+  >;
+  deleteMany?: Maybe<TrialScalarWhereInput[] | TrialScalarWhereInput>;
+  updateMany?: Maybe<
+    TrialUpdateManyWithWhereNestedInput[] | TrialUpdateManyWithWhereNestedInput
+  >;
 }
 
-export interface TestCreateInput {
-  id?: Maybe<ID_Input>;
-  cpm: Int;
-  rawCpm: Int;
-  wpm: Int;
-  correct: Int;
-  incorrect: Int;
-  corrections: Int;
-  wordIndex: Int;
-  account: AccountCreateOneWithoutResultsInput;
-  type: ResultType;
+export interface TrialUpdateWithWhereUniqueWithoutOwnerInput {
+  where: TrialWhereUniqueInput;
+  data: TrialUpdateWithoutOwnerDataInput;
 }
 
-export interface AccountCreateOneWithoutResultsInput {
-  create?: Maybe<AccountCreateWithoutResultsInput>;
-  connect?: Maybe<AccountWhereUniqueInput>;
-}
-
-export interface AccountCreateWithoutResultsInput {
-  id?: Maybe<ID_Input>;
-  email: String;
-  username: String;
-  usernameLowercase?: Maybe<String>;
-  password: String;
-  role: Role;
-  lastSeen?: Maybe<Float>;
-  lastPlayed?: Maybe<ResultType>;
-  confirmed?: Maybe<Boolean>;
-}
-
-export interface TestUpdateInput {
-  cpm?: Maybe<Int>;
-  rawCpm?: Maybe<Int>;
-  wpm?: Maybe<Int>;
-  correct?: Maybe<Int>;
-  incorrect?: Maybe<Int>;
-  corrections?: Maybe<Int>;
-  wordIndex?: Maybe<Int>;
-  account?: Maybe<AccountUpdateOneRequiredWithoutResultsInput>;
-  type?: Maybe<ResultType>;
-}
-
-export interface AccountUpdateOneRequiredWithoutResultsInput {
-  create?: Maybe<AccountCreateWithoutResultsInput>;
-  update?: Maybe<AccountUpdateWithoutResultsDataInput>;
-  upsert?: Maybe<AccountUpsertWithoutResultsInput>;
-  connect?: Maybe<AccountWhereUniqueInput>;
-}
-
-export interface AccountUpdateWithoutResultsDataInput {
-  email?: Maybe<String>;
-  username?: Maybe<String>;
-  usernameLowercase?: Maybe<String>;
-  password?: Maybe<String>;
-  role?: Maybe<Role>;
-  lastSeen?: Maybe<Float>;
-  lastPlayed?: Maybe<ResultType>;
-  confirmed?: Maybe<Boolean>;
-}
-
-export interface AccountUpsertWithoutResultsInput {
-  update: AccountUpdateWithoutResultsDataInput;
-  create: AccountCreateWithoutResultsInput;
-}
-
-export interface TestUpdateManyMutationInput {
-  cpm?: Maybe<Int>;
-  rawCpm?: Maybe<Int>;
-  wpm?: Maybe<Int>;
-  correct?: Maybe<Int>;
-  incorrect?: Maybe<Int>;
-  corrections?: Maybe<Int>;
-  wordIndex?: Maybe<Int>;
-  type?: Maybe<ResultType>;
-}
-
-export interface TrialCreateInput {
-  id?: Maybe<ID_Input>;
-  results?: Maybe<TestCreateManyInput>;
-  wordSet: String;
-  name: String;
-  difficulty?: Maybe<Difficulty>;
-  minWordLength?: Maybe<Int>;
-  maxWordLength?: Maybe<Int>;
-}
-
-export interface TestCreateManyInput {
-  create?: Maybe<TestCreateInput[] | TestCreateInput>;
-  connect?: Maybe<TestWhereUniqueInput[] | TestWhereUniqueInput>;
-}
-
-export interface TrialUpdateInput {
+export interface TrialUpdateWithoutOwnerDataInput {
   results?: Maybe<TestUpdateManyInput>;
   wordSet?: Maybe<String>;
   name?: Maybe<String>;
   difficulty?: Maybe<Difficulty>;
   minWordLength?: Maybe<Int>;
   maxWordLength?: Maybe<Int>;
+  custom?: Maybe<Boolean>;
+  private?: Maybe<Boolean>;
 }
 
 export interface TestUpdateManyInput {
@@ -913,10 +905,246 @@ export interface TestUpdateDataInput {
   type?: Maybe<ResultType>;
 }
 
+export interface AccountUpdateOneRequiredWithoutResultsInput {
+  create?: Maybe<AccountCreateWithoutResultsInput>;
+  update?: Maybe<AccountUpdateWithoutResultsDataInput>;
+  upsert?: Maybe<AccountUpsertWithoutResultsInput>;
+  connect?: Maybe<AccountWhereUniqueInput>;
+}
+
+export interface AccountUpdateWithoutResultsDataInput {
+  email?: Maybe<String>;
+  username?: Maybe<String>;
+  usernameLowercase?: Maybe<String>;
+  password?: Maybe<String>;
+  role?: Maybe<Role>;
+  lastSeen?: Maybe<Float>;
+  lastPlayed?: Maybe<ResultType>;
+  confirmed?: Maybe<Boolean>;
+  personalTrials?: Maybe<TrialUpdateManyWithoutOwnerInput>;
+}
+
+export interface AccountUpsertWithoutResultsInput {
+  update: AccountUpdateWithoutResultsDataInput;
+  create: AccountCreateWithoutResultsInput;
+}
+
 export interface TestUpsertWithWhereUniqueNestedInput {
   where: TestWhereUniqueInput;
   update: TestUpdateDataInput;
   create: TestCreateInput;
+}
+
+export interface TrialUpsertWithWhereUniqueWithoutOwnerInput {
+  where: TrialWhereUniqueInput;
+  update: TrialUpdateWithoutOwnerDataInput;
+  create: TrialCreateWithoutOwnerInput;
+}
+
+export interface TrialScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  wordSet?: Maybe<String>;
+  wordSet_not?: Maybe<String>;
+  wordSet_in?: Maybe<String[] | String>;
+  wordSet_not_in?: Maybe<String[] | String>;
+  wordSet_lt?: Maybe<String>;
+  wordSet_lte?: Maybe<String>;
+  wordSet_gt?: Maybe<String>;
+  wordSet_gte?: Maybe<String>;
+  wordSet_contains?: Maybe<String>;
+  wordSet_not_contains?: Maybe<String>;
+  wordSet_starts_with?: Maybe<String>;
+  wordSet_not_starts_with?: Maybe<String>;
+  wordSet_ends_with?: Maybe<String>;
+  wordSet_not_ends_with?: Maybe<String>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  difficulty?: Maybe<Difficulty>;
+  difficulty_not?: Maybe<Difficulty>;
+  difficulty_in?: Maybe<Difficulty[] | Difficulty>;
+  difficulty_not_in?: Maybe<Difficulty[] | Difficulty>;
+  minWordLength?: Maybe<Int>;
+  minWordLength_not?: Maybe<Int>;
+  minWordLength_in?: Maybe<Int[] | Int>;
+  minWordLength_not_in?: Maybe<Int[] | Int>;
+  minWordLength_lt?: Maybe<Int>;
+  minWordLength_lte?: Maybe<Int>;
+  minWordLength_gt?: Maybe<Int>;
+  minWordLength_gte?: Maybe<Int>;
+  maxWordLength?: Maybe<Int>;
+  maxWordLength_not?: Maybe<Int>;
+  maxWordLength_in?: Maybe<Int[] | Int>;
+  maxWordLength_not_in?: Maybe<Int[] | Int>;
+  maxWordLength_lt?: Maybe<Int>;
+  maxWordLength_lte?: Maybe<Int>;
+  maxWordLength_gt?: Maybe<Int>;
+  maxWordLength_gte?: Maybe<Int>;
+  custom?: Maybe<Boolean>;
+  custom_not?: Maybe<Boolean>;
+  private?: Maybe<Boolean>;
+  private_not?: Maybe<Boolean>;
+  AND?: Maybe<TrialScalarWhereInput[] | TrialScalarWhereInput>;
+  OR?: Maybe<TrialScalarWhereInput[] | TrialScalarWhereInput>;
+  NOT?: Maybe<TrialScalarWhereInput[] | TrialScalarWhereInput>;
+}
+
+export interface TrialUpdateManyWithWhereNestedInput {
+  where: TrialScalarWhereInput;
+  data: TrialUpdateManyDataInput;
+}
+
+export interface TrialUpdateManyDataInput {
+  wordSet?: Maybe<String>;
+  name?: Maybe<String>;
+  difficulty?: Maybe<Difficulty>;
+  minWordLength?: Maybe<Int>;
+  maxWordLength?: Maybe<Int>;
+  custom?: Maybe<Boolean>;
+  private?: Maybe<Boolean>;
+}
+
+export interface AccountUpdateManyMutationInput {
+  email?: Maybe<String>;
+  username?: Maybe<String>;
+  usernameLowercase?: Maybe<String>;
+  password?: Maybe<String>;
+  role?: Maybe<Role>;
+  lastSeen?: Maybe<Float>;
+  lastPlayed?: Maybe<ResultType>;
+  confirmed?: Maybe<Boolean>;
+}
+
+export interface TestUpdateInput {
+  cpm?: Maybe<Int>;
+  rawCpm?: Maybe<Int>;
+  wpm?: Maybe<Int>;
+  correct?: Maybe<Int>;
+  incorrect?: Maybe<Int>;
+  corrections?: Maybe<Int>;
+  wordIndex?: Maybe<Int>;
+  account?: Maybe<AccountUpdateOneRequiredWithoutResultsInput>;
+  type?: Maybe<ResultType>;
+}
+
+export interface TestUpdateManyMutationInput {
+  cpm?: Maybe<Int>;
+  rawCpm?: Maybe<Int>;
+  wpm?: Maybe<Int>;
+  correct?: Maybe<Int>;
+  incorrect?: Maybe<Int>;
+  corrections?: Maybe<Int>;
+  wordIndex?: Maybe<Int>;
+  type?: Maybe<ResultType>;
+}
+
+export interface TrialCreateInput {
+  id?: Maybe<ID_Input>;
+  results?: Maybe<TestCreateManyInput>;
+  wordSet: String;
+  name: String;
+  difficulty?: Maybe<Difficulty>;
+  minWordLength?: Maybe<Int>;
+  maxWordLength?: Maybe<Int>;
+  custom?: Maybe<Boolean>;
+  private?: Maybe<Boolean>;
+  owner?: Maybe<AccountCreateOneWithoutPersonalTrialsInput>;
+}
+
+export interface AccountCreateOneWithoutPersonalTrialsInput {
+  create?: Maybe<AccountCreateWithoutPersonalTrialsInput>;
+  connect?: Maybe<AccountWhereUniqueInput>;
+}
+
+export interface AccountCreateWithoutPersonalTrialsInput {
+  id?: Maybe<ID_Input>;
+  email: String;
+  username: String;
+  usernameLowercase?: Maybe<String>;
+  password: String;
+  results?: Maybe<TestCreateManyWithoutAccountInput>;
+  role: Role;
+  lastSeen?: Maybe<Float>;
+  lastPlayed?: Maybe<ResultType>;
+  confirmed?: Maybe<Boolean>;
+}
+
+export interface TrialUpdateInput {
+  results?: Maybe<TestUpdateManyInput>;
+  wordSet?: Maybe<String>;
+  name?: Maybe<String>;
+  difficulty?: Maybe<Difficulty>;
+  minWordLength?: Maybe<Int>;
+  maxWordLength?: Maybe<Int>;
+  custom?: Maybe<Boolean>;
+  private?: Maybe<Boolean>;
+  owner?: Maybe<AccountUpdateOneWithoutPersonalTrialsInput>;
+}
+
+export interface AccountUpdateOneWithoutPersonalTrialsInput {
+  create?: Maybe<AccountCreateWithoutPersonalTrialsInput>;
+  update?: Maybe<AccountUpdateWithoutPersonalTrialsDataInput>;
+  upsert?: Maybe<AccountUpsertWithoutPersonalTrialsInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<AccountWhereUniqueInput>;
+}
+
+export interface AccountUpdateWithoutPersonalTrialsDataInput {
+  email?: Maybe<String>;
+  username?: Maybe<String>;
+  usernameLowercase?: Maybe<String>;
+  password?: Maybe<String>;
+  results?: Maybe<TestUpdateManyWithoutAccountInput>;
+  role?: Maybe<Role>;
+  lastSeen?: Maybe<Float>;
+  lastPlayed?: Maybe<ResultType>;
+  confirmed?: Maybe<Boolean>;
+}
+
+export interface AccountUpsertWithoutPersonalTrialsInput {
+  update: AccountUpdateWithoutPersonalTrialsDataInput;
+  create: AccountCreateWithoutPersonalTrialsInput;
 }
 
 export interface TrialUpdateManyMutationInput {
@@ -925,6 +1153,8 @@ export interface TrialUpdateManyMutationInput {
   difficulty?: Maybe<Difficulty>;
   minWordLength?: Maybe<Int>;
   maxWordLength?: Maybe<Int>;
+  custom?: Maybe<Boolean>;
+  private?: Maybe<Boolean>;
 }
 
 export interface AccountSubscriptionWhereInput {
@@ -999,6 +1229,15 @@ export interface AccountPromise extends Promise<Account>, Fragmentable {
   lastSeen: () => Promise<Float>;
   lastPlayed: () => Promise<ResultType>;
   confirmed: () => Promise<Boolean>;
+  personalTrials: <T = FragmentableArray<Trial>>(args?: {
+    where?: TrialWhereInput;
+    orderBy?: TrialOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
 }
 
 export interface AccountSubscription
@@ -1024,6 +1263,15 @@ export interface AccountSubscription
   lastSeen: () => Promise<AsyncIterator<Float>>;
   lastPlayed: () => Promise<AsyncIterator<ResultType>>;
   confirmed: () => Promise<AsyncIterator<Boolean>>;
+  personalTrials: <T = Promise<AsyncIterator<TrialSubscription>>>(args?: {
+    where?: TrialWhereInput;
+    orderBy?: TrialOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
 }
 
 export interface AccountNullablePromise
@@ -1049,6 +1297,15 @@ export interface AccountNullablePromise
   lastSeen: () => Promise<Float>;
   lastPlayed: () => Promise<ResultType>;
   confirmed: () => Promise<Boolean>;
+  personalTrials: <T = FragmentableArray<Trial>>(args?: {
+    where?: TrialWhereInput;
+    orderBy?: TrialOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
 }
 
 export interface Test {
@@ -1112,6 +1369,92 @@ export interface TestNullablePromise
   wordIndex: () => Promise<Int>;
   account: <T = AccountPromise>() => T;
   type: () => Promise<ResultType>;
+}
+
+export interface Trial {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  wordSet: String;
+  name: String;
+  difficulty?: Difficulty;
+  minWordLength?: Int;
+  maxWordLength?: Int;
+  custom?: Boolean;
+  private?: Boolean;
+}
+
+export interface TrialPromise extends Promise<Trial>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  results: <T = FragmentableArray<Test>>(args?: {
+    where?: TestWhereInput;
+    orderBy?: TestOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  wordSet: () => Promise<String>;
+  name: () => Promise<String>;
+  difficulty: () => Promise<Difficulty>;
+  minWordLength: () => Promise<Int>;
+  maxWordLength: () => Promise<Int>;
+  custom: () => Promise<Boolean>;
+  private: () => Promise<Boolean>;
+  owner: <T = AccountPromise>() => T;
+}
+
+export interface TrialSubscription
+  extends Promise<AsyncIterator<Trial>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  results: <T = Promise<AsyncIterator<TestSubscription>>>(args?: {
+    where?: TestWhereInput;
+    orderBy?: TestOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  wordSet: () => Promise<AsyncIterator<String>>;
+  name: () => Promise<AsyncIterator<String>>;
+  difficulty: () => Promise<AsyncIterator<Difficulty>>;
+  minWordLength: () => Promise<AsyncIterator<Int>>;
+  maxWordLength: () => Promise<AsyncIterator<Int>>;
+  custom: () => Promise<AsyncIterator<Boolean>>;
+  private: () => Promise<AsyncIterator<Boolean>>;
+  owner: <T = AccountSubscription>() => T;
+}
+
+export interface TrialNullablePromise
+  extends Promise<Trial | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  results: <T = FragmentableArray<Test>>(args?: {
+    where?: TestWhereInput;
+    orderBy?: TestOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  wordSet: () => Promise<String>;
+  name: () => Promise<String>;
+  difficulty: () => Promise<Difficulty>;
+  minWordLength: () => Promise<Int>;
+  maxWordLength: () => Promise<Int>;
+  custom: () => Promise<Boolean>;
+  private: () => Promise<Boolean>;
+  owner: <T = AccountPromise>() => T;
 }
 
 export interface AccountConnection {
@@ -1243,81 +1586,6 @@ export interface AggregateTestSubscription
   extends Promise<AsyncIterator<AggregateTest>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface Trial {
-  id: ID_Output;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-  wordSet: String;
-  name: String;
-  difficulty?: Difficulty;
-  minWordLength?: Int;
-  maxWordLength?: Int;
-}
-
-export interface TrialPromise extends Promise<Trial>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-  results: <T = FragmentableArray<Test>>(args?: {
-    where?: TestWhereInput;
-    orderBy?: TestOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-  wordSet: () => Promise<String>;
-  name: () => Promise<String>;
-  difficulty: () => Promise<Difficulty>;
-  minWordLength: () => Promise<Int>;
-  maxWordLength: () => Promise<Int>;
-}
-
-export interface TrialSubscription
-  extends Promise<AsyncIterator<Trial>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  results: <T = Promise<AsyncIterator<TestSubscription>>>(args?: {
-    where?: TestWhereInput;
-    orderBy?: TestOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-  wordSet: () => Promise<AsyncIterator<String>>;
-  name: () => Promise<AsyncIterator<String>>;
-  difficulty: () => Promise<AsyncIterator<Difficulty>>;
-  minWordLength: () => Promise<AsyncIterator<Int>>;
-  maxWordLength: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface TrialNullablePromise
-  extends Promise<Trial | null>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-  results: <T = FragmentableArray<Test>>(args?: {
-    where?: TestWhereInput;
-    orderBy?: TestOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-  wordSet: () => Promise<String>;
-  name: () => Promise<String>;
-  difficulty: () => Promise<Difficulty>;
-  minWordLength: () => Promise<Int>;
-  maxWordLength: () => Promise<Int>;
 }
 
 export interface TrialConnection {
@@ -1566,6 +1834,8 @@ export interface TrialPreviousValues {
   difficulty?: Difficulty;
   minWordLength?: Int;
   maxWordLength?: Int;
+  custom?: Boolean;
+  private?: Boolean;
 }
 
 export interface TrialPreviousValuesPromise
@@ -1579,6 +1849,8 @@ export interface TrialPreviousValuesPromise
   difficulty: () => Promise<Difficulty>;
   minWordLength: () => Promise<Int>;
   maxWordLength: () => Promise<Int>;
+  custom: () => Promise<Boolean>;
+  private: () => Promise<Boolean>;
 }
 
 export interface TrialPreviousValuesSubscription
@@ -1592,6 +1864,8 @@ export interface TrialPreviousValuesSubscription
   difficulty: () => Promise<AsyncIterator<Difficulty>>;
   minWordLength: () => Promise<AsyncIterator<Int>>;
   maxWordLength: () => Promise<AsyncIterator<Int>>;
+  custom: () => Promise<AsyncIterator<Boolean>>;
+  private: () => Promise<AsyncIterator<Boolean>>;
 }
 
 /*

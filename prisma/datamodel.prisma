@@ -11,6 +11,7 @@ type Account {
   lastSeen: Float
   lastPlayed: ResultType
   confirmed: Boolean! @default(value: false)
+  personalTrials: [Trial] @relation(name: "UsersTrials")
 }
 
 type Test {
@@ -38,6 +39,9 @@ type Trial {
   difficulty: Difficulty
   minWordLength: Int
   maxWordLength: Int
+  custom: Boolean @default(value: false)
+  private: Boolean @default(value: false)
+  owner: Account @relation(name: "UsersTrials")
 }
 
 enum ResultType {

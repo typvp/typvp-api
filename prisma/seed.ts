@@ -5,6 +5,12 @@ dotenv.config()
 import {prisma} from '../src/generated/prisma-client'
 
 async function main() {
+  // Recreate our 6 default Trials
+  // Custom will be true if it's user made or user-saved
+  await prisma.deleteManyTrials({
+    custom: false,
+  })
+
   const easySet1 = generate(250, {
     minLength: 3,
     maxLength: 5,

@@ -16,6 +16,7 @@ export const typeDefs = /* GraphQL */ `type Account {
   lastPlayed: ResultType
   confirmed: Boolean!
   color: String
+  personalTrials(where: TrialWhereInput, orderBy: TrialOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Trial!]
 }
 
 type AccountConnection {
@@ -36,11 +37,31 @@ input AccountCreateInput {
   lastPlayed: ResultType
   confirmed: Boolean
   color: String
+  personalTrials: TrialCreateManyWithoutOwnerInput
+}
+
+input AccountCreateOneWithoutPersonalTrialsInput {
+  create: AccountCreateWithoutPersonalTrialsInput
+  connect: AccountWhereUniqueInput
 }
 
 input AccountCreateOneWithoutResultsInput {
   create: AccountCreateWithoutResultsInput
   connect: AccountWhereUniqueInput
+}
+
+input AccountCreateWithoutPersonalTrialsInput {
+  id: ID
+  email: String!
+  username: String!
+  usernameLowercase: String
+  password: String!
+  results: TestCreateManyWithoutAccountInput
+  role: Role!
+  lastSeen: Float
+  lastPlayed: ResultType
+  confirmed: Boolean
+  color: String
 }
 
 input AccountCreateWithoutResultsInput {
@@ -54,6 +75,7 @@ input AccountCreateWithoutResultsInput {
   lastPlayed: ResultType
   confirmed: Boolean
   color: String
+  personalTrials: TrialCreateManyWithoutOwnerInput
 }
 
 type AccountEdge {
@@ -132,6 +154,7 @@ input AccountUpdateInput {
   lastPlayed: ResultType
   confirmed: Boolean
   color: String
+  personalTrials: TrialUpdateManyWithoutOwnerInput
 }
 
 input AccountUpdateManyMutationInput {
@@ -153,6 +176,28 @@ input AccountUpdateOneRequiredWithoutResultsInput {
   connect: AccountWhereUniqueInput
 }
 
+input AccountUpdateOneWithoutPersonalTrialsInput {
+  create: AccountCreateWithoutPersonalTrialsInput
+  update: AccountUpdateWithoutPersonalTrialsDataInput
+  upsert: AccountUpsertWithoutPersonalTrialsInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: AccountWhereUniqueInput
+}
+
+input AccountUpdateWithoutPersonalTrialsDataInput {
+  email: String
+  username: String
+  usernameLowercase: String
+  password: String
+  results: TestUpdateManyWithoutAccountInput
+  role: Role
+  lastSeen: Float
+  lastPlayed: ResultType
+  confirmed: Boolean
+  color: String
+}
+
 input AccountUpdateWithoutResultsDataInput {
   email: String
   username: String
@@ -163,6 +208,12 @@ input AccountUpdateWithoutResultsDataInput {
   lastPlayed: ResultType
   confirmed: Boolean
   color: String
+  personalTrials: TrialUpdateManyWithoutOwnerInput
+}
+
+input AccountUpsertWithoutPersonalTrialsInput {
+  update: AccountUpdateWithoutPersonalTrialsDataInput!
+  create: AccountCreateWithoutPersonalTrialsInput!
 }
 
 input AccountUpsertWithoutResultsInput {
@@ -292,6 +343,9 @@ input AccountWhereInput {
   color_not_starts_with: String
   color_ends_with: String
   color_not_ends_with: String
+  personalTrials_every: TrialWhereInput
+  personalTrials_some: TrialWhereInput
+  personalTrials_none: TrialWhereInput
   AND: [AccountWhereInput!]
   OR: [AccountWhereInput!]
   NOT: [AccountWhereInput!]
@@ -833,6 +887,9 @@ type Trial {
   difficulty: Difficulty
   minWordLength: Int
   maxWordLength: Int
+  custom: Boolean
+  private: Boolean
+  owner: Account
 }
 
 type TrialConnection {
@@ -849,6 +906,26 @@ input TrialCreateInput {
   difficulty: Difficulty
   minWordLength: Int
   maxWordLength: Int
+  custom: Boolean
+  private: Boolean
+  owner: AccountCreateOneWithoutPersonalTrialsInput
+}
+
+input TrialCreateManyWithoutOwnerInput {
+  create: [TrialCreateWithoutOwnerInput!]
+  connect: [TrialWhereUniqueInput!]
+}
+
+input TrialCreateWithoutOwnerInput {
+  id: ID
+  results: TestCreateManyInput
+  wordSet: String!
+  name: String!
+  difficulty: Difficulty
+  minWordLength: Int
+  maxWordLength: Int
+  custom: Boolean
+  private: Boolean
 }
 
 type TrialEdge {
@@ -873,6 +950,10 @@ enum TrialOrderByInput {
   minWordLength_DESC
   maxWordLength_ASC
   maxWordLength_DESC
+  custom_ASC
+  custom_DESC
+  private_ASC
+  private_DESC
 }
 
 type TrialPreviousValues {
@@ -884,6 +965,96 @@ type TrialPreviousValues {
   difficulty: Difficulty
   minWordLength: Int
   maxWordLength: Int
+  custom: Boolean
+  private: Boolean
+}
+
+input TrialScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  wordSet: String
+  wordSet_not: String
+  wordSet_in: [String!]
+  wordSet_not_in: [String!]
+  wordSet_lt: String
+  wordSet_lte: String
+  wordSet_gt: String
+  wordSet_gte: String
+  wordSet_contains: String
+  wordSet_not_contains: String
+  wordSet_starts_with: String
+  wordSet_not_starts_with: String
+  wordSet_ends_with: String
+  wordSet_not_ends_with: String
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  difficulty: Difficulty
+  difficulty_not: Difficulty
+  difficulty_in: [Difficulty!]
+  difficulty_not_in: [Difficulty!]
+  minWordLength: Int
+  minWordLength_not: Int
+  minWordLength_in: [Int!]
+  minWordLength_not_in: [Int!]
+  minWordLength_lt: Int
+  minWordLength_lte: Int
+  minWordLength_gt: Int
+  minWordLength_gte: Int
+  maxWordLength: Int
+  maxWordLength_not: Int
+  maxWordLength_in: [Int!]
+  maxWordLength_not_in: [Int!]
+  maxWordLength_lt: Int
+  maxWordLength_lte: Int
+  maxWordLength_gt: Int
+  maxWordLength_gte: Int
+  custom: Boolean
+  custom_not: Boolean
+  private: Boolean
+  private_not: Boolean
+  AND: [TrialScalarWhereInput!]
+  OR: [TrialScalarWhereInput!]
+  NOT: [TrialScalarWhereInput!]
 }
 
 type TrialSubscriptionPayload {
@@ -911,6 +1082,19 @@ input TrialUpdateInput {
   difficulty: Difficulty
   minWordLength: Int
   maxWordLength: Int
+  custom: Boolean
+  private: Boolean
+  owner: AccountUpdateOneWithoutPersonalTrialsInput
+}
+
+input TrialUpdateManyDataInput {
+  wordSet: String
+  name: String
+  difficulty: Difficulty
+  minWordLength: Int
+  maxWordLength: Int
+  custom: Boolean
+  private: Boolean
 }
 
 input TrialUpdateManyMutationInput {
@@ -919,6 +1103,47 @@ input TrialUpdateManyMutationInput {
   difficulty: Difficulty
   minWordLength: Int
   maxWordLength: Int
+  custom: Boolean
+  private: Boolean
+}
+
+input TrialUpdateManyWithoutOwnerInput {
+  create: [TrialCreateWithoutOwnerInput!]
+  delete: [TrialWhereUniqueInput!]
+  connect: [TrialWhereUniqueInput!]
+  set: [TrialWhereUniqueInput!]
+  disconnect: [TrialWhereUniqueInput!]
+  update: [TrialUpdateWithWhereUniqueWithoutOwnerInput!]
+  upsert: [TrialUpsertWithWhereUniqueWithoutOwnerInput!]
+  deleteMany: [TrialScalarWhereInput!]
+  updateMany: [TrialUpdateManyWithWhereNestedInput!]
+}
+
+input TrialUpdateManyWithWhereNestedInput {
+  where: TrialScalarWhereInput!
+  data: TrialUpdateManyDataInput!
+}
+
+input TrialUpdateWithoutOwnerDataInput {
+  results: TestUpdateManyInput
+  wordSet: String
+  name: String
+  difficulty: Difficulty
+  minWordLength: Int
+  maxWordLength: Int
+  custom: Boolean
+  private: Boolean
+}
+
+input TrialUpdateWithWhereUniqueWithoutOwnerInput {
+  where: TrialWhereUniqueInput!
+  data: TrialUpdateWithoutOwnerDataInput!
+}
+
+input TrialUpsertWithWhereUniqueWithoutOwnerInput {
+  where: TrialWhereUniqueInput!
+  update: TrialUpdateWithoutOwnerDataInput!
+  create: TrialCreateWithoutOwnerInput!
 }
 
 input TrialWhereInput {
@@ -1003,6 +1228,11 @@ input TrialWhereInput {
   maxWordLength_lte: Int
   maxWordLength_gt: Int
   maxWordLength_gte: Int
+  custom: Boolean
+  custom_not: Boolean
+  private: Boolean
+  private_not: Boolean
+  owner: AccountWhereInput
   AND: [TrialWhereInput!]
   OR: [TrialWhereInput!]
   NOT: [TrialWhereInput!]

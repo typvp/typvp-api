@@ -80,4 +80,32 @@ export class TestResolver {
       orderBy: 'wpm_DESC',
     })
   }
+
+  @Mutation(returns => Boolean)
+  @UseMiddleware(IsAuthenticated, LogAccess)
+  async saveWordSet(
+    @Arg('wordSet') wordSet: string,
+    @Ctx() ctx: Context,
+  ): Promise<boolean> {
+    const id = getAccountId(ctx) as string
+    const now = new Date().toDateString()
+
+    await ctx.prisma.updateAccount({
+      where: {
+        id,
+      },
+      data: {
+        personalTrials: {
+          create: {
+            wordSet,
+            custom: true,
+            private: true,
+            name: `Saved ${now}`,
+          },
+        },
+      },
+    })
+
+    return true
+  }
 }

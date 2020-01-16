@@ -1,5 +1,6 @@
 import {ObjectType, Field, ID, Int, registerEnumType} from 'type-graphql'
 import {Test} from '../typingTest/test.type'
+import {Account} from '../account/account.type'
 
 export enum Difficulty {
   EASY = 'EASY',
@@ -40,4 +41,13 @@ export class Trial {
 
   @Field(type => Int)
   maxWordLength: number
+
+  @Field(type => Boolean)
+  custom: boolean
+
+  @Field(type => Boolean)
+  private: boolean
+
+  @Field(type => Account, {nullable: true})
+  owner?: Account
 }

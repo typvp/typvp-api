@@ -7,6 +7,8 @@ export const TrialFragment = `
     maxWordLength
     wordSet
     createdAt
+    private
+    custom
     results {
       id
       createdAt

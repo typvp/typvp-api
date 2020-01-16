@@ -23,6 +23,7 @@ import {Account, AuthPayload} from './account.type'
 import {AccountFragment} from '../fragments/AccountFragment'
 import {TestsWithCount, ResultType} from '../typingTest/test.type'
 import {startEmailConfirmationProcess} from '../../utils/createConfirmEmailLink'
+import {Trial} from '../trial/trial.type'
 
 @Resolver(of => Account)
 export class AccountResolver {
@@ -117,6 +118,13 @@ export class AccountResolver {
   @UseMiddleware(LogAccess)
   async account(@Arg('id', type => ID) id: string, @Ctx() ctx: Context) {
     return await ctx.prisma.account({id})
+  }
+
+  @Query(returns => [Trial])
+  @UseMiddleware(IsAuthenticated, LogAccess)
+  async myTrials(@Ctx() ctx: Context) {
+    const id = getAccountId(ctx) as string
+    return await ctx.prisma.account({id}).personalTrials()
   }
 
   @Query(returns => TestsWithCount)

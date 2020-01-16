@@ -68,7 +68,12 @@ export class TrialResolver {
   @Query(returns => [Trial])
   @UseMiddleware(LogAccess)
   async trials(@Ctx() ctx: Context) {
-    return await ctx.prisma.trials()
+    return await ctx.prisma.trials({
+      where: {
+        custom: false,
+        private: false,
+      },
+    })
   }
 
   @Query(returns => Trial)

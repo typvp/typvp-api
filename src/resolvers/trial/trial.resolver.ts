@@ -67,7 +67,7 @@ export class TrialResolver {
 
   @Query(returns => [Trial])
   @UseMiddleware(LogAccess)
-  async trials(@Ctx() ctx: Context) {
+  async trials(@Ctx() ctx: Context): Promise<Trial[]> {
     return await ctx.prisma.trials({
       where: {
         custom: false,
@@ -81,7 +81,7 @@ export class TrialResolver {
   async trial(
     @Arg('trialId', type => ID) trialId: string,
     @Ctx() ctx: Context,
-  ) {
+  ): Promise<Trial> {
     return await ctx.prisma.trial({id: trialId})
   }
 
@@ -90,10 +90,79 @@ export class TrialResolver {
   async trialLeaders(
     @Arg('trialId', type => ID) trialId: string,
     @Ctx() ctx: Context,
-  ) {
+  ): Promise<Trial> {
     return await ctx.prisma.trial({id: trialId}).results({
       orderBy: 'wpm_DESC',
       first: 10,
     })
+  }
+
+  @Mutation(returns => Trial)
+  @UseMiddleware(IsAuthenticated, LogAccess)
+  async updateTrialInfo(
+    @Arg('trialId', type => ID) trialId: string,
+    @Arg('name', type => String, {nullable: true}) name: string,
+    @Arg('wordSet', type => String, {nullable: true}) wordSet: string,
+    @Arg('private', type => Boolean, {nullable: true}) isPrivate: boolean,
+    @Ctx() ctx: Context,
+  ): Promise<Trial> {
+    const id = getAccountId(ctx) as string
+    try {
+      const trial = await ctx.prisma
+        .account({
+          id: id,
+        })
+        .personalTrials({
+          where: {
+            id: trialId,
+          },
+        })
+
+      if (trial) {
+        return await ctx.prisma.updateTrial({
+          data: {
+            name: name && name,
+            wordSet: wordSet && wordSet,
+            private: isPrivate && isPrivate,
+          },
+          where: {
+            id: trialId,
+          },
+        })
+      } else {
+        throw new Error('Trial not found or does not belong to Requester')
+      }
+    } catch (e) {
+      throw new Error('Trial not found or does not belong to Requester')
+    }
+  }
+
+  @Mutation(returns => Trial)
+  @UseMiddleware(IsAuthenticated, LogAccess)
+  async deleteTrial(
+    @Arg('trialId', type => ID) trialId: string,
+    @Ctx() ctx: Context,
+  ): Promise<Trial> {
+    const id = getAccountId(ctx) as string
+    try {
+      const trial = await ctx.prisma
+        .account({
+          id: id,
+        })
+        .personalTrials({
+          where: {
+            id: trialId,
+          },
+        })
+
+      if (trial) {
+        return await ctx.prisma.deleteTrial({id: trialId})
+        // return true
+      } else {
+        throw new Error('Trial not found or does not belong to Requester')
+      }
+    } catch (e) {
+      throw new Error('Trial not found or does not belong to Requester')
+    }
   }
 }

@@ -25,7 +25,7 @@ export class Trial {
   updatedAt: string
 
   @Field(type => [Test])
-  results: Test[]
+  results?: Test[]
 
   @Field(type => String)
   wordSet: string
@@ -33,20 +33,20 @@ export class Trial {
   @Field(type => String)
   name: string
 
-  @Field(type => Difficulty)
-  difficulty: Difficulty
+  @Field(type => Difficulty, {nullable: true})
+  difficulty?: keyof typeof Difficulty
 
-  @Field(type => Int)
-  minWordLength: number
+  @Field(type => Int, {nullable: true})
+  minWordLength?: number
 
-  @Field(type => Int)
-  maxWordLength: number
+  @Field(type => Int, {nullable: true})
+  maxWordLength?: number
 
-  @Field(type => Boolean)
-  custom: boolean
+  @Field(type => Boolean, {nullable: true})
+  custom?: boolean
 
-  @Field(type => Boolean)
-  private: boolean
+  @Field(type => Boolean, {nullable: true})
+  private?: boolean
 
   @Field(type => Account, {nullable: true})
   owner?: Account

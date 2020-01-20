@@ -108,17 +108,14 @@ export class TrialResolver {
   ): Promise<Trial> {
     const id = getAccountId(ctx) as string
     try {
-      const trial = await ctx.prisma
-        .account({
+      const exists = await ctx.prisma.$exists.trial({
+        id: trialId,
+        owner: {
           id: id,
-        })
-        .personalTrials({
-          where: {
-            id: trialId,
-          },
-        })
+        },
+      })
 
-      if (trial) {
+      if (exists) {
         return await ctx.prisma.updateTrial({
           data: {
             name: name && name,
@@ -145,19 +142,15 @@ export class TrialResolver {
   ): Promise<Trial> {
     const id = getAccountId(ctx) as string
     try {
-      const trial = await ctx.prisma
-        .account({
+      const exists = await ctx.prisma.$exists.trial({
+        id: trialId,
+        owner: {
           id: id,
-        })
-        .personalTrials({
-          where: {
-            id: trialId,
-          },
-        })
+        },
+      })
 
-      if (trial) {
+      if (exists) {
         return await ctx.prisma.deleteTrial({id: trialId})
-        // return true
       } else {
         throw new Error('Trial not found or does not belong to Requester')
       }

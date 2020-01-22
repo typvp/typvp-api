@@ -45,6 +45,9 @@ export class Account {
 
   @Field(type => Boolean)
   confirmed: boolean
+
+  @Field(type => String, {nullable: true})
+  color?: string
 }
 
 @ObjectType()

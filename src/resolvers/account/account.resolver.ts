@@ -21,8 +21,9 @@ import {AccountSignupInput, AccountLoginInput} from './account.input'
 import {FilterArgs} from '../generic.args'
 import {Account, AuthPayload} from './account.type'
 import {AccountFragment} from '../fragments/AccountFragment'
-import {TestsWithCount} from '../typingTest/test.type'
+import {TestsWithCount, ResultType} from '../typingTest/test.type'
 import {startEmailConfirmationProcess} from '../../utils/createConfirmEmailLink'
+import {Trial} from '../trial/trial.type'
 
 @Resolver(of => Account)
 export class AccountResolver {
@@ -78,7 +79,9 @@ export class AccountResolver {
     @Ctx() ctx: Context,
   ): Promise<AuthPayload> {
     try {
-      const account = await ctx.prisma.account({username: input.username})
+      const account = await ctx.prisma.account({
+        usernameLowercase: input.username.toLowerCase(),
+      })
 
       if (!account) {
         throw new Error(
@@ -117,6 +120,13 @@ export class AccountResolver {
     return await ctx.prisma.account({id})
   }
 
+  @Query(returns => [Trial])
+  @UseMiddleware(IsAuthenticated, LogAccess)
+  async myTrials(@Ctx() ctx: Context) {
+    const id = getAccountId(ctx) as string
+    return await ctx.prisma.account({id}).personalTrials()
+  }
+
   @Query(returns => TestsWithCount)
   @UseMiddleware(IsAuthenticated, LogAccess)
   async myResults(
@@ -134,7 +144,12 @@ export class AccountResolver {
     })
     return {
       results,
-      testCount: await this.testCount({id} as Account, ctx),
+      allTestCount: await this.testCount({id} as Account, ctx),
+      filteredTestCount: await this.testCount(
+        {id} as Account,
+        ctx,
+        filter.type,
+      ),
     }
   }
 
@@ -152,14 +167,34 @@ export class AccountResolver {
     })
   }
 
+  @Mutation(returns => Account)
+  @UseMiddleware(IsAuthenticated, LogAccess)
+  async updateAccountColor(
+    @Arg('color', type => String) color: string,
+    @Ctx() ctx: Context,
+  ): Promise<Account> {
+    const id = getAccountId(ctx) as string
+    return await ctx.prisma.updateAccount({
+      where: {id},
+      data: {
+        color,
+      },
+    })
+  }
+
   @FieldResolver(returns => Int)
-  async testCount(@Root() account: Account, @Ctx() ctx: Context) {
+  async testCount(
+    @Root() account: Account,
+    @Ctx() ctx: Context,
+    filter?: ResultType,
+  ) {
     const {count} = await ctx.prisma
       .testsConnection({
         where: {
           account: {
             id: account.id,
           },
+          type_in: filter ? [filter] : ['SINGLEPLAYER', 'TRIAL'],
         },
       })
       .aggregate()

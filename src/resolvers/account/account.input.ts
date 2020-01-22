@@ -1,5 +1,5 @@
 import {Field, InputType} from 'type-graphql'
-import {IsEmail, IsString, Max, Min} from 'class-validator'
+import {IsEmail, IsString, Length} from 'class-validator'
 
 @InputType()
 export class AccountSignupInput {
@@ -9,14 +9,12 @@ export class AccountSignupInput {
 
   @Field(type => String)
   @IsString()
-  @Min(5)
-  @Max(25)
+  @Length(5, 25)
   password: string
 
   @Field(type => String)
   @IsString()
-  @Min(3)
-  @Max(15)
+  @Length(3, 15)
   username: string
 }
 

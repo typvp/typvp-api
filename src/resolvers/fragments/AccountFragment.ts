@@ -9,6 +9,7 @@ export const AccountFragment = `
     updatedAt
     createdAt
     confirmed
+    color
     results {
       id
       cpm

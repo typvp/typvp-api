@@ -39,17 +39,18 @@ export async function initSocketIO() {
     console.log('connection')
 
     socket.on('race_queue', async data => {
-      redis.hmset(socket.id, ['id', data.id, 'name', data.name])
+      const {id, name, color} = data
+      redis.hmset(socket.id, ['id', id, 'name', name, 'color', color])
       await redis.rpush('queue', socket.id)
 
       processQueue(socket.id)
     })
 
     socket.on('race_join-lobby', async data => {
-      const {lobbyId, id, name} = data
+      const {lobbyId, id, name, color} = data
       console.log(`joining specific lobby ${lobbyId}`)
 
-      redis.hmset(socket.id, ['id', data.id, 'name', data.name])
+      redis.hmset(socket.id, ['id', id, 'name', name, 'color', color])
 
       const lobbyToJoin: TLobby = lobbies.get(lobbyId)
       if (lobbyToJoin) {
@@ -58,7 +59,7 @@ export async function initSocketIO() {
           lobbyToJoin.state === LobbyState.WAITING
         ) {
           console.log('lobby to join is valid')
-          const playerList = [...lobbyToJoin.players, {id, wpm: 0, name}]
+          const playerList = [...lobbyToJoin.players, {id, wpm: 0, name, color}]
 
           const newLobby = {...lobbyToJoin, players: playerList}
 

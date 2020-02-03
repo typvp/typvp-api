@@ -1,9 +1,10 @@
-import express from 'express'
+import express, {Request} from 'express'
 import http from 'http'
 import cors from 'cors'
 
 import {redis} from './redis'
 import {prisma} from '../generated/prisma-client'
+import {handlePaymentWebbook} from './stripe'
 
 export const app = express()
 
@@ -19,6 +20,13 @@ export async function initExpress() {
         'https://next.typvp.xyz',
         'http://localhost:8082',
       ],
+    }),
+    express.json({
+      verify: function(req: Request, res, buf) {
+        if (req.originalUrl.startsWith('/webhook')) {
+          req.rawBody = buf.toString()
+        }
+      },
     }),
   )
   app.get('/confirm/:id', async (req, res) => {
@@ -45,4 +53,5 @@ export async function initExpress() {
       res.send('It looks like your email validation link expired...')
     }
   })
+  app.post('/webhook', async (req, res) => handlePaymentWebbook(req, res))
 }

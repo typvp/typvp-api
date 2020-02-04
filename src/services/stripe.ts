@@ -1,5 +1,6 @@
 import Stripe from 'stripe'
 import {Request, Response} from 'express'
+import {prisma} from '../generated/prisma-client'
 
 const key =
   process.env.NODE_ENV === 'production'
@@ -30,9 +31,16 @@ export const handlePaymentWebbook = async (req: Request, res: Response) => {
 
   if (eventType === 'checkout.session.completed') {
     const session: any = event.data.object
-    console.log(session)
-    const cust = await stripe.customers.retrieve(session.customer)
-    console.log(cust)
-    // todo: get email and then set user as pro
+    const {email} = (await stripe.customers.retrieve(session.customer)) as any
+
+    await prisma.updateAccount({
+      where: {
+        email: email,
+      },
+      data: {
+        role: 'PRO',
+      },
+    })
   }
+  res.json({received: true})
 }

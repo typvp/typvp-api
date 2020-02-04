@@ -10,11 +10,11 @@ import {AuthenticationError} from 'apollo-server-express'
  * @param obj - resolver data
  * @param roles - array of roles to be checked against
  */
-export const AuthorizationCheck: AuthChecker<Context> = (
-  {root, args, context, info},
+export const asyncAuthorizationCheck: AuthChecker<Context> = async (
+  {root, args, context: ctx, info},
   roles,
 ) => {
-  const authHeader = context.req.headers['authorization']
+  const authHeader = ctx.req.headers['authorization']
 
   if (authHeader) {
     const token = authHeader.replace('Bearer ', '')
@@ -26,11 +26,11 @@ export const AuthorizationCheck: AuthChecker<Context> = (
     // not be needed. Uncomment this code if you have configured
     // RBAC for your users
     if (roles) {
-      // const user = await ctx.prisma.user({ id: accountId })
-      // roles.map((role: string) => {
-      //   if (role == user.userRole) return true
-      // })
-      // return false
+      const user = await ctx.prisma.account({id: accountId})
+      roles.map((role: string) => {
+        if (role == user.role) return true
+      })
+      return false
     }
 
     // Since we have no roles argument passed to the middleware

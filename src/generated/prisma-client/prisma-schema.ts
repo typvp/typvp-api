@@ -32,7 +32,7 @@ input AccountCreateInput {
   usernameLowercase: String
   password: String!
   results: TestCreateManyWithoutAccountInput
-  role: Role!
+  role: Role
   lastSeen: Float
   lastPlayed: ResultType
   confirmed: Boolean
@@ -57,7 +57,7 @@ input AccountCreateWithoutPersonalTrialsInput {
   usernameLowercase: String
   password: String!
   results: TestCreateManyWithoutAccountInput
-  role: Role!
+  role: Role
   lastSeen: Float
   lastPlayed: ResultType
   confirmed: Boolean
@@ -70,7 +70,7 @@ input AccountCreateWithoutResultsInput {
   username: String!
   usernameLowercase: String
   password: String!
-  role: Role!
+  role: Role
   lastSeen: Float
   lastPlayed: ResultType
   confirmed: Boolean
@@ -446,6 +446,7 @@ enum Role {
   USER
   ADMIN
   PRO
+  BETA
 }
 
 type Subscription {

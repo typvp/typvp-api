@@ -7,7 +7,7 @@ type Account {
   usernameLowercase: String @unique
   password: String!
   results: [Test!] @relation(name: "UsersTests")
-  role: Role!
+  role: Role! @default(value: USER)
   lastSeen: Float
   lastPlayed: ResultType
   confirmed: Boolean! @default(value: false)
@@ -62,5 +62,6 @@ enum Role {
   USER
   ADMIN
   PRO
+  BETA
 }
 

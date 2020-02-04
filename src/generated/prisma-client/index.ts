@@ -179,7 +179,7 @@ export interface ClientConstructor<T> {
  * Types
  */
 
-export type Role = "USER" | "ADMIN" | "PRO";
+export type Role = "USER" | "ADMIN" | "PRO" | "BETA";
 
 export type ResultType = "SINGLEPLAYER" | "RACE" | "TRIAL";
 
@@ -600,7 +600,7 @@ export interface AccountCreateInput {
   usernameLowercase?: Maybe<String>;
   password: String;
   results?: Maybe<TestCreateManyWithoutAccountInput>;
-  role: Role;
+  role?: Maybe<Role>;
   lastSeen?: Maybe<Float>;
   lastPlayed?: Maybe<ResultType>;
   confirmed?: Maybe<Boolean>;
@@ -673,7 +673,7 @@ export interface AccountCreateWithoutResultsInput {
   username: String;
   usernameLowercase?: Maybe<String>;
   password: String;
-  role: Role;
+  role?: Maybe<Role>;
   lastSeen?: Maybe<Float>;
   lastPlayed?: Maybe<ResultType>;
   confirmed?: Maybe<Boolean>;
@@ -1124,7 +1124,7 @@ export interface AccountCreateWithoutPersonalTrialsInput {
   usernameLowercase?: Maybe<String>;
   password: String;
   results?: Maybe<TestCreateManyWithoutAccountInput>;
-  role: Role;
+  role?: Maybe<Role>;
   lastSeen?: Maybe<Float>;
   lastPlayed?: Maybe<ResultType>;
   confirmed?: Maybe<Boolean>;

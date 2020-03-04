@@ -10,7 +10,7 @@ import {AuthenticationError} from 'apollo-server-express'
  * @param obj - resolver data
  * @param roles - array of roles to be checked against
  */
-export const asyncAuthorizationCheck: AuthChecker<Context> = async (
+export const AuthorizationCheck: AuthChecker<Context> = async (
   {root, args, context: ctx, info},
   roles,
 ) => {
@@ -18,18 +18,18 @@ export const asyncAuthorizationCheck: AuthChecker<Context> = async (
 
   if (authHeader) {
     const token = authHeader.replace('Bearer ', '')
-    const {accountId} = jwt.verify(token, process.env.APP_SECRET) as {
-      accountId: string
+    const {role: userRole} = jwt.verify(token, process.env.APP_SECRET) as {
+      role: string
     }
 
     // NOTE: As of now RBAC isn't implemented within the DB and may
     // not be needed. Uncomment this code if you have configured
     // RBAC for your users
     if (roles) {
-      const user = await ctx.prisma.account({id: accountId})
-      roles.map((role: string) => {
-        if (role == user.role) return true
-      })
+      const index = roles.findIndex(role => role === userRole)
+      if (index !== -1) {
+        return true
+      }
       return false
     }
 

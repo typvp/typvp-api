@@ -96,7 +96,10 @@ export class AccountResolver implements ResolverInterface<Account> {
       }
 
       return {
-        token: jwt.sign({accountId: account.id}, process.env.APP_SECRET),
+        token: jwt.sign(
+          {accountId: account.id, role: account.role},
+          process.env.APP_SECRET,
+        ),
         account,
       }
     } catch (err) {

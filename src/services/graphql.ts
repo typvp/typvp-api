@@ -10,6 +10,7 @@ import {TestResolver} from '../resolvers/typingTest/test.resolver'
 import {RaceResolver} from '../resolvers/race/race.resolver'
 import {app} from './express'
 import {redis} from './redis'
+import {executor} from '../utils/executor'
 
 export async function initGraphQL() {
   const schema = (await buildSchema({
@@ -21,6 +22,7 @@ export async function initGraphQL() {
   })) as GraphQLSchema
 
   const server = new ApolloServer({
+    executor: executor(schema),
     subscriptions: {
       path: '/sub',
     },

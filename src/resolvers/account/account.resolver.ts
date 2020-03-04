@@ -11,6 +11,7 @@ import {
   FieldResolver,
   Root,
   Int,
+  ResolverInterface,
 } from 'type-graphql'
 
 import {getAccountId} from '../../utils'
@@ -20,13 +21,12 @@ import {LogAccess} from '../../middleware/Log'
 import {AccountSignupInput, AccountLoginInput} from './account.input'
 import {FilterArgs} from '../generic.args'
 import {Account, AuthPayload} from './account.type'
-import {AccountFragment} from '../fragments/AccountFragment'
-import {TestsWithCount, ResultType} from '../typingTest/test.type'
+import {TestsWithCount, ResultType, Test} from '../typingTest/test.type'
 import {startEmailConfirmationProcess} from '../../utils/createConfirmEmailLink'
 import {Trial} from '../trial/trial.type'
 
 @Resolver(of => Account)
-export class AccountResolver {
+export class AccountResolver implements ResolverInterface<Account> {
   @Mutation(returns => AuthPayload)
   @UseMiddleware(LogAccess)
   async signup(
@@ -109,7 +109,7 @@ export class AccountResolver {
   async me(@Ctx() ctx: Context): Promise<Account | null> {
     const id = getAccountId(ctx)
     if (id) {
-      return await ctx.prisma.account({id}).$fragment(AccountFragment)
+      return await ctx.prisma.account({id})
     }
     return null
   }
@@ -180,6 +180,18 @@ export class AccountResolver {
         color,
       },
     })
+  }
+
+  @FieldResolver()
+  async results(
+    @Root() account: Account,
+    @Ctx() ctx: Context,
+  ): Promise<Test[]> {
+    return ctx.prisma
+      .account({
+        id: account.id,
+      })
+      .results()
   }
 
   @FieldResolver(returns => Int)

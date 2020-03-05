@@ -57,6 +57,7 @@ export class AccountResolver implements ResolverInterface<Account> {
         username: input.username,
         usernameLowercase: input.username.toLowerCase(),
         role: 'USER',
+        lastSeen: Date.now(),
       })
 
       if (process.env.NODE_ENV === 'production') {
@@ -130,32 +131,6 @@ export class AccountResolver implements ResolverInterface<Account> {
     return await ctx.prisma.account({id}).personalTrials()
   }
 
-  @Query(returns => TestsWithCount)
-  @UseMiddleware(IsAuthenticated, LogAccess)
-  async myResults(
-    @Arg('filter') filter: FilterArgs,
-    @Ctx() ctx: Context,
-  ): Promise<TestsWithCount> {
-    const id = getAccountId(ctx) as string
-    const results = await ctx.prisma.account({id}).results({
-      skip: filter.skip,
-      first: filter.first,
-      orderBy: filter.date,
-      where: {
-        type_in: filter.type ? [filter.type] : ['SINGLEPLAYER', 'TRIAL'],
-      },
-    })
-    return {
-      results,
-      allTestCount: await this.testCount({id} as Account, ctx),
-      filteredTestCount: await this.testCount(
-        {id} as Account,
-        ctx,
-        filter.type,
-      ),
-    }
-  }
-
   @Mutation(returns => Boolean, {nullable: true})
   @UseMiddleware(IsAuthenticated, LogAccess)
   async seen(@Ctx() ctx: Context): Promise<void> {
@@ -185,23 +160,65 @@ export class AccountResolver implements ResolverInterface<Account> {
     })
   }
 
-  @FieldResolver()
+  @FieldResolver(returns => [Test])
   async results(
     @Root() account: Account,
     @Ctx() ctx: Context,
   ): Promise<Test[]> {
-    return ctx.prisma
+    return await ctx.prisma
       .account({
         id: account.id,
       })
       .results()
   }
 
-  @FieldResolver(returns => Int)
-  async testCount(
+  @FieldResolver(returns => [Trial])
+  async personalTrials(
     @Root() account: Account,
     @Ctx() ctx: Context,
-    filter?: ResultType,
+  ): Promise<[Trial]> {
+    return await ctx.prisma.account({id: account.id}).personalTrials()
+  }
+
+  @FieldResolver(returns => [Test])
+  async filterResults(
+    @Root() account: Account,
+    @Ctx() ctx: Context,
+    @Arg('filter') filter: FilterArgs,
+  ): Promise<Test[]> {
+    return await ctx.prisma
+      .account({
+        id: account.id,
+      })
+      .results({
+        skip: filter.skip,
+        first: filter.first,
+        orderBy: filter.date,
+        where: {
+          type_in: filter.type ? [filter.type] : ['SINGLEPLAYER', 'TRIAL'],
+        },
+      })
+  }
+
+  @FieldResolver(returns => Int)
+  async testCount(@Root() account: Account, @Ctx() ctx: Context) {
+    const {count} = await ctx.prisma
+      .testsConnection({
+        where: {
+          account: {
+            id: account.id,
+          },
+        },
+      })
+      .aggregate()
+    return count
+  }
+
+  @FieldResolver(returns => Int)
+  async testCountByType(
+    @Root() account: Account,
+    @Ctx() ctx: Context,
+    @Arg('filter', type => String, {nullable: true}) filter: ResultType,
   ) {
     const {count} = await ctx.prisma
       .testsConnection({

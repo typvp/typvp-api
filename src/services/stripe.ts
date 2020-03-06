@@ -1,6 +1,9 @@
 import Stripe from 'stripe'
 import {Request, Response} from 'express'
+
 import {prisma} from '../generated/prisma-client'
+import {startProNAMProcess} from '../utils/mailing/proNoAccountMatchEmail'
+import {startProSuccessProcess} from '../utils/mailing/proSuccessEmail'
 
 const key =
   process.env.NODE_ENV === 'production'
@@ -11,6 +14,22 @@ export const stripe = new Stripe(key, {
   apiVersion: '2020-03-02',
   typescript: true,
 })
+
+async function applyProToAccount(email: string) {
+  try {
+    const account = await prisma.updateAccount({
+      where: {
+        email,
+      },
+      data: {
+        role: 'PRO',
+      },
+    })
+    startProSuccessProcess(account)
+  } catch (e) {
+    startProNAMProcess(email)
+  }
+}
 
 export const handlePaymentWebbook = async (req: Request, res: Response) => {
   let event: Stripe.Event
@@ -31,16 +50,11 @@ export const handlePaymentWebbook = async (req: Request, res: Response) => {
 
   if (eventType === 'checkout.session.completed') {
     const session: any = event.data.object
+    console.log(session)
+    console.log(data)
     const {email} = (await stripe.customers.retrieve(session.customer)) as any
 
-    await prisma.updateAccount({
-      where: {
-        email: email,
-      },
-      data: {
-        role: 'PRO',
-      },
-    })
+    applyProToAccount(email)
   }
   res.json({received: true})
 }

@@ -22,7 +22,7 @@ import {AccountSignupInput, AccountLoginInput} from './account.input'
 import {FilterArgs} from '../generic.args'
 import {Account, AuthPayload} from './account.type'
 import {TestsWithCount, ResultType, Test} from '../typingTest/test.type'
-import {startEmailConfirmationProcess} from '../../utils/createConfirmEmailLink'
+import {startEmailConfirmationProcess} from '../../utils/mailing/createConfirmEmailLink'
 import {Trial} from '../trial/trial.type'
 
 @Resolver(of => Account)
@@ -61,7 +61,7 @@ export class AccountResolver implements ResolverInterface<Account> {
       })
 
       if (process.env.NODE_ENV === 'production') {
-        startEmailConfirmationProcess(account, ctx.req)
+        startEmailConfirmationProcess(account)
       }
 
       return {

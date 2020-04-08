@@ -1,8 +1,8 @@
 import {buildSchema} from 'type-graphql'
-import {GraphQLSchema} from 'graphql'
 import {ApolloServer} from 'apollo-server-express'
+import {PrismaClient} from '@prisma/client'
+import path from 'path'
 
-import {prisma} from '../generated/prisma-client'
 import {AuthorizationCheck} from '../middleware/Auth'
 import {TrialResolver} from '../resolvers/trial/trial.resolver'
 import {AccountResolver} from '../resolvers/account/account.resolver'
@@ -12,15 +12,26 @@ import {app} from './express'
 import {redis} from './redis'
 import {executor} from '../utils/executor'
 
-export async function initGraphQL() {
-  const schema = (await buildSchema({
-    resolvers: [TrialResolver, AccountResolver, TestResolver, RaceResolver],
-    authChecker: AuthorizationCheck,
-    dateScalarMode: 'isoDate',
-  }).catch(e => {
-    console.log(e)
-  })) as GraphQLSchema
+import {
+  AccountRelationsResolver,
+  TestRelationsResolver,
+  TrialRelationsResolver,
+} from '../../prisma/generated/type-graphql'
 
+export async function initGraphQL() {
+  const schema = await buildSchema({
+    resolvers: [
+      AccountRelationsResolver,
+      TestRelationsResolver,
+      TrialRelationsResolver,
+    ],
+    authChecker: AuthorizationCheck,
+
+    emitSchemaFile: path.resolve(__dirname, './generated-schema.graphql'),
+    validate: false,
+  })
+
+  const prisma = new PrismaClient()
   const server = new ApolloServer({
     executor: executor(schema),
     subscriptions: {

@@ -1,37 +1,36 @@
 import {buildSchema} from 'type-graphql'
 import {ApolloServer} from 'apollo-server-express'
-import {PrismaClient} from '@prisma/client'
 import path from 'path'
 
 import {AuthorizationCheck} from '../middleware/Auth'
-import {TrialResolver} from '../resolvers/trial/trial.resolver'
-import {AccountResolver} from '../resolvers/account/account.resolver'
-import {TestResolver} from '../resolvers/typingTest/test.resolver'
-import {RaceResolver} from '../resolvers/race/race.resolver'
+import {AccountResolver} from '../resolvers/account/AccountResolver'
+import {AccountRelationsResolver} from '../generated/type-graphql/resolvers/relations/Account/AccountRelationsResolver'
+import {TestRelationsResolver} from '../generated/type-graphql/resolvers/relations/Test/TestRelationsResolver'
+import {TrialRelationsResolver} from '../generated/type-graphql/resolvers/relations/Trial/TrialRelationsResolver'
+import {AccountCrudResolver} from '../generated/type-graphql/resolvers/crud/Account/AccountCrudResolver'
+import {TestCrudResolver} from '../generated/type-graphql/resolvers/crud/Test/TestCrudResolver'
+import {TrialCrudResolver} from '../generated/type-graphql/resolvers/crud/Trial/TrialCrudResolver'
 import {app} from './express'
 import {redis} from './redis'
 import {executor} from '../utils/executor'
-
-import {
-  AccountRelationsResolver,
-  TestRelationsResolver,
-  TrialRelationsResolver,
-} from '../../prisma/generated/type-graphql'
+import {prisma} from '../services/prisma'
 
 export async function initGraphQL() {
   const schema = await buildSchema({
     resolvers: [
+      AccountResolver,
       AccountRelationsResolver,
+      AccountCrudResolver,
       TestRelationsResolver,
+      TestCrudResolver,
+      TrialCrudResolver,
       TrialRelationsResolver,
     ],
     authChecker: AuthorizationCheck,
-
     emitSchemaFile: path.resolve(__dirname, './generated-schema.graphql'),
     validate: false,
   })
 
-  const prisma = new PrismaClient()
   const server = new ApolloServer({
     executor: executor(schema),
     subscriptions: {

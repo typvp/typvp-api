@@ -1,54 +1,56 @@
 import {ObjectType, Field, ID, registerEnumType, Float, Int} from 'type-graphql'
 import {Test, ResultType} from '../typingTest/test.type'
 
-export enum Role {
-  USER = 'USER',
-  ADMIN = 'ADMIN',
-  PRO = 'PRO',
-}
+import {Account} from '../../generated/type-graphql/models/Account'
 
-registerEnumType(Role, {
-  name: 'Role',
-})
+// export enum Role {
+//   USER = 'USER',
+//   ADMIN = 'ADMIN',
+//   PRO = 'PRO',
+// }
 
-@ObjectType()
-export class Account {
-  @Field(type => ID)
-  id: string
+// registerEnumType(Role, {
+//   name: 'Role',
+// })
 
-  @Field(type => String)
-  createdAt: string
+// @ObjectType()
+// export class AccountOld {
+//   @Field(type => ID)
+//   id: string
 
-  @Field(type => String)
-  updatedAt: string
+//   @Field(type => String)
+//   createdAt: string
 
-  @Field(type => String)
-  email: string
+//   @Field(type => String)
+//   updatedAt: string
 
-  @Field(type => String)
-  username: string
+//   @Field(type => String)
+//   email: string
 
-  @Field(type => Role)
-  role: keyof typeof Role
+//   @Field(type => String)
+//   username: string
 
-  @Field(type => [Test])
-  results?: Test[]
+//   @Field(type => Role)
+//   role: keyof typeof Role
 
-  @Field(type => Float, {nullable: true})
-  lastSeen?: number
+//   @Field(type => [Test])
+//   results?: Test[]
 
-  @Field(type => ResultType, {nullable: true})
-  lastPlayed?: keyof typeof ResultType
+//   @Field(type => Float, {nullable: true})
+//   lastSeen?: number
 
-  @Field(type => Int, {nullable: true})
-  testCount?: number
+//   @Field(type => ResultType, {nullable: true})
+//   lastPlayed?: keyof typeof ResultType
 
-  @Field(type => Boolean)
-  confirmed: boolean
+//   @Field(type => Int, {nullable: true})
+//   testCount?: number
 
-  @Field(type => String, {nullable: true})
-  color?: string
-}
+//   @Field(type => Boolean)
+//   confirmed: boolean
+
+//   @Field(type => String, {nullable: true})
+//   color?: string
+// }
 
 @ObjectType()
 export class AuthPayload {

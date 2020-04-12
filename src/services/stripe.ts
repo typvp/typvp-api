@@ -1,7 +1,7 @@
 import Stripe from 'stripe'
 import {Request, Response} from 'express'
 
-import {prisma} from '../generated/prisma-client'
+import {prisma} from '../services/prisma'
 import {startProNAMProcess} from '../utils/mailing/proNoAccountMatchEmail'
 import {startProSuccessProcess} from '../utils/mailing/proSuccessEmail'
 

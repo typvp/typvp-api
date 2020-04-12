@@ -1,8 +1,8 @@
-import {prisma} from './services/prisma'
+import {PrismaClient} from '@prisma/client'
 import {Redis} from 'ioredis'
 
 export interface Context {
-  // prisma: typeof prisma
+  prisma: PrismaClient
   req: any
   redis: Redis
 }

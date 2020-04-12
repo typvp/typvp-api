@@ -1,0 +1,42 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateField",
+      "model": "Account",
+      "field": "tests",
+      "type": "Test",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Account",
+      "field": "trials",
+      "type": "Trial",
+      "arity": "List"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Account",
+      "field": "Test"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Account",
+      "field": "Trial"
+    },
+    {
+      "tag": "DeleteArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Trial",
+          "field": "owner"
+        },
+        "directive": "relation"
+      },
+      "argument": "name"
+    }
+  ]
+}

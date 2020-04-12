@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 generator typegraphql {
@@ -25,8 +25,8 @@ model Account {
   updatedAt         DateTime  @default(now())
   username          String    @unique
   usernameLowercase String?   @unique
-  tests             Test[]
-  trials            Trial[]
+  Test              Test[]
+  Trial             Trial[]
 }
 
 model Test {
@@ -41,8 +41,8 @@ model Test {
   updatedAt   DateTime   @default(now())
   wordIndex   Int
   wpm         Int
-  trial       Trial?     @relation(fields: [trialId], references: [id])
   trialId     String?
+  trial       Trial?     @relation(fields: [trialId], references: [id])
   account     Account    @relation(fields: [accountId], references: [id])
   accountId   String
 }
@@ -58,9 +58,9 @@ model Trial {
   private       Boolean?    @default(false)
   updatedAt     DateTime    @default(now())
   wordSet       String
-  results       Test[]
-  owner         Account?    @relation(fields: [ownerId], references: [id])
+  results       Trial[]
   ownerId       String?
+  owner         Account?    @relation(name: "TrialOwner", fields: [ownerId], references: [id])
 }
 
 enum ResultType {

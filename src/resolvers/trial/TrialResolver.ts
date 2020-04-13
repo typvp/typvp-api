@@ -45,7 +45,7 @@ class ExclusiveUpdateOneTrialInput implements Partial<TrialUpdateInput> {
 
 @ArgsType()
 class ExclusiveUpdateOneTrialArgs implements UpdateOneTrialArgs {
-  @Field(_type => TrialUpdateInput, {nullable: false})
+  @Field(_type => ExclusiveUpdateOneTrialInput, {nullable: false})
   data!: ExclusiveUpdateOneTrialInput
 
   @Field(_type => TrialWhereUniqueInput, {nullable: false})

@@ -2,8 +2,9 @@ import * as jwt from 'jsonwebtoken'
 
 import {Context} from '../types'
 import {NewTestInput} from '../resolvers/typingTest/test.input'
-import {Account} from '../resolvers/account/account.type'
 import {ResultType} from '../resolvers/typingTest/test.type'
+import {Account} from '../generated/type-graphql'
+import {ExclusiveCreateOneTestInput} from '../resolvers/typingTest/TestResolver'
 
 export function getAccountId(ctx: Context) {
   const Authorization = ctx.req.get('Authorization')
@@ -18,16 +19,16 @@ export function getAccountId(ctx: Context) {
   return false
 }
 
-interface IStickyKeysOptions {
+type StickyKeysOptions = {
   wordList: string
   mode: keyof typeof ResultType
 }
 
-interface IStickyKeys {
-  (results: NewTestInput, user: Account, options: IStickyKeysOptions): boolean
-}
-
-export const stickyKeys: IStickyKeys = function(results, user, options) {
+export function stickyKeys(
+  results: ExclusiveCreateOneTestInput,
+  user: Account,
+  options: StickyKeysOptions,
+): boolean {
   if (!options.wordList) {
     console.log('failed no cached wordlist')
     return false

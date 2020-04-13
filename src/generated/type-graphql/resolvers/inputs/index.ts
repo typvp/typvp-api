@@ -20,6 +20,7 @@ export { IntFilter } from "./IntFilter";
 export { NullableBooleanFilter } from "./NullableBooleanFilter";
 export { NullableDifficultyFilter } from "./NullableDifficultyFilter";
 export { NullableIntFilter } from "./NullableIntFilter";
+export { NullableResultTypeFilter } from "./NullableResultTypeFilter";
 export { NullableStringFilter } from "./NullableStringFilter";
 export { ResultTypeFilter } from "./ResultTypeFilter";
 export { RoleFilter } from "./RoleFilter";

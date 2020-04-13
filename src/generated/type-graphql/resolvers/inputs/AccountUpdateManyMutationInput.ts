@@ -1,4 +1,5 @@
 import { Arg, Args, ArgsType, Ctx, Field, FieldResolver, Float, ID, InputType, Int, Mutation, ObjectType, Query, Resolver, Root, registerEnumType } from "type-graphql";
+import { ResultType } from "../../enums/ResultType";
 import { Role } from "../../enums/Role";
 
 @InputType({
@@ -36,11 +37,11 @@ export class AccountUpdateManyMutationInput {
   })
   id?: string | null;
 
-  @Field(_type => String, {
+  @Field(_type => ResultType, {
     nullable: true,
     description: undefined
   })
-  lastPlayed?: string | null;
+  lastPlayed?: keyof typeof ResultType | null;
 
   @Field(_type => Date, {
     nullable: true,

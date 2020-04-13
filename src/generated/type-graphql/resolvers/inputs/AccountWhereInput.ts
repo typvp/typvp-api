@@ -1,6 +1,7 @@
 import { Arg, Args, ArgsType, Ctx, Field, FieldResolver, Float, ID, InputType, Int, Mutation, ObjectType, Query, Resolver, Root, registerEnumType } from "type-graphql";
 import { BooleanFilter } from "../inputs/BooleanFilter";
 import { DateTimeFilter } from "../inputs/DateTimeFilter";
+import { NullableResultTypeFilter } from "../inputs/NullableResultTypeFilter";
 import { NullableStringFilter } from "../inputs/NullableStringFilter";
 import { RoleFilter } from "../inputs/RoleFilter";
 import { StringFilter } from "../inputs/StringFilter";
@@ -42,11 +43,11 @@ export class AccountWhereInput {
   })
   id?: StringFilter | null;
 
-  @Field(_type => NullableStringFilter, {
+  @Field(_type => NullableResultTypeFilter, {
     nullable: true,
     description: undefined
   })
-  lastPlayed?: NullableStringFilter | null;
+  lastPlayed?: NullableResultTypeFilter | null;
 
   @Field(_type => DateTimeFilter, {
     nullable: true,

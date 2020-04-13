@@ -4,12 +4,13 @@ import path from 'path'
 
 import {AuthorizationCheck} from '../middleware/Auth'
 import {AccountResolver} from '../resolvers/account/AccountResolver'
+import {TrialResolver} from '../resolvers/trial/TrialResolver'
 import {AccountRelationsResolver} from '../generated/type-graphql/resolvers/relations/Account/AccountRelationsResolver'
+import {FindOneAccountResolver} from '../generated/type-graphql/resolvers/crud/Account/FindOneAccountResolver'
 import {TestRelationsResolver} from '../generated/type-graphql/resolvers/relations/Test/TestRelationsResolver'
 import {TrialRelationsResolver} from '../generated/type-graphql/resolvers/relations/Trial/TrialRelationsResolver'
-import {AccountCrudResolver} from '../generated/type-graphql/resolvers/crud/Account/AccountCrudResolver'
-import {TestCrudResolver} from '../generated/type-graphql/resolvers/crud/Test/TestCrudResolver'
-import {TrialCrudResolver} from '../generated/type-graphql/resolvers/crud/Trial/TrialCrudResolver'
+import {FindOneTrialResolver} from '../generated/type-graphql/resolvers/crud/Trial/FindOneTrialResolver'
+import {FindManyTrialResolver} from '../generated/type-graphql/resolvers/crud/Trial/FindManyTrialResolver'
 import {app} from './express'
 import {redis} from './redis'
 import {executor} from '../utils/executor'
@@ -18,12 +19,13 @@ import {prisma} from '../services/prisma'
 export async function initGraphQL() {
   const schema = await buildSchema({
     resolvers: [
+      TrialResolver,
+      FindOneTrialResolver,
+      FindManyTrialResolver,
+      FindOneAccountResolver,
       AccountResolver,
       AccountRelationsResolver,
-      AccountCrudResolver,
       TestRelationsResolver,
-      TestCrudResolver,
-      TrialCrudResolver,
       TrialRelationsResolver,
     ],
     authChecker: AuthorizationCheck,

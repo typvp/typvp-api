@@ -17,10 +17,6 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "esModuleInterop": true,
-    "baseUrl": "./src",
-    "paths": {
-      "~gen/*": ["./generated/type-graphql/*"]
-    }
   },
   "exclude": ["prisma", "prisma.old"]
 }

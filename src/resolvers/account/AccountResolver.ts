@@ -156,4 +156,32 @@ export class AccountResolver {
       throw err
     }
   }
+
+  @Mutation(returns => Boolean)
+  @UseMiddleware(IsAuthenticated, LogAccess)
+  async createPersonalWordset(
+    @Arg('wordSet') wordSet: string,
+    @Ctx() ctx: Context,
+  ): Promise<Boolean> {
+    const id = getAccountId(ctx) as string
+    const now = new Date().toISOString()
+
+    await ctx.prisma.account.update({
+      where: {id},
+      data: {
+        trials: {
+          create: {
+            wordSet,
+            custom: true,
+            private: true,
+            name: `Saved ${now}`,
+            difficulty: 'NORMAL',
+            minWordLength: 3,
+            maxWordLength: 8,
+          },
+        },
+      },
+    })
+    return true
+  }
 }

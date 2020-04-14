@@ -5,6 +5,7 @@ import path from 'path'
 import {AuthorizationCheck} from '../middleware/Auth'
 import {AccountResolver} from '../resolvers/account/AccountResolver'
 import {TrialResolver} from '../resolvers/trial/TrialResolver'
+import {TestResolver} from '../resolvers/typingTest/TestResolver'
 import {AccountRelationsResolver} from '../generated/type-graphql/resolvers/relations/Account/AccountRelationsResolver'
 import {FindOneAccountResolver} from '../generated/type-graphql/resolvers/crud/Account/FindOneAccountResolver'
 import {TestRelationsResolver} from '../generated/type-graphql/resolvers/relations/Test/TestRelationsResolver'
@@ -20,6 +21,7 @@ export async function initGraphQL() {
   const schema = await buildSchema({
     resolvers: [
       TrialResolver,
+      TestResolver,
       FindOneTrialResolver,
       FindManyTrialResolver,
       FindOneAccountResolver,

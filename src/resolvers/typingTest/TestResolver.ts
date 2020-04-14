@@ -8,13 +8,12 @@ import {
   ArgsType,
   Ctx,
   Mutation,
+  Query,
 } from 'type-graphql'
-import {
-  Test,
-  CreateOneTestArgs,
-  TestCreateInput,
-  ResultType,
-} from '../../generated/type-graphql'
+import {ResultType} from '../../generated/type-graphql/enums/ResultType'
+import {TestCreateInput} from '../../generated/type-graphql/resolvers/inputs/TestCreateInput'
+import {Test} from '../../generated/type-graphql/models/Test'
+import {FindManyTestArgs} from '../../generated/type-graphql/resolvers/crud/Test/args/FindManyTestArgs'
 import {IsAuthenticated} from '../../middleware/Auth'
 import {LogAccess} from '../../middleware/Log'
 import {Context} from '../../types'
@@ -73,6 +72,18 @@ export class ExclusiveCreateOneTestArgs {
 
 @Resolver(of => Test)
 export class TestResolver {
+  @Query(returns => [Test])
+  async leaderboard(
+    @Args() args: FindManyTestArgs,
+    @Ctx() ctx: Context,
+  ): Promise<Test[]> {
+    return ctx.prisma.test.findMany({
+      skip: args.skip,
+      first: args.first,
+      orderBy: {wpm: 'desc'},
+    })
+  }
+
   @Mutation(returns => Boolean)
   @UseMiddleware(IsAuthenticated, LogAccess)
   async createNewResult(

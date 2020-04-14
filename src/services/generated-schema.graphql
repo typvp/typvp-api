@@ -20,65 +20,6 @@ type Account {
   trials(where: TrialWhereInput, orderBy: TrialOrderByInput, skip: Int, after: TrialWhereUniqueInput, before: TrialWhereUniqueInput, first: Int, last: Int): [Trial!]
 }
 
-input AccountCreateInput {
-  color: String
-  confirmed: Boolean
-  createdAt: DateTime
-  email: String!
-  id: String
-  lastPlayed: ResultType
-  lastSeen: DateTime
-  password: String!
-  role: Role
-  updatedAt: DateTime
-  username: String!
-  usernameLowercase: String
-  tests: TestCreateManyWithoutAccountInput
-  trials: TrialCreateManyWithoutOwnerInput
-}
-
-input AccountCreateOneWithoutTestsInput {
-  create: AccountCreateWithoutTestsInput
-  connect: AccountWhereUniqueInput
-}
-
-input AccountCreateOneWithoutTrialsInput {
-  create: AccountCreateWithoutTrialsInput
-  connect: AccountWhereUniqueInput
-}
-
-input AccountCreateWithoutTestsInput {
-  color: String
-  confirmed: Boolean
-  createdAt: DateTime
-  email: String!
-  id: String
-  lastPlayed: ResultType
-  lastSeen: DateTime
-  password: String!
-  role: Role
-  updatedAt: DateTime
-  username: String!
-  usernameLowercase: String
-  trials: TrialCreateManyWithoutOwnerInput
-}
-
-input AccountCreateWithoutTrialsInput {
-  color: String
-  confirmed: Boolean
-  createdAt: DateTime
-  email: String!
-  id: String
-  lastPlayed: ResultType
-  lastSeen: DateTime
-  password: String!
-  role: Role
-  updatedAt: DateTime
-  username: String!
-  usernameLowercase: String
-  tests: TestCreateManyWithoutAccountInput
-}
-
 input AccountLoginInput {
   username: String!
   password: String!
@@ -88,81 +29,6 @@ input AccountSignupInput {
   email: String!
   password: String!
   username: String!
-}
-
-input AccountUpdateInput {
-  color: String
-  confirmed: Boolean
-  createdAt: DateTime
-  email: String
-  id: String
-  lastPlayed: ResultType
-  lastSeen: DateTime
-  password: String
-  role: Role
-  updatedAt: DateTime
-  username: String
-  usernameLowercase: String
-  tests: TestUpdateManyWithoutAccountInput
-  trials: TrialUpdateManyWithoutOwnerInput
-}
-
-input AccountUpdateOneRequiredWithoutTestsInput {
-  create: AccountCreateWithoutTestsInput
-  connect: AccountWhereUniqueInput
-  update: AccountUpdateWithoutTestsDataInput
-  upsert: AccountUpsertWithoutTestsInput
-}
-
-input AccountUpdateOneWithoutTrialsInput {
-  create: AccountCreateWithoutTrialsInput
-  connect: AccountWhereUniqueInput
-  disconnect: Boolean
-  delete: Boolean
-  update: AccountUpdateWithoutTrialsDataInput
-  upsert: AccountUpsertWithoutTrialsInput
-}
-
-input AccountUpdateWithoutTestsDataInput {
-  color: String
-  confirmed: Boolean
-  createdAt: DateTime
-  email: String
-  id: String
-  lastPlayed: ResultType
-  lastSeen: DateTime
-  password: String
-  role: Role
-  updatedAt: DateTime
-  username: String
-  usernameLowercase: String
-  trials: TrialUpdateManyWithoutOwnerInput
-}
-
-input AccountUpdateWithoutTrialsDataInput {
-  color: String
-  confirmed: Boolean
-  createdAt: DateTime
-  email: String
-  id: String
-  lastPlayed: ResultType
-  lastSeen: DateTime
-  password: String
-  role: Role
-  updatedAt: DateTime
-  username: String
-  usernameLowercase: String
-  tests: TestUpdateManyWithoutAccountInput
-}
-
-input AccountUpsertWithoutTestsInput {
-  update: AccountUpdateWithoutTestsDataInput!
-  create: AccountCreateWithoutTestsInput!
-}
-
-input AccountUpsertWithoutTrialsInput {
-  update: AccountUpdateWithoutTrialsDataInput!
-  create: AccountCreateWithoutTrialsInput!
 }
 
 input AccountWhereInput {
@@ -225,6 +91,27 @@ enum Difficulty {
   HARD
 }
 
+input ExclusiveAccountCreateInput {
+  email: String!
+  password: String!
+  username: String!
+}
+
+input ExclusiveAccountUpdateInput {
+  color: String
+  email: String
+}
+
+input ExclusiveCreateOneTestInput {
+  correct: Int!
+  corrections: Int!
+  cpm: Int!
+  incorrect: Int!
+  rawCpm: Int!
+  wordIndex: Int!
+  wpm: Int!
+}
+
 input ExclusiveUpdateOneTrialInput {
   wordSet: String
   name: String
@@ -243,12 +130,14 @@ input IntFilter {
 }
 
 type Mutation {
-  updateAccount(data: AccountUpdateInput!, where: AccountWhereUniqueInput!): Account!
-  createAccount(data: AccountCreateInput!): AuthPayload!
+  updateAccount(data: ExclusiveAccountUpdateInput!): Account!
+  createAccount(data: ExclusiveAccountCreateInput!): AuthPayload!
   login(test: AccountLoginInput!): AuthPayload!
   createPersonalWordset(wordSet: String!): Boolean!
   updateTrial(data: ExclusiveUpdateOneTrialInput!, where: TrialWhereUniqueInput!): Trial!
   deleteTrial(trialId: ID!): Trial!
+  createNewResult(data: ExclusiveCreateOneTestInput!): Boolean!
+  getWordset: String!
 }
 
 input NullableBooleanFilter {
@@ -304,6 +193,7 @@ type Query {
   account(where: AccountWhereUniqueInput!): Account
   me(where: AccountWhereUniqueInput!): Account
   trialLeaders(trialId: ID!): [Test!]!
+  leaderboard(where: TestWhereInput, orderBy: TestOrderByInput, skip: Int, after: TestWhereUniqueInput, before: TestWhereUniqueInput, first: Int, last: Int): [Test!]!
   trial(where: TrialWhereUniqueInput!): Trial
   trials(where: TrialWhereInput, orderBy: TrialOrderByInput, skip: Int, after: TrialWhereUniqueInput, before: TrialWhereUniqueInput, first: Int, last: Int): [Trial!]!
 }
@@ -367,46 +257,6 @@ type Test {
   account: Account!
 }
 
-input TestCreateManyWithoutAccountInput {
-  create: [TestCreateWithoutAccountInput!]
-  connect: [TestWhereUniqueInput!]
-}
-
-input TestCreateManyWithoutTrialInput {
-  create: [TestCreateWithoutTrialInput!]
-  connect: [TestWhereUniqueInput!]
-}
-
-input TestCreateWithoutAccountInput {
-  correct: Int!
-  corrections: Int!
-  cpm: Int!
-  createdAt: DateTime
-  id: String
-  incorrect: Int!
-  rawCpm: Int!
-  type: ResultType!
-  updatedAt: DateTime
-  wordIndex: Int!
-  wpm: Int!
-  trial: TrialCreateOneWithoutResultsInput
-}
-
-input TestCreateWithoutTrialInput {
-  correct: Int!
-  corrections: Int!
-  cpm: Int!
-  createdAt: DateTime
-  id: String
-  incorrect: Int!
-  rawCpm: Int!
-  type: ResultType!
-  updatedAt: DateTime
-  wordIndex: Int!
-  wpm: Int!
-  account: AccountCreateOneWithoutTestsInput!
-}
-
 input TestFilter {
   every: TestWhereInput
   some: TestWhereInput
@@ -429,120 +279,6 @@ input TestOrderByInput {
   trialId: OrderByArg
   account: OrderByArg
   accountId: OrderByArg
-}
-
-input TestScalarWhereInput {
-  correct: IntFilter
-  corrections: IntFilter
-  cpm: IntFilter
-  createdAt: DateTimeFilter
-  id: StringFilter
-  incorrect: IntFilter
-  rawCpm: IntFilter
-  type: ResultTypeFilter
-  updatedAt: DateTimeFilter
-  wordIndex: IntFilter
-  wpm: IntFilter
-  trialId: NullableStringFilter
-  accountId: StringFilter
-  AND: [TestScalarWhereInput!]
-  OR: [TestScalarWhereInput!]
-  NOT: [TestScalarWhereInput!]
-}
-
-input TestUpdateManyDataInput {
-  correct: Int
-  corrections: Int
-  cpm: Int
-  createdAt: DateTime
-  id: String
-  incorrect: Int
-  rawCpm: Int
-  type: ResultType
-  updatedAt: DateTime
-  wordIndex: Int
-  wpm: Int
-}
-
-input TestUpdateManyWithoutAccountInput {
-  create: [TestCreateWithoutAccountInput!]
-  connect: [TestWhereUniqueInput!]
-  set: [TestWhereUniqueInput!]
-  disconnect: [TestWhereUniqueInput!]
-  delete: [TestWhereUniqueInput!]
-  update: [TestUpdateWithWhereUniqueWithoutAccountInput!]
-  updateMany: [TestUpdateManyWithWhereNestedInput!]
-  deleteMany: [TestScalarWhereInput!]
-  upsert: [TestUpsertWithWhereUniqueWithoutAccountInput!]
-}
-
-input TestUpdateManyWithoutTrialInput {
-  create: [TestCreateWithoutTrialInput!]
-  connect: [TestWhereUniqueInput!]
-  set: [TestWhereUniqueInput!]
-  disconnect: [TestWhereUniqueInput!]
-  delete: [TestWhereUniqueInput!]
-  update: [TestUpdateWithWhereUniqueWithoutTrialInput!]
-  updateMany: [TestUpdateManyWithWhereNestedInput!]
-  deleteMany: [TestScalarWhereInput!]
-  upsert: [TestUpsertWithWhereUniqueWithoutTrialInput!]
-}
-
-input TestUpdateManyWithWhereNestedInput {
-  where: TestScalarWhereInput!
-  data: TestUpdateManyDataInput!
-}
-
-input TestUpdateWithoutAccountDataInput {
-  correct: Int
-  corrections: Int
-  cpm: Int
-  createdAt: DateTime
-  id: String
-  incorrect: Int
-  rawCpm: Int
-  type: ResultType
-  updatedAt: DateTime
-  wordIndex: Int
-  wpm: Int
-  trial: TrialUpdateOneWithoutResultsInput
-}
-
-input TestUpdateWithoutTrialDataInput {
-  correct: Int
-  corrections: Int
-  cpm: Int
-  createdAt: DateTime
-  id: String
-  incorrect: Int
-  rawCpm: Int
-  type: ResultType
-  updatedAt: DateTime
-  wordIndex: Int
-  wpm: Int
-  account: AccountUpdateOneRequiredWithoutTestsInput
-}
-
-input TestUpdateWithWhereUniqueWithoutAccountInput {
-  where: TestWhereUniqueInput!
-  data: TestUpdateWithoutAccountDataInput!
-}
-
-input TestUpdateWithWhereUniqueWithoutTrialInput {
-  where: TestWhereUniqueInput!
-  data: TestUpdateWithoutTrialDataInput!
-}
-
-input TestUpsertWithWhereUniqueWithoutAccountInput {
-  where: TestWhereUniqueInput!
-  update: TestUpdateWithoutAccountDataInput!
-  create: TestCreateWithoutAccountInput!
-}
-
-input TestUpsertWithWhereUniqueWithoutTrialInput {
-  where: TestWhereUniqueInput!
-  update: TestUpdateWithoutTrialDataInput!
-  create: TestCreateWithoutTrialInput!
 }
 
 input TestWhereInput {
@@ -586,44 +322,6 @@ type Trial {
   owner: Account
 }
 
-input TrialCreateManyWithoutOwnerInput {
-  create: [TrialCreateWithoutOwnerInput!]
-  connect: [TrialWhereUniqueInput!]
-}
-
-input TrialCreateOneWithoutResultsInput {
-  create: TrialCreateWithoutResultsInput
-  connect: TrialWhereUniqueInput
-}
-
-input TrialCreateWithoutOwnerInput {
-  createdAt: DateTime
-  custom: Boolean
-  difficulty: Difficulty
-  id: String
-  maxWordLength: Int
-  minWordLength: Int
-  name: String!
-  private: Boolean
-  updatedAt: DateTime
-  wordSet: String!
-  results: TestCreateManyWithoutTrialInput
-}
-
-input TrialCreateWithoutResultsInput {
-  createdAt: DateTime
-  custom: Boolean
-  difficulty: Difficulty
-  id: String
-  maxWordLength: Int
-  minWordLength: Int
-  name: String!
-  private: Boolean
-  updatedAt: DateTime
-  wordSet: String!
-  owner: AccountCreateOneWithoutTrialsInput
-}
-
 input TrialFilter {
   every: TrialWhereInput
   some: TrialWhereInput
@@ -643,107 +341,6 @@ input TrialOrderByInput {
   wordSet: OrderByArg
   owner: OrderByArg
   ownerId: OrderByArg
-}
-
-input TrialScalarWhereInput {
-  createdAt: DateTimeFilter
-  custom: NullableBooleanFilter
-  difficulty: NullableDifficultyFilter
-  id: StringFilter
-  maxWordLength: NullableIntFilter
-  minWordLength: NullableIntFilter
-  name: StringFilter
-  private: NullableBooleanFilter
-  updatedAt: DateTimeFilter
-  wordSet: StringFilter
-  results: TestFilter
-  ownerId: NullableStringFilter
-  AND: [TrialScalarWhereInput!]
-  OR: [TrialScalarWhereInput!]
-  NOT: [TrialScalarWhereInput!]
-}
-
-input TrialUpdateManyDataInput {
-  createdAt: DateTime
-  custom: Boolean
-  difficulty: Difficulty
-  id: String
-  maxWordLength: Int
-  minWordLength: Int
-  name: String
-  private: Boolean
-  updatedAt: DateTime
-  wordSet: String
-}
-
-input TrialUpdateManyWithoutOwnerInput {
-  create: [TrialCreateWithoutOwnerInput!]
-  connect: [TrialWhereUniqueInput!]
-  set: [TrialWhereUniqueInput!]
-  disconnect: [TrialWhereUniqueInput!]
-  delete: [TrialWhereUniqueInput!]
-  update: [TrialUpdateWithWhereUniqueWithoutOwnerInput!]
-  updateMany: [TrialUpdateManyWithWhereNestedInput!]
-  deleteMany: [TrialScalarWhereInput!]
-  upsert: [TrialUpsertWithWhereUniqueWithoutOwnerInput!]
-}
-
-input TrialUpdateManyWithWhereNestedInput {
-  where: TrialScalarWhereInput!
-  data: TrialUpdateManyDataInput!
-}
-
-input TrialUpdateOneWithoutResultsInput {
-  create: TrialCreateWithoutResultsInput
-  connect: TrialWhereUniqueInput
-  disconnect: Boolean
-  delete: Boolean
-  update: TrialUpdateWithoutResultsDataInput
-  upsert: TrialUpsertWithoutResultsInput
-}
-
-input TrialUpdateWithoutOwnerDataInput {
-  createdAt: DateTime
-  custom: Boolean
-  difficulty: Difficulty
-  id: String
-  maxWordLength: Int
-  minWordLength: Int
-  name: String
-  private: Boolean
-  updatedAt: DateTime
-  wordSet: String
-  results: TestUpdateManyWithoutTrialInput
-}
-
-input TrialUpdateWithoutResultsDataInput {
-  createdAt: DateTime
-  custom: Boolean
-  difficulty: Difficulty
-  id: String
-  maxWordLength: Int
-  minWordLength: Int
-  name: String
-  private: Boolean
-  updatedAt: DateTime
-  wordSet: String
-  owner: AccountUpdateOneWithoutTrialsInput
-}
-
-input TrialUpdateWithWhereUniqueWithoutOwnerInput {
-  where: TrialWhereUniqueInput!
-  data: TrialUpdateWithoutOwnerDataInput!
-}
-
-input TrialUpsertWithoutResultsInput {
-  update: TrialUpdateWithoutResultsDataInput!
-  create: TrialCreateWithoutResultsInput!
-}
-
-input TrialUpsertWithWhereUniqueWithoutOwnerInput {
-  where: TrialWhereUniqueInput!
-  update: TrialUpdateWithoutOwnerDataInput!
-  create: TrialCreateWithoutOwnerInput!
 }
 
 input TrialWhereInput {

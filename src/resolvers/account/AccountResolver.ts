@@ -8,6 +8,8 @@ import {
   Resolver,
   UseMiddleware,
   Arg,
+  ArgsType,
+  Field,
   InputType,
 } from 'type-graphql'
 
@@ -17,6 +19,9 @@ import {
   UpdateOneAccountArgs,
   CreateOneAccountArgs,
 } from '../../generated/type-graphql/resolvers/crud/Account/args'
+import {AccountCreateInput} from '../../generated/type-graphql/resolvers/inputs/AccountCreateInput'
+import {AccountUpdateInput} from '../../generated/type-graphql/resolvers/inputs/AccountUpdateInput'
+import {Role} from '../../generated/type-graphql/enums/Role'
 import {LogAccess} from '../../middleware/Log'
 import {Context} from '../../types'
 import {getAccountId} from '../../utils'
@@ -24,7 +29,51 @@ import {IsAuthenticated} from '../../middleware/Auth'
 import {AuthPayload} from './account.type'
 import {startEmailConfirmationProcess} from '../../utils/mailing/createConfirmEmailLink'
 import {AccountLoginInput} from './account.input'
-import {Role} from '@prisma/client'
+
+@InputType({isAbstract: true})
+class ExclusiveAccountUpdateInput implements Partial<AccountUpdateInput> {
+  @Field(_type => String, {
+    nullable: true,
+    description: undefined,
+  })
+  color?: string | null
+  @Field(_type => String, {
+    nullable: true,
+    description: undefined,
+  })
+  email?: string | null
+}
+
+@ArgsType()
+class ExclusiveUpdateOneAccountArgs implements Partial<UpdateOneAccountArgs> {
+  @Field(_type => ExclusiveAccountUpdateInput, {nullable: false})
+  data!: ExclusiveAccountUpdateInput
+}
+
+@InputType({isAbstract: true})
+class ExclusiveAccountCreateInput implements Partial<AccountCreateInput> {
+  @Field(_type => String, {
+    nullable: false,
+    description: undefined,
+  })
+  email!: string
+  @Field(_type => String, {
+    nullable: false,
+    description: undefined,
+  })
+  password!: string
+  @Field(_type => String, {
+    nullable: false,
+    description: undefined,
+  })
+  username!: string
+}
+
+@ArgsType()
+class ExclusiveUpdateOneTrialArgs implements CreateOneAccountArgs {
+  @Field(_type => ExclusiveAccountCreateInput, {nullable: false})
+  data!: ExclusiveAccountCreateInput
+}
 
 @Resolver(of => Account)
 export class AccountResolver {
@@ -52,16 +101,17 @@ export class AccountResolver {
   @UseMiddleware(IsAuthenticated, LogAccess)
   async updateAccount(
     @Ctx() ctx: Context,
-    @Args() args: UpdateOneAccountArgs,
+    @Args() args: ExclusiveUpdateOneAccountArgs,
   ): Promise<Account> {
-    return ctx.prisma.account.update(args)
+    const id = getAccountId(ctx) as string
+    return ctx.prisma.account.update({where: {id}, data: {...args.data}})
   }
 
   @Mutation(returns => AuthPayload)
   @UseMiddleware(LogAccess)
   async createAccount(
     @Ctx() ctx: Context,
-    @Args() args: CreateOneAccountArgs,
+    @Args() args: ExclusiveUpdateOneTrialArgs,
   ): Promise<AuthPayload> {
     try {
       const accountExists = await ctx.prisma.account.findMany({

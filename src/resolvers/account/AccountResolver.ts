@@ -48,18 +48,6 @@ export class AccountResolver {
     }
   }
 
-  @Mutation(returns => Boolean, {nullable: true})
-  @UseMiddleware(IsAuthenticated)
-  async seen(@Ctx() ctx: Context): Promise<void> {
-    const id = getAccountId(ctx) as string
-    ctx.prisma.account.update({
-      where: {id},
-      data: {
-        lastSeen: Date(),
-      },
-    })
-  }
-
   @Mutation(returns => Account)
   @UseMiddleware(IsAuthenticated, LogAccess)
   async updateAccount(

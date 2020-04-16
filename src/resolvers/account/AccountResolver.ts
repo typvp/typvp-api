@@ -87,13 +87,10 @@ export class AccountResolver {
 
   @Query(returns => Account, {nullable: true})
   @UseMiddleware(LogAccess)
-  async me(
-    @Ctx() ctx: Context,
-    @Args() args: FindOneAccountArgs,
-  ): Promise<Account | null> {
+  async me(@Ctx() ctx: Context): Promise<Account | null> {
     const id = getAccountId(ctx)
     if (id) {
-      return ctx.prisma.account.findOne(args)
+      return ctx.prisma.account.findOne({where: {id}})
     }
   }
 

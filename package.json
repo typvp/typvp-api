@@ -29,7 +29,7 @@
     "prisma-client-lib": "^1.34.10",
     "reflect-metadata": "^0.1.13",
     "socket.io": "^2.3.0",
-    "stripe": "^8.25.0",
+    "stripe": "^8.40.0",
     "tiny-lru": "^7.0.2",
     "type-graphql": "^0.18.0-beta.16",
     "uuid": "^3.3.3"

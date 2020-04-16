@@ -17,7 +17,7 @@ export const stripe = new Stripe(key, {
 
 async function applyProToAccount(email: string) {
   try {
-    const account = await prisma.updateAccount({
+    const account = await prisma.account.update({
       where: {
         email,
       },
@@ -45,14 +45,16 @@ export const handlePaymentWebbook = async (req: Request, res: Response) => {
     return
   }
 
-  const data: Stripe.Event.Data = event.data
   const eventType: string = event.type
 
   if (eventType === 'checkout.session.completed') {
-    const session: any = event.data.object
-    console.log(session)
-    console.log(data)
-    const {email} = (await stripe.customers.retrieve(session.customer)) as any
+    const data = event.data.object as Stripe.Checkout.Session
+    console.log('data', data)
+    const {email} = (await stripe.customers.retrieve(
+      data.customer,
+    )) as Stripe.Customer
+
+    console.log(email)
 
     applyProToAccount(email)
   }

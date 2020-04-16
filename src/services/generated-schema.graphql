@@ -13,25 +13,20 @@ type Account {
   lastSeen: DateTime!
   password: String!
   role: Role!
+  tests(after: TestWhereUniqueInput, before: TestWhereUniqueInput, first: Int, last: Int, orderBy: TestOrderByInput, skip: Int, where: TestWhereInput): [Test!]
+  trials(after: TrialWhereUniqueInput, before: TrialWhereUniqueInput, first: Int, last: Int, orderBy: TrialOrderByInput, skip: Int, where: TrialWhereInput): [Trial!]
   updatedAt: DateTime!
   username: String!
   usernameLowercase: String
-  tests(where: TestWhereInput, orderBy: TestOrderByInput, skip: Int, after: TestWhereUniqueInput, before: TestWhereUniqueInput, first: Int, last: Int): [Test!]
-  trials(where: TrialWhereInput, orderBy: TrialOrderByInput, skip: Int, after: TrialWhereUniqueInput, before: TrialWhereUniqueInput, first: Int, last: Int): [Trial!]
 }
 
 input AccountLoginInput {
-  username: String!
-  password: String!
-}
-
-input AccountSignupInput {
-  email: String!
   password: String!
   username: String!
 }
 
 input AccountWhereInput {
+  AND: [AccountWhereInput!]
   color: NullableStringFilter
   confirmed: BooleanFilter
   createdAt: DateTimeFilter
@@ -39,16 +34,15 @@ input AccountWhereInput {
   id: StringFilter
   lastPlayed: NullableResultTypeFilter
   lastSeen: DateTimeFilter
+  NOT: [AccountWhereInput!]
+  OR: [AccountWhereInput!]
   password: StringFilter
   role: RoleFilter
+  tests: TestFilter
+  trials: TrialFilter
   updatedAt: DateTimeFilter
   username: StringFilter
   usernameLowercase: NullableStringFilter
-  tests: TestFilter
-  trials: TrialFilter
-  AND: [AccountWhereInput!]
-  OR: [AccountWhereInput!]
-  NOT: [AccountWhereInput!]
 }
 
 input AccountWhereUniqueInput {
@@ -59,8 +53,8 @@ input AccountWhereUniqueInput {
 }
 
 type AuthPayload {
-  token: String!
   account: Account!
+  token: String!
 }
 
 input BooleanFilter {
@@ -75,20 +69,20 @@ scalar DateTime
 
 input DateTimeFilter {
   equals: DateTime
-  not: DateTime
-  in: [DateTime!]
-  notIn: [DateTime!]
-  lt: DateTime
-  lte: DateTime
   gt: DateTime
   gte: DateTime
+  in: [DateTime!]
+  lt: DateTime
+  lte: DateTime
+  not: DateTime
+  notIn: [DateTime!]
 }
 
 enum Difficulty {
   EASY
-  NORMAL
-  MEDIUM
   HARD
+  MEDIUM
+  NORMAL
 }
 
 input ExclusiveAccountCreateInput {
@@ -113,31 +107,30 @@ input ExclusiveCreateOneTestInput {
 }
 
 input ExclusiveUpdateOneTrialInput {
-  wordSet: String
   name: String
   private: Boolean
+  wordSet: String
 }
 
 input IntFilter {
   equals: Int
-  not: Int
-  in: [Int!]
-  notIn: [Int!]
-  lt: Int
-  lte: Int
   gt: Int
   gte: Int
+  in: [Int!]
+  lt: Int
+  lte: Int
+  not: Int
+  notIn: [Int!]
 }
 
 type Mutation {
-  updateAccount(data: ExclusiveAccountUpdateInput!): Account!
   createAccount(data: ExclusiveAccountCreateInput!): AuthPayload!
-  login(test: AccountLoginInput!): AuthPayload!
-  createPersonalWordset(wordSet: String!): Boolean!
-  updateTrial(data: ExclusiveUpdateOneTrialInput!, where: TrialWhereUniqueInput!): Trial!
-  deleteTrial(trialId: ID!): Trial!
   createNewResult(data: ExclusiveCreateOneTestInput!): Boolean!
-  getWordset: String!
+  createPersonalWordset(wordSet: String!): Boolean!
+  deleteTrial(trialId: ID!): Trial!
+  login(test: AccountLoginInput!): AuthPayload!
+  updateAccount(data: ExclusiveAccountUpdateInput!): Account!
+  updateTrial(data: ExclusiveUpdateOneTrialInput!, where: TrialWhereUniqueInput!): Trial!
 }
 
 input NullableBooleanFilter {
@@ -147,41 +140,41 @@ input NullableBooleanFilter {
 
 input NullableDifficultyFilter {
   equals: Difficulty
-  not: Difficulty
   in: [Difficulty!]
+  not: Difficulty
   notIn: [Difficulty!]
 }
 
 input NullableIntFilter {
   equals: Int
-  not: Int
-  in: [Int!]
-  notIn: [Int!]
-  lt: Int
-  lte: Int
   gt: Int
   gte: Int
+  in: [Int!]
+  lt: Int
+  lte: Int
+  not: Int
+  notIn: [Int!]
 }
 
 input NullableResultTypeFilter {
   equals: ResultType
-  not: ResultType
   in: [ResultType!]
+  not: ResultType
   notIn: [ResultType!]
 }
 
 input NullableStringFilter {
+  contains: String
+  endsWith: String
   equals: String
-  not: String
-  in: [String!]
-  notIn: [String!]
-  lt: String
-  lte: String
   gt: String
   gte: String
-  contains: String
+  in: [String!]
+  lt: String
+  lte: String
+  not: String
+  notIn: [String!]
   startsWith: String
-  endsWith: String
 }
 
 enum OrderByArg {
@@ -191,55 +184,58 @@ enum OrderByArg {
 
 type Query {
   account(where: AccountWhereUniqueInput!): Account
-  me(where: AccountWhereUniqueInput!): Account
-  trialLeaders(trialId: ID!): [Test!]!
-  leaderboard(where: TestWhereInput, orderBy: TestOrderByInput, skip: Int, after: TestWhereUniqueInput, before: TestWhereUniqueInput, first: Int, last: Int): [Test!]!
+  getWordset: String!
+  leaderboard(after: TestWhereUniqueInput, before: TestWhereUniqueInput, first: Int, last: Int, orderBy: TestOrderByInput, skip: Int, where: TestWhereInput): [Test!]!
+  me: Account
   trial(where: TrialWhereUniqueInput!): Trial
-  trials(where: TrialWhereInput, orderBy: TrialOrderByInput, skip: Int, after: TrialWhereUniqueInput, before: TrialWhereUniqueInput, first: Int, last: Int): [Trial!]!
+  trialLeaders(trialId: ID!): [Test!]!
+  trials(after: TrialWhereUniqueInput, before: TrialWhereUniqueInput, first: Int, last: Int, orderBy: TrialOrderByInput, skip: Int, where: TrialWhereInput): [Trial!]!
 }
 
 enum ResultType {
-  SINGLEPLAYER
   RACE
+  SINGLEPLAYER
   TRIAL
 }
 
 input ResultTypeFilter {
   equals: ResultType
-  not: ResultType
   in: [ResultType!]
+  not: ResultType
   notIn: [ResultType!]
 }
 
 enum Role {
-  USER
   ADMIN
-  PRO
   BETA
+  PRO
+  USER
 }
 
 input RoleFilter {
   equals: Role
-  not: Role
   in: [Role!]
+  not: Role
   notIn: [Role!]
 }
 
 input StringFilter {
+  contains: String
+  endsWith: String
   equals: String
-  not: String
-  in: [String!]
-  notIn: [String!]
-  lt: String
-  lte: String
   gt: String
   gte: String
-  contains: String
+  in: [String!]
+  lt: String
+  lte: String
+  not: String
+  notIn: [String!]
   startsWith: String
-  endsWith: String
 }
 
 type Test {
+  account: Account!
+  accountId: String!
   correct: Int!
   corrections: Int!
   cpm: Int!
@@ -247,23 +243,23 @@ type Test {
   id: String!
   incorrect: Int!
   rawCpm: Int!
+  trial: Trial
+  trialId: String
   type: ResultType!
   updatedAt: DateTime!
   wordIndex: Int!
   wpm: Int!
-  trialId: String
-  accountId: String!
-  trial: Trial
-  account: Account!
 }
 
 input TestFilter {
   every: TestWhereInput
-  some: TestWhereInput
   none: TestWhereInput
+  some: TestWhereInput
 }
 
 input TestOrderByInput {
+  account: OrderByArg
+  accountId: OrderByArg
   correct: OrderByArg
   corrections: OrderByArg
   cpm: OrderByArg
@@ -271,35 +267,33 @@ input TestOrderByInput {
   id: OrderByArg
   incorrect: OrderByArg
   rawCpm: OrderByArg
+  trial: OrderByArg
+  trialId: OrderByArg
   type: OrderByArg
   updatedAt: OrderByArg
   wordIndex: OrderByArg
   wpm: OrderByArg
-  trial: OrderByArg
-  trialId: OrderByArg
-  account: OrderByArg
-  accountId: OrderByArg
 }
 
 input TestWhereInput {
+  account: AccountWhereInput
+  accountId: StringFilter
+  AND: [TestWhereInput!]
   correct: IntFilter
   corrections: IntFilter
   cpm: IntFilter
   createdAt: DateTimeFilter
   id: StringFilter
   incorrect: IntFilter
+  NOT: [TestWhereInput!]
+  OR: [TestWhereInput!]
   rawCpm: IntFilter
+  trial: TrialWhereInput
+  trialId: NullableStringFilter
   type: ResultTypeFilter
   updatedAt: DateTimeFilter
   wordIndex: IntFilter
   wpm: IntFilter
-  trialId: NullableStringFilter
-  accountId: StringFilter
-  AND: [TestWhereInput!]
-  OR: [TestWhereInput!]
-  NOT: [TestWhereInput!]
-  trial: TrialWhereInput
-  account: AccountWhereInput
 }
 
 input TestWhereUniqueInput {
@@ -314,18 +308,18 @@ type Trial {
   maxWordLength: Int
   minWordLength: Int
   name: String!
+  owner: Account
+  ownerId: String
   private: Boolean
+  results(after: TestWhereUniqueInput, before: TestWhereUniqueInput, first: Int, last: Int, orderBy: TestOrderByInput, skip: Int, where: TestWhereInput): [Test!]
   updatedAt: DateTime!
   wordSet: String!
-  ownerId: String
-  results(where: TestWhereInput, orderBy: TestOrderByInput, skip: Int, after: TestWhereUniqueInput, before: TestWhereUniqueInput, first: Int, last: Int): [Test!]
-  owner: Account
 }
 
 input TrialFilter {
   every: TrialWhereInput
-  some: TrialWhereInput
   none: TrialWhereInput
+  some: TrialWhereInput
 }
 
 input TrialOrderByInput {
@@ -336,14 +330,15 @@ input TrialOrderByInput {
   maxWordLength: OrderByArg
   minWordLength: OrderByArg
   name: OrderByArg
+  owner: OrderByArg
+  ownerId: OrderByArg
   private: OrderByArg
   updatedAt: OrderByArg
   wordSet: OrderByArg
-  owner: OrderByArg
-  ownerId: OrderByArg
 }
 
 input TrialWhereInput {
+  AND: [TrialWhereInput!]
   createdAt: DateTimeFilter
   custom: NullableBooleanFilter
   difficulty: NullableDifficultyFilter
@@ -351,15 +346,14 @@ input TrialWhereInput {
   maxWordLength: NullableIntFilter
   minWordLength: NullableIntFilter
   name: StringFilter
+  NOT: [TrialWhereInput!]
+  OR: [TrialWhereInput!]
+  owner: AccountWhereInput
+  ownerId: NullableStringFilter
   private: NullableBooleanFilter
+  results: TestFilter
   updatedAt: DateTimeFilter
   wordSet: StringFilter
-  results: TestFilter
-  ownerId: NullableStringFilter
-  AND: [TrialWhereInput!]
-  OR: [TrialWhereInput!]
-  NOT: [TrialWhereInput!]
-  owner: AccountWhereInput
 }
 
 input TrialWhereUniqueInput {

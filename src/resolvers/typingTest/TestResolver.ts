@@ -110,7 +110,7 @@ export class TestResolver {
     return isValid
   }
 
-  @Mutation(returns => String)
+  @Query(returns => String)
   @UseMiddleware(LogAccess, Seen(ResultType.SINGLEPLAYER))
   async getWordset(@Ctx() ctx: Context): Promise<string> {
     const id = getAccountId(ctx)

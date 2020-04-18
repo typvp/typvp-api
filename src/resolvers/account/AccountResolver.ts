@@ -11,6 +11,8 @@ import {
   ArgsType,
   Field,
   InputType,
+  ObjectType,
+  Int,
 } from 'type-graphql'
 
 import {Account} from '../../generated/type-graphql/models/Account'
@@ -29,6 +31,8 @@ import {IsAuthenticated} from '../../middleware/Auth'
 import {AuthPayload} from './account.type'
 import {startEmailConfirmationProcess} from '../../utils/mailing/createConfirmEmailLink'
 import {AccountLoginInput} from './account.input'
+import {Test} from '../../generated/type-graphql/models/Test'
+import {FindManyTestArgs} from '../../generated/type-graphql/resolvers/crud/Test/args/FindManyTestArgs'
 
 @InputType({isAbstract: true})
 class ExclusiveAccountUpdateInput implements Partial<AccountUpdateInput> {
@@ -48,6 +52,15 @@ class ExclusiveAccountUpdateInput implements Partial<AccountUpdateInput> {
 class ExclusiveUpdateOneAccountArgs implements Partial<UpdateOneAccountArgs> {
   @Field(_type => ExclusiveAccountUpdateInput, {nullable: false})
   data!: ExclusiveAccountUpdateInput
+}
+
+@ObjectType()
+class accountResultsResponse {
+  @Field(type => Int)
+  count: number
+
+  @Field(type => [Test])
+  results: Test[]
 }
 
 @InputType({isAbstract: true})
@@ -91,6 +104,24 @@ export class AccountResolver {
     const id = getAccountId(ctx)
     if (id) {
       return ctx.prisma.account.findOne({where: {id}})
+    }
+  }
+
+  @Query(returns => accountResultsResponse)
+  @UseMiddleware(LogAccess)
+  async accountResults(
+    @Ctx() ctx: Context,
+    @Arg('id') id: string,
+    @Args() args: FindManyTestArgs,
+  ): Promise<accountResultsResponse> {
+    const {skip, first, where, ...rest} = args
+    console.log(rest, where)
+    return {
+      count: await ctx.prisma.test.count({
+        where: {...where, accountId: id},
+        ...rest,
+      }),
+      results: await ctx.prisma.account.findOne({where: {id}}).tests({...args}),
     }
   }
 

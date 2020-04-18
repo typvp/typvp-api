@@ -25,6 +25,11 @@ input AccountLoginInput {
   username: String!
 }
 
+type accountResultsResponse {
+  count: Int!
+  results: [Test!]!
+}
+
 input AccountWhereInput {
   AND: [AccountWhereInput!]
   color: NullableStringFilter
@@ -184,6 +189,7 @@ enum OrderByArg {
 
 type Query {
   account(where: AccountWhereUniqueInput!): Account
+  accountResults(after: TestWhereUniqueInput, before: TestWhereUniqueInput, first: Int, id: String!, last: Int, orderBy: TestOrderByInput, skip: Int, where: TestWhereInput): accountResultsResponse!
   getWordset: String!
   leaderboard(after: TestWhereUniqueInput, before: TestWhereUniqueInput, first: Int, last: Int, orderBy: TestOrderByInput, skip: Int, where: TestWhereInput): [Test!]!
   me: Account

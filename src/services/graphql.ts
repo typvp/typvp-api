@@ -36,7 +36,7 @@ export async function initGraphQL() {
   })
 
   const server = new ApolloServer({
-    executor: executor(schema),
+    // executor: executor(schema),
     subscriptions: {
       path: '/sub',
     },

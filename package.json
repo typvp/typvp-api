@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@typvp/gen": "^0.2.3",
-    "apollo-server-express": "^2.9.12",
+    "apollo-server-express": "^2.14.2",
     "bcryptjs": "^2.4.3",
     "bull": "^3.12.1",
     "class-validator": "^0.11.0",

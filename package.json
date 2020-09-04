@@ -28,7 +28,7 @@
     "reflect-metadata": "^0.1.13",
     "socket.io": "^2.3.0",
     "tiny-lru": "^7.0.2",
-    "type-graphql": "^0.17.5",
+    "type-graphql": "^0.17.6",
     "uuid": "^3.3.3"
   },
   "devDependencies": {
